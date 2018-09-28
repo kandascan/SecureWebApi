@@ -56,6 +56,14 @@ namespace SecureWebAPI
                         ClockSkew = TimeSpan.Zero // remove delay of token when expire
                     };
                 });
+                services.AddAuthorization(options =>
+                {
+                  options.AddPolicy("ApiUser", policy =>
+                  {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("Role", "Admin");
+                  });
+                });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,  

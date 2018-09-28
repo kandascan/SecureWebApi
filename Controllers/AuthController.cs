@@ -31,27 +31,7 @@ namespace SecureWebAPI.Controllers
             _signInManager = signInManager;
             _configuration = configuration;
             _context = context;
-        }
-
-        [HttpPost]
-        public async Task<object> Login([FromBody] User model)
-        {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
-            
-            if (result.Succeeded)
-            {
-                var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
-                return await GenerateJwtToken(model.Email, appUser);
-            }
-            
-            throw new ApplicationException("INVALID_LOGIN_ATTEMPT");
-        }       
-
-        [HttpGet]
-        public ActionResult<string> Get()
-        {
-            return "value";
-        }
+        }     
  
         [HttpPost]
         public async Task<object> Register([FromBody] User model)
@@ -69,7 +49,20 @@ namespace SecureWebAPI.Controllers
                 return await GenerateJwtToken(model.Email, user);
             }
             
-            return result.Errors.FirstOrDefault().Description;
+            return new BadRequestObjectResult(result.Errors);
+        }
+
+        [HttpPost]
+        public async Task<object> Login([FromBody] User model)
+        {
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+            if (!result.Succeeded)
+            {
+                return new BadRequestObjectResult("User not found");
+            }
+
+            var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
+            return await GenerateJwtToken(model.Email, appUser);            
         }
 
         private async Task<object> GenerateJwtToken(string email, User user)
@@ -83,7 +76,8 @@ namespace SecureWebAPI.Controllers
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["JwtExpireDays"]));
+            //var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["JwtExpireDays"]));
+            var expires = DateTime.Now.AddMinutes(2);
 
             var token = new JwtSecurityToken(
                 _configuration["JwtIssuer"],
@@ -92,7 +86,7 @@ namespace SecureWebAPI.Controllers
                 expires: expires,
                 signingCredentials: creds
             );
-
+            
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
