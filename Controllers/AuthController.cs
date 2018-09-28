@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SecureWebAPI.Entities;
+using SecureWebAPI.Helpers;
 using SecureWebAPI.Models;
 
 namespace SecureWebAPI.Controllers
@@ -46,7 +47,7 @@ namespace SecureWebAPI.Controllers
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
-                return await GenerateJwtToken(model.Email, user);
+                return await TokenHelper.GenerateJwtToken(model.Email, user, _configuration);
             }
             
             return new BadRequestObjectResult(result.Errors);
@@ -62,32 +63,7 @@ namespace SecureWebAPI.Controllers
             }
 
             var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
-            return await GenerateJwtToken(model.Email, appUser);            
-        }
-
-        private async Task<object> GenerateJwtToken(string email, User user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            //var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["JwtExpireDays"]));
-            var expires = DateTime.Now.AddMinutes(2);
-
-            var token = new JwtSecurityToken(
-                _configuration["JwtIssuer"],
-                _configuration["JwtIssuer"],
-                claims,
-                expires: expires,
-                signingCredentials: creds
-            );
-            
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+            return await TokenHelper.GenerateJwtToken(model.Email, appUser, _configuration);            
+        }        
     }
 }
