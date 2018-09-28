@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SecureWebAPI.Entities;
-using SecureWebAPI.Helpers;
+using SecureWebAPI.Extensions;
 using SecureWebAPI.Models;
 
 namespace SecureWebAPI.Controllers
@@ -21,15 +21,12 @@ namespace SecureWebAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
  
-        public AuthController(ApplicationDbContext context, UserManager<User> userManager,
-            SignInManager<User> signInManager, IConfiguration configuration)
+        public AuthController(ApplicationDbContext context, UserManager<User> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _configuration = configuration;
             _context = context;
         }     
@@ -46,8 +43,7 @@ namespace SecureWebAPI.Controllers
 
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, false);
-                return await TokenHelper.GenerateJwtToken(model.Email, user, _configuration);
+                return await user.GenerateJwtToken(_configuration);
             }
             
             return new BadRequestObjectResult(result.Errors);
@@ -56,14 +52,15 @@ namespace SecureWebAPI.Controllers
         [HttpPost]
         public async Task<object> Login([FromBody] User model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
-            if (!result.Succeeded)
-            {
-                return new BadRequestObjectResult("User not found");
-            }
+            var user = await _userManager.FindByNameAsync(model.Email);
 
-            var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
-            return await TokenHelper.GenerateJwtToken(model.Email, appUser, _configuration);            
+            if (user == null) 
+                return new BadRequestObjectResult("User not found");
+
+            if (!await _userManager.CheckPasswordAsync(user, model.Password))
+                return new BadRequestObjectResult("User password incorrect");
+
+            return await user.GenerateJwtToken(_configuration);           
         }        
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SecureWebAPI.Extensions;
+using SecureWebAPI.Models;
 
 namespace SecureWebAPI.Controllers
 {
@@ -15,19 +16,29 @@ namespace SecureWebAPI.Controllers
     [Authorize]
     public class ValuesController : ControllerBase
     {
-        private readonly ClaimsPrincipal _caller;
+        private readonly ClaimsPrincipal claimsPrincipal;
         public ValuesController(IHttpContextAccessor httpContextAccessor)
         {
-            _caller = httpContextAccessor.HttpContext.User;
+            claimsPrincipal = httpContextAccessor.HttpContext.User;
         }
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            var userId = _caller.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var claims = _caller.Claims.si
-
+            var userId = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
             return new string[] { userId, "value1", "value2" };
+        }
+
+        [HttpGet]
+        [Route("posts")]
+        public ActionResult<IEnumerable<Post>> GetPosts()
+        {
+            return new List<Post>
+            {
+                new Models.Post{Id = "1", UserId = claimsPrincipal.Identity.ToString()},
+                new Models.Post{Id = "1", UserId = claimsPrincipal.Identity.ToString()},
+                new Models.Post{Id = "1", UserId = claimsPrincipal.Identity.ToString()}
+            };
         }
 
         //[Authorize(Policy = "ApiUser")]
