@@ -18,6 +18,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SecureWebAPI.Entities;
 using SecureWebAPI.Models;
+using AutoMapper;
 
 namespace SecureWebAPI
 {
@@ -31,11 +32,12 @@ namespace SecureWebAPI
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>();
+            services.AddDbContext<ApplicationDbContext>(x => x.UseInMemoryDatabase("MemoryDB"));
+            services.AddAutoMapper();
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services
                 .AddAuthentication(options =>
                 {
@@ -53,7 +55,7 @@ namespace SecureWebAPI
                         ValidIssuer = Configuration["JwtIssuer"],
                         ValidAudience = Configuration["JwtIssuer"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
-                        ClockSkew = TimeSpan.Zero // remove delay of token when expire
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
                 services.AddAuthorization(options =>

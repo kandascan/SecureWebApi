@@ -11,10 +11,10 @@ namespace SecureWebAPI.Entities
         {
         }
  
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseInMemoryDatabase("MemoryDB");
-        }
+        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        // {
+        //     optionsBuilder.UseInMemoryDatabase("MemoryDB");
+        // }
         public DbSet<User> Users { get; set; }
  
         public DbSet<Post> Posts { get; set; }

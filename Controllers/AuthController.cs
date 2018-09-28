@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,22 +24,20 @@ namespace SecureWebAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
  
-        public AuthController(ApplicationDbContext context, UserManager<User> userManager, IConfiguration configuration)
+        public AuthController(ApplicationDbContext context, UserManager<User> userManager, IConfiguration configuration, IMapper mapper)
         {
             _userManager = userManager;
             _configuration = configuration;
             _context = context;
+            _mapper = mapper;
         }     
  
         [HttpPost]
-        public async Task<object> Register([FromBody] User model)
+        public async Task<object> Register([FromBody] UserVM model)
         {
-            var user = new User
-            {
-                UserName = model.Email, 
-                Email = model.Email
-            };
+            var user = _mapper.Map<User>(model);
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
@@ -50,9 +49,10 @@ namespace SecureWebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<object> Login([FromBody] User model)
+        public async Task<object> Login([FromBody] UserVM model)
         {
-            var user = await _userManager.FindByNameAsync(model.Email);
+            var userName = _mapper.Map<User>(model).UserName;
+            var user = await _userManager.FindByNameAsync(userName);
 
             if (user == null) 
                 return new BadRequestObjectResult("User not found");
