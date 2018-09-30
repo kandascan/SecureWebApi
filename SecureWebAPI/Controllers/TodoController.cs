@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using LoggerService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,12 +22,14 @@ namespace SecureWebAPI.Controllers
         private readonly ClaimsPrincipal claimsPrincipal;
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private ILoggerManager _logger;
         private readonly string UserId;
 
-        public TodoController(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, IMapper mapper)
+        public TodoController(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, IMapper mapper, ILoggerManager logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
             claimsPrincipal = httpContextAccessor.HttpContext.User;
             UserId = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         }
@@ -68,6 +71,7 @@ namespace SecureWebAPI.Controllers
             }
             catch(Exception ex){
                 error = ex.Message;
+                _logger.LogError(ex.Message);
             }
 
             return Ok(new{

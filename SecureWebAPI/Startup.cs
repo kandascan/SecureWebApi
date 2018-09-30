@@ -13,12 +13,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SecureWebAPI.Entities;
 using SecureWebAPI.Models;
 using AutoMapper;
+using System.IO;
+using NLog;
+using LoggerService;
 
 namespace SecureWebAPI
 {
@@ -26,6 +28,7 @@ namespace SecureWebAPI
     {
         public Startup(IConfiguration configuration)
         {
+            LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             Configuration = configuration;
         }
 
@@ -77,9 +80,10 @@ namespace SecureWebAPI
                     options.Password.RequireUppercase = false;
                     options.Password.RequireNonAlphanumeric = false;
                 });
+            services.AddSingleton<ILoggerManager, LoggerManager>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext dbContext, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -89,9 +93,7 @@ namespace SecureWebAPI
             {
                 app.UseHsts();
             }
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
+            
             dbContext.Database.EnsureCreated();
             app.UseAuthentication();
             app.UseHttpsRedirection();
