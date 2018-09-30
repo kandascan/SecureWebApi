@@ -37,6 +37,7 @@ namespace SecureWebAPI
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+               
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services
                 .AddAuthentication(options =>
@@ -58,18 +59,26 @@ namespace SecureWebAPI
                         ClockSkew = TimeSpan.Zero
                     };
                 });
-                services.AddAuthorization(options =>
+            services
+                .AddAuthorization(options =>
                 {
-                  options.AddPolicy("ApiUser", policy =>
-                  {
+                    options.AddPolicy("ApiUser", policy =>
+                    {
                     policy.RequireAuthenticatedUser();
                     policy.RequireClaim("Role", "Admin");
-                  });
+                    });
+                });
+            services
+                .Configure<IdentityOptions>(options => {
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredLength = 5;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
                 });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env,  
-                ApplicationDbContext dbContext, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext dbContext, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
