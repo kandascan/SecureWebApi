@@ -35,9 +35,9 @@ namespace SecureWebAPI.Controllers
         {
             return new List<Post>
             {
-                new Models.Post{Id = "1", UserId = claimsPrincipal.Identity.ToString()},
-                new Models.Post{Id = "1", UserId = claimsPrincipal.Identity.ToString()},
-                new Models.Post{Id = "1", UserId = claimsPrincipal.Identity.ToString()}
+                new Models.Post{Id = "1", UserId = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)?.Value},
+                new Models.Post{Id = "1", UserId = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.Role)?.Value},
+                new Models.Post{Id = "1", UserId = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.Name)?.Value},
             };
         }
 

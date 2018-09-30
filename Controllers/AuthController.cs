@@ -23,12 +23,14 @@ namespace SecureWebAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
  
-        public AuthController(ApplicationDbContext context, UserManager<User> userManager, IConfiguration configuration, IMapper mapper)
+        public AuthController(ApplicationDbContext context, UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, IMapper mapper)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
             _configuration = configuration;
             _context = context;
             _mapper = mapper;
@@ -50,11 +52,19 @@ namespace SecureWebAPI.Controllers
             });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+             await _signInManager.SignOutAsync();   
+             return Ok(new {Message = "User logout"}); 
+        }
+
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] UserVM model)
         {
             var userName = _mapper.Map<User>(model).UserName;
             var user = await _userManager.FindByNameAsync(userName);
+            var signIn = await _signInManager.PasswordSignInAsync(user, model.Password, true, false);
             var errors = new List<string>();
             string token = null;
             if (user == null) 

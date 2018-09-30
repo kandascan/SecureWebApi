@@ -32,7 +32,8 @@ namespace SecureWebAPI
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(x => x.UseInMemoryDatabase("MemoryDB"));
+            services.AddDbContext<ApplicationDbContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAutoMapper();
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
