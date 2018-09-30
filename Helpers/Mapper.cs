@@ -9,6 +9,8 @@ namespace SecureWebAPI.Helpers
         {
             CreateMap<User, UserVM>();
             CreateMap<UserVM, User>();
+            CreateMap<Todo, TodoVM>();
+            CreateMap<TodoVM, Todo>();
         }
     }
 }
