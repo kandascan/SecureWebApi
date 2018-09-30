@@ -17,18 +17,8 @@ namespace SecureWebAPI.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            //modelBuilder.Entity<User>(ConfigureUserEntity);
             modelBuilder.Entity<Todo>(ConfigureTodoEntity);
         }
-
-        // private void ConfigureUserEntity(EntityTypeBuilder<User> entity)
-        // {
-        //     entity.hask(e => e.Id);
-        //     entity
-        //     .HasMany(c => c.Todos)
-        //     .WithOne(e => e.User)
-        //     .HasForeignKey(p => p.UserId);
-        // }
         
         private void ConfigureTodoEntity(EntityTypeBuilder<Todo> entity)
         {
