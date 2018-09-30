@@ -35,32 +35,40 @@ namespace SecureWebAPI.Controllers
         }     
  
         [HttpPost]
-        public async Task<object> Register([FromBody] UserVM model)
+        public async Task<IActionResult> Register([FromBody] UserVM model)
         {
             var user = _mapper.Map<User>(model);
             var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
-            {
-                return await user.GenerateJwtToken(_configuration);
-            }
+            string token = null;
+            if(result.Succeeded)
+                token = await user.GenerateJwtToken(_configuration);
             
-            return new BadRequestObjectResult(result.Errors);
+            return Ok(new{
+                token = token,
+                Success = result.Succeeded,
+                Errors = result.Errors
+            });
         }
 
         [HttpPost]
-        public async Task<object> Login([FromBody] UserVM model)
+        public async Task<IActionResult> Login([FromBody] UserVM model)
         {
             var userName = _mapper.Map<User>(model).UserName;
             var user = await _userManager.FindByNameAsync(userName);
-
+            var errors = new List<string>();
+            string token = null;
             if (user == null) 
-                return new BadRequestObjectResult("User not found");
-
-            if (!await _userManager.CheckPasswordAsync(user, model.Password))
-                return new BadRequestObjectResult("User password incorrect");
-
-            return await user.GenerateJwtToken(_configuration);           
+                errors.Add("User not found");
+            else if (!await _userManager.CheckPasswordAsync(user, model.Password))
+                errors.Add("User password incorrect");            
+            else
+                token = await user.GenerateJwtToken(_configuration); 
+            
+            return Ok(new{
+                token = token,
+                Success = !string.IsNullOrEmpty(token) ? true : false,
+                Errors = errors
+            });
         }        
     }
 }
