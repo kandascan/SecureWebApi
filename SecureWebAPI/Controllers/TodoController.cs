@@ -24,6 +24,8 @@ namespace SecureWebAPI.Controllers
         private readonly IMapper _mapper;
         private ILoggerManager _logger;
         private readonly string UserId;
+        private string Errors; //TODO: Errors should comes from ResponseBase Model.
+
 
         public TodoController(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, IMapper mapper, ILoggerManager logger)
         {
@@ -36,80 +38,122 @@ namespace SecureWebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = _context.Todos.Where(u => u.UserId == UserId).ToArray();
-
+            var response = new List<TodoVM>();
+            try
+            {
+                var result = _context.Todos.Where(u => u.UserId == UserId).ToArray();
+                response = _mapper.Map<List<TodoVM>>(result);
+            }
+            catch (Exception ex)
+            {
+                Errors = ex.Message;
+                _logger.LogError(ex.Message);
+            }
             return Ok(new{
-                UserId = UserId,
-                Success = true,
-                todos = result,
-                Errors = "Errr",
+                UserId,
+                Success = string.IsNullOrEmpty(Errors) ? true : false,
+                todos = response,
+                Errors,
             });
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var result = _context.Todos.FirstOrDefault(t => t.Id == id);
+            var response = new TodoVM();
+            try
+            {
+                var result = _context.Todos.FirstOrDefault(t => t.Id == id);
+                response = _mapper.Map<TodoVM>(result);
+            }
+            catch (Exception ex)
+            {
+                Errors = ex.Message;
+                _logger.LogError(ex.Message);
+            }
 
             return Ok(new{
-                UserId = UserId,
-                Success = true,
-                todos = _mapper.Map<TodoVM>(result),
-                Errors = "Errr",
+                UserId,
+                Success = string.IsNullOrEmpty(Errors) ? true : false,
+                todo = response,
+                Errors,
             });
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TodoVM todoVM)
         {
-            string error = null;
-            TodoVM todoresult = new TodoVM();
-            try{
-                var result = _context.Todos.Add(new Todo{UserId = UserId, Name = todoVM.Name});
-                _context.SaveChanges();
-                todoresult = _mapper.Map<TodoVM>(result);
+            var response = new TodoVM();//TODO: Changed to Request Response in future in each method
+            var todo = _mapper.Map<Todo>(todoVM);
+            todo.UserId = UserId;
+            try
+            {                           //TODO: Loginc in AppManager 
+                var result = _context.Todos.Add(todo);
+                _context.SaveChanges();//TODO: repository for this
+                response = _mapper.Map<TodoVM>(result.Entity);//TODO: Mapping in AppManager
             }
             catch(Exception ex){
-                error = ex.Message;
+                Errors = ex.Message;
                 _logger.LogError(ex.Message);
             }
 
             return Ok(new{
-                UserId = UserId,
-                Success = !string.IsNullOrEmpty(error) ? true : false,
-                todos = todoresult,
-                Errors = error,
+                UserId,
+                Success = string.IsNullOrEmpty(Errors) ? true : false,//TODO: This also should comes from Request Response
+                todo = response,
+                Errors,
             }); 
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> Put([FromBody] TodoVM todoVM)
         {
+            var response = new TodoVM();//TODO: Changed to Request Response in future in each method
             var todo = _mapper.Map<Todo>(todoVM);
             todo.UserId = UserId;
-            var result = _context.Todos.Update(todo);
-            _context.SaveChanges();
+            todo.CreatedDate = DateTime.Now; //Changed in future to get CreatedDate too and leave this as original and implemented UpdateDate and set to now.
+            try
+            {
+                var result = _context.Todos.Update(todo);
+                _context.SaveChanges();
+                response = _mapper.Map<TodoVM>(result.Entity);
+            }
+            catch (Exception ex)
+            {
+                Errors = ex.Message;
+                _logger.LogError(ex.Message);
+            }
 
             return Ok(new{
-                UserId = UserId,
-                Success = result != null ? true : false,
-                todos = _mapper.Map<TodoVM>(result),
-                Errors = "Errr",
+                UserId,
+                Success = response != null ? true : false,
+                todo = response,
+                Errors,
             }); 
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var todo = _context.Todos.FirstOrDefault(t => t.Id == id);
-            var result = todo != null ?_context.Todos.Remove(todo) : null;
-            _context.SaveChanges();
+            var response = new TodoVM();
+            try
+            {
+                var todo = _context.Todos.FirstOrDefault(t => t.Id == id);
+                var result = todo != null ? _context.Todos.Remove(todo) : null;
+                _context.SaveChanges();
+                response =_mapper.Map<TodoVM>(result.Entity);
+            }
+            catch (Exception ex)
+            {
+                Errors = ex.Message;
+                _logger.LogError(ex.Message);
+            }            
             
             return Ok(new{
-                UserId = UserId,
-                Success = result != null ? true : false,
-                todos = _mapper.Map<TodoVM>(result),
-                Errors = "Errr",
+                UserId,
+                Success = response != null ? true : false,
+                todo = response,
+                Errors,
             }); 
         }
     }
