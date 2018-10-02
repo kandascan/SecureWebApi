@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SecureWebAPI.Models;
 
-namespace SecureWebAPI.Entities
+namespace DataAccess.Entities
 {
     public class ApplicationDbContext : IdentityDbContext
     {
@@ -11,16 +10,16 @@ namespace SecureWebAPI.Entities
             : base(options)
         {
         }
-        public DbSet<User> Users { get; set; } 
-        public DbSet<Todo> Todos { get; set; }
+        public DbSet<UserEntity> Users { get; set; } 
+        public DbSet<TodoEntity> Todos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Todo>(ConfigureTodoEntity);
+            modelBuilder.Entity<TodoEntity>(ConfigureTodoEntity);
         }
         
-        private void ConfigureTodoEntity(EntityTypeBuilder<Todo> entity)
+        private void ConfigureTodoEntity(EntityTypeBuilder<TodoEntity> entity)
         {
             entity.ToTable("Todo");
             entity.HasKey(e => e.Id);

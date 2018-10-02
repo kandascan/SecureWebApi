@@ -6,12 +6,10 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using DataAccess.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using SecureWebAPI.Entities;
 using SecureWebAPI.Extensions;
 using SecureWebAPI.Models;
 
@@ -21,12 +19,12 @@ namespace SecureWebAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<UserEntity> _userManager;
+        private readonly SignInManager<UserEntity> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
  
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, IMapper mapper)
+        public AuthController(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, IConfiguration configuration, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -37,7 +35,7 @@ namespace SecureWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserVM model)
         {
-            var user = _mapper.Map<User>(model);
+            var user = _mapper.Map<UserEntity>(model);
             var result = await _userManager.CreateAsync(user, model.Password);
             string token = null;
             if(result.Succeeded)
@@ -50,7 +48,7 @@ namespace SecureWebAPI.Controllers
             });
         }
 
-        [HttpGet]
+        [HttpGet]        
         public async Task<IActionResult> Logout()
         {
              await _signInManager.SignOutAsync();   
@@ -60,7 +58,7 @@ namespace SecureWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] UserVM model)
         {
-            var userName = _mapper.Map<User>(model).UserName;
+            var userName = _mapper.Map<UserEntity>(model).UserName;
             var user = await _userManager.FindByNameAsync(userName);
             var signIn = await _signInManager.PasswordSignInAsync(user, model.Password, true, false);
             var errors = new List<string>();
@@ -73,7 +71,7 @@ namespace SecureWebAPI.Controllers
                 token = await user.GenerateJwtToken(_configuration); 
             
             return Ok(new{
-                token = token,
+                token,
                 Success = !string.IsNullOrEmpty(token) ? true : false,
                 Errors = errors
             });
