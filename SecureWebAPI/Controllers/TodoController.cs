@@ -4,12 +4,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using DataAccess.Entities;
 using LoggerService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SecureWebAPI.Entities;
-using SecureWebAPI.Extensions;
 using SecureWebAPI.Models;
 
 namespace SecureWebAPI.Controllers
@@ -84,7 +83,7 @@ namespace SecureWebAPI.Controllers
         public async Task<IActionResult> Post([FromBody] TodoVM todoVM)
         {
             var response = new TodoVM();//TODO: Changed to Request Response in future in each method
-            var todo = _mapper.Map<Todo>(todoVM);
+            var todo = _mapper.Map<TodoEntity>(todoVM);
             todo.UserId = UserId;
             try
             {                           //TODO: Loginc in AppManager 
@@ -109,7 +108,7 @@ namespace SecureWebAPI.Controllers
         public async Task<IActionResult> Put([FromBody] TodoVM todoVM)
         {
             var response = new TodoVM();//TODO: Changed to Request Response in future in each method
-            var todo = _mapper.Map<Todo>(todoVM);
+            var todo = _mapper.Map<TodoEntity>(todoVM);
             todo.UserId = UserId;
             todo.CreatedDate = DateTime.Now; //Changed in future to get CreatedDate too and leave this as original and implemented UpdateDate and set to now.
             try
