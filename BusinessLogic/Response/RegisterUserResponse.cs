@@ -4,8 +4,8 @@ using System.Text;
 
 namespace BusinessLogic.Response
 {
-    public class TodoResponse : BaseResponse
+    public class RegisterUserResponse : BaseResponse
     {
-        //public TodoVM Todo { get; set; }
+        public string Token { get; internal set; }
     }
 }

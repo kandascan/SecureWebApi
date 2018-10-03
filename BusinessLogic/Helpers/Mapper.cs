@@ -1,6 +1,6 @@
 using AutoMapper;
+using BusinessLogic.Models;
 using DataAccess.Entities;
-using SecureWebAPI.Models;
 
 namespace BusinessLogic.Helpers
 {
@@ -8,10 +8,8 @@ namespace BusinessLogic.Helpers
     {
         public Mapper()
         {
-            CreateMap<UserEntity, UserVM>();
-            CreateMap<UserVM, UserEntity>();
-            CreateMap<TodoEntity, TodoVM>();
-            CreateMap<TodoVM, TodoEntity>();
+            CreateMap<UserEntity, User>();
+            CreateMap<User, UserEntity>();
         }
     }
 }
