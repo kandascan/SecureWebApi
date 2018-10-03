@@ -7,20 +7,19 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using SecureWebAPI.Entities;
-using SecureWebAPI.Models;
 using AutoMapper;
 using System.IO;
 using NLog;
 using LoggerService;
+using DataAccess.Entities;
+using BusinessLogic.Service;
+using DataAccess.UnitOfWork;
 
 namespace SecureWebAPI
 {
@@ -38,7 +37,7 @@ namespace SecureWebAPI
             services.AddDbContext<ApplicationDbContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAutoMapper();
-            services.AddIdentity<User, IdentityRole>()
+            services.AddIdentity<UserEntity, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
                
@@ -81,6 +80,10 @@ namespace SecureWebAPI
                     options.Password.RequireNonAlphanumeric = false;
                 });
             services.AddSingleton<ILoggerManager, LoggerManager>();
+            services.AddTransient<IServiceManager, ServiceManager>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext dbContext)
