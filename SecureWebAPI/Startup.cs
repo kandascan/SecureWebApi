@@ -20,6 +20,9 @@ using System.IO;
 using NLog;
 using LoggerService;
 using SecureWebAPI.DataAccess.Entities;
+using SecureWebAPI.DataAccess.UnitOfWork;
+using SecureWebAPI.DataAccess.Repository;
+using SecureWebAPI.BusinessLogic;
 
 namespace SecureWebAPI
 {
@@ -36,6 +39,9 @@ namespace SecureWebAPI
         {
             services.AddDbContext<ApplicationDbContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddSingleton<IUnitOfWork, UnitOfWork>();
+
             services.AddAutoMapper();
             services.AddIdentity<UserEntity, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -80,6 +86,11 @@ namespace SecureWebAPI
                     options.Password.RequireNonAlphanumeric = false;
                 });
             services.AddSingleton<ILoggerManager, LoggerManager>();
+            services.AddTransient<IServiceManager, ServiceManager>();
+
+            services.AddTransient<IRepository<UserEntity>, Repository<UserEntity>>();
+            services.AddTransient<IRepository<TodoEntity>, Repository<TodoEntity>>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext dbContext)

@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SecureWebAPI.DataAccess.Entities;
 
 namespace SecureWebAPI.DataAccess.Repository
 {
-public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class
     {
         private ApplicationDbContext _db = null;
         private DbSet<T> _objectSet;

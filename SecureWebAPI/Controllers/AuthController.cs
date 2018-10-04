@@ -11,9 +11,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SecureWebAPI.BusinessLogic;
 using SecureWebAPI.DataAccess.Entities;
 using SecureWebAPI.Extensions;
 using SecureWebAPI.Models;
+using SecureWebAPI.BusinessLogic.Request;
+using SecureWebAPI.BusinessLogic.Response;
+using SecureWebAPI.DataAccess.UnitOfWork;
 
 namespace SecureWebAPI.Controllers
 {
@@ -25,29 +29,41 @@ namespace SecureWebAPI.Controllers
         private readonly SignInManager<UserEntity> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly IServiceManager _service;
+        private readonly IUnitOfWork _uow;
  
-        public AuthController(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, IConfiguration configuration, IMapper mapper)
+        public AuthController(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, 
+        IConfiguration configuration, IMapper mapper, IServiceManager service, IUnitOfWork uow)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _mapper = mapper;
+            _service = new ServiceManager(uow, mapper, userManager, signInManager, configuration);
+            _uow = uow;
         }     
  
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserVM model)
         {
-            var user = _mapper.Map<UserEntity>(model);
-            var result = await _userManager.CreateAsync(user, model.Password);
-            string token = null;
-            if(result.Succeeded)
-                token = await user.GenerateJwtToken(_configuration);
+            // var user = _mapper.Map<UserEntity>(model);
+            // var result = await _userManager.CreateAsync(user, model.Password);
+            // string token = null;
+            // if(result.Succeeded)
+            //     token = await user.GenerateJwtToken(_configuration);
             
-            return Ok(new{
-                token = token,
-                Success = result.Succeeded,
-                Errors = result.Errors
-            });
+            // return Ok(new{
+            //     token = token,
+            //     Success = result.Succeeded,
+            //     Errors = result.Errors
+            // });
+
+            var request = new RegisterUserRequest{User = model, RequestId = new Guid()};  
+
+
+            var response = _service.RegisterUser(request);
+
+            return Ok(response);
         }
 
         [HttpGet]

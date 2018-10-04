@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,8 +17,8 @@ namespace SecureWebAPI.DataAccess.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<TodoEntity>(ConfigureTodoEntity);           
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<TodoEntity>(ConfigureTodoEntity);
         }
         
         private void ConfigureTodoEntity(EntityTypeBuilder<TodoEntity> entity)

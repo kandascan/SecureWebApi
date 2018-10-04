@@ -1,13 +1,14 @@
+﻿using Microsoft.EntityFrameworkCore;
+using SecureWebAPI.DataAccess.Entities;
+using SecureWebAPI.DataAccess.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using SecureWebAPI.DataAccess.Entities;
-using SecureWebAPI.DataAccess.Repository;
+using System.Threading.Tasks;
 
 namespace SecureWebAPI.DataAccess.UnitOfWork
 {
-public class UnitOfWork : IDisposable, IUnitOfWork
+    public class UnitOfWork : IDisposable, IUnitOfWork
     {
         private ApplicationDbContext db = null;
 
@@ -45,12 +46,8 @@ public class UnitOfWork : IDisposable, IUnitOfWork
         }
         public void Dispose()
         {
-            throw new NotImplementedException();
-        }
-
-        IRepository<T> IUnitOfWork.Repository<T>()
-        {
-            throw new NotImplementedException();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
