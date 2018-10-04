@@ -1,4 +1,5 @@
 using AutoMapper;
+using SecureWebAPI.DataAccess.Entities;
 using SecureWebAPI.Models;
 
 namespace SecureWebAPI.Helpers
@@ -7,10 +8,10 @@ namespace SecureWebAPI.Helpers
     {
         public Mapper()
         {
-            CreateMap<User, UserVM>();
-            CreateMap<UserVM, User>();
-            CreateMap<Todo, TodoVM>();
-            CreateMap<TodoVM, Todo>();
+            CreateMap<UserEntity, UserVM>();
+            CreateMap<UserVM, UserEntity>();
+            CreateMap<TodoEntity, TodoVM>();
+            CreateMap<TodoVM, TodoEntity>();
         }
     }
 }

@@ -15,12 +15,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using SecureWebAPI.Entities;
-using SecureWebAPI.Models;
 using AutoMapper;
 using System.IO;
 using NLog;
 using LoggerService;
+using SecureWebAPI.DataAccess.Entities;
 
 namespace SecureWebAPI
 {
@@ -38,7 +37,7 @@ namespace SecureWebAPI
             services.AddDbContext<ApplicationDbContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAutoMapper();
-            services.AddIdentity<User, IdentityRole>()
+            services.AddIdentity<UserEntity, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
                

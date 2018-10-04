@@ -6,14 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using SecureWebAPI.Models;
 using System;
+using SecureWebAPI.DataAccess.Entities;
 
 namespace SecureWebAPI.Extensions
 {
     public static class IdentityExtensions
     {
-        public static async Task<string> GenerateJwtToken(this User user, IConfiguration configuration)
+        public static async Task<string> GenerateJwtToken(this UserEntity user, IConfiguration configuration)
         {
             var claims = new List<Claim>
             {
