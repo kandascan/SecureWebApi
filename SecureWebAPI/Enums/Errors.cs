@@ -4,6 +4,7 @@ namespace SecureWebAPI.Enums
     {
         DUPLICATE,
         NOT_VALID,
-        NOT_EXIST
+        NOT_EXIST,
+        EXCEPTION
     }
 }

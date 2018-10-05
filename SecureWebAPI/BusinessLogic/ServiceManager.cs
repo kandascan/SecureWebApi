@@ -49,16 +49,14 @@ namespace SecureWebAPI.BusinessLogic
             try{
                 var result =  await _userManager.CreateAsync(user, request.User.Password);
                 response.Success = result.Succeeded;
-                response.Errors.Add(Errors.DUPLICATE, "Duplicated User");
                 if (result.Succeeded)
                     response.Token = await user.GenerateJwtToken(_configuration);
-
             }
             catch(Exception ex)
             {
-                
+                response.Errors.Add(Errors.EXCEPTION, ex.Message);
             }
-            
+
             return response;
         }
     }

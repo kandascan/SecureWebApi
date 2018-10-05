@@ -46,23 +46,8 @@ namespace SecureWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserVM model)
         {
-            // var user = _mapper.Map<UserEntity>(model);
-            // var result = await _userManager.CreateAsync(user, model.Password);
-            // string token = null;
-            // if(result.Succeeded)
-            //     token = await user.GenerateJwtToken(_configuration);
-            
-            // return Ok(new{
-            //     token = token,
-            //     Success = result.Succeeded,
-            //     Errors = result.Errors
-            // });
-
             var request = new RegisterUserRequest{User = model, RequestId = new Guid()};  
-
-
-            var response = _service.RegisterUser(request);
-
+            var response = await _service.RegisterUser(request);
             return Ok(response);
         }
 
