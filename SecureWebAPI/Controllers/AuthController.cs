@@ -39,14 +39,14 @@ namespace SecureWebAPI.Controllers
             _signInManager = signInManager;
             _configuration = configuration;
             _mapper = mapper;
-            _service = new ServiceManager(uow, mapper, userManager, signInManager, configuration);
+            _service = service;
             _uow = uow;
         }     
  
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserVM model)
         {
-            var request = new RegisterUserRequest{User = model, RequestId = new Guid()};  
+            var request = new UserRequest{User = model, RequestId = new Guid()};  
             var response = await _service.RegisterUser(request);
             return Ok(response);
         }
@@ -61,23 +61,9 @@ namespace SecureWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] UserVM model)
         {
-            var userName = _mapper.Map<UserEntity>(model).UserName;
-            var user = await _userManager.FindByNameAsync(userName);
-            var signIn = await _signInManager.PasswordSignInAsync(user, model.Password, true, false);
-            var errors = new List<string>();
-            string token = null;
-            if (user == null) 
-                errors.Add("User not found");
-            else if (!await _userManager.CheckPasswordAsync(user, model.Password))
-                errors.Add("User password incorrect");            
-            else
-                token = await user.GenerateJwtToken(_configuration); 
-            
-            return Ok(new{
-                token = token,
-                Success = !string.IsNullOrEmpty(token) ? true : false,
-                Errors = errors
-            });
+            var request = new UserRequest { User = model, RequestId = new Guid() };
+            var response = await _service.LoginUser(request);
+            return Ok(response);           
         }        
     }
 }

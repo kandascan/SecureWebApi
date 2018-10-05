@@ -56,6 +56,29 @@ namespace SecureWebAPI.Controllers
                 Errors,
             });
         }
+        [HttpGet]
+        [Route("all")]
+        public async Task<IActionResult> GetAll()
+        {
+            var response = new List<TodoVM>();
+            try
+            {
+                var result = _context.Todos.ToArray();
+                response = _mapper.Map<List<TodoVM>>(result);
+            }
+            catch (Exception ex)
+            {
+                Errors = ex.Message;
+                _logger.LogError(ex.Message);
+            }
+            return Ok(new
+            {
+                UserId,
+                Success = string.IsNullOrEmpty(Errors) ? true : false,
+                todos = response,
+                Errors,
+            });
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)

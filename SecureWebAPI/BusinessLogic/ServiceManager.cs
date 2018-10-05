@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -42,19 +44,51 @@ namespace SecureWebAPI.BusinessLogic
             return response;
         }
 
-        public async Task<RegisterUserResponse> RegisterUser(RegisterUserRequest request)
+        public async Task<UserResponse> RegisterUser(UserRequest request)
         {
-            var response = new RegisterUserResponse();
+            var response = new UserResponse();
             var user = _mapper.Map<UserEntity>(request.User);
             try{
                 var result =  await _userManager.CreateAsync(user, request.User.Password);
                 response.Success = result.Succeeded;
                 if (result.Succeeded)
                     response.Token = await user.GenerateJwtToken(_configuration);
+                else
+                {
+                    var error = result.Errors.FirstOrDefault();                    
+                    response.Errors.Add(error.Code, error.Description);
+                }
             }
             catch(Exception ex)
             {
-                response.Errors.Add(Errors.EXCEPTION, ex.Message);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+
+            return response;
+        }
+        public async Task<UserResponse> LoginUser(UserRequest request)
+        {
+            var response = new UserResponse();
+            var userName = _mapper.Map<UserEntity>(request.User).UserName;
+            try
+            {
+                var user = await _userManager.FindByNameAsync(userName);                
+                if (user == null)          
+                    response.Errors.Add(Errors.NOT_EXIST.ToString(), "User not found");    
+                else if (!await _userManager.CheckPasswordAsync(user, request.User.Password))
+                    response.Errors.Add(Errors.PASSWORD_INCORRECT.ToString(), "User password incorrect");
+
+                
+                var signIn = await _signInManager.PasswordSignInAsync(user, request.User.Password, true, false);
+                if (signIn.Succeeded)
+                {
+                    response.Token = await user.GenerateJwtToken(_configuration);
+                }
+                response.Success = signIn.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                response.Errors.Add("System Exception", ex.Message);
             }
 
             return response;

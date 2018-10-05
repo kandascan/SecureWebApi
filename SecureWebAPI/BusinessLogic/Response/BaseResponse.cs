@@ -8,10 +8,11 @@ namespace SecureWebAPI.BusinessLogic.Response
     {
         public BaseResponse()
         {
-            Errors = new Dictionary<Errors, string>();
+            Errors = new Dictionary<string, string>();
         }
         public bool Success { get; set; }
-        public Dictionary<Errors,string> Errors { get; set; }
+        public Dictionary<string, string> Errors { get; set; }
+
         public DateTime ResponseTime { get; set; } = DateTime.Now;
     }
 }
