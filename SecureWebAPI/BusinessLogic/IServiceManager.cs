@@ -6,9 +6,9 @@ namespace SecureWebAPI.BusinessLogic
 {
     public interface IServiceManager
     {
-        TodoResponse GetTodoById(TodoRequest request);
         Task<UserResponse> RegisterUser(UserRequest request);
         Task<UserResponse> LoginUser(UserRequest request);
-
+        Task<UserResponse> LogOutUser(UserRequest request);
+        TodoResponse GetTodoById(TodoRequest request);
     }
 }

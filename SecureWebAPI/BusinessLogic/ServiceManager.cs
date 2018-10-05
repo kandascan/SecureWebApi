@@ -93,5 +93,22 @@ namespace SecureWebAPI.BusinessLogic
 
             return response;
         }
+
+        public async Task<UserResponse> LogOutUser(UserRequest request)
+        {
+            var response = new UserResponse();
+            try
+            {
+                await _signInManager.SignOutAsync();
+                response.Message = "User logout";
+                response.Success = true;
+            }
+            catch(Exception ex)
+            {
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            
+            return response;
+        }
     }
 }

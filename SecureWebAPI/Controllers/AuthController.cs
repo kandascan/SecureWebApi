@@ -18,6 +18,7 @@ using SecureWebAPI.Models;
 using SecureWebAPI.BusinessLogic.Request;
 using SecureWebAPI.BusinessLogic.Response;
 using SecureWebAPI.DataAccess.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SecureWebAPI.Controllers
 {
@@ -25,22 +26,10 @@ namespace SecureWebAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<UserEntity> _userManager;
-        private readonly SignInManager<UserEntity> _signInManager;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
         private readonly IServiceManager _service;
-        private readonly IUnitOfWork _uow;
- 
-        public AuthController(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, 
-        IConfiguration configuration, IMapper mapper, IServiceManager service, IUnitOfWork uow)
+        public AuthController(IServiceManager service)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _configuration = configuration;
-            _mapper = mapper;
             _service = service;
-            _uow = uow;
         }     
  
         [HttpPost]
@@ -51,19 +40,21 @@ namespace SecureWebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Logout()
-        {
-             await _signInManager.SignOutAsync();   
-             return Ok(new {Message = "User logout"}); 
-        }
-
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] UserVM model)
         {
             var request = new UserRequest { User = model, RequestId = new Guid() };
             var response = await _service.LoginUser(request);
             return Ok(response);           
-        }        
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            var request = new UserRequest { RequestId = new Guid() };
+            var response = await _service.LogOutUser(request);
+            return Ok(response);
+        }
     }
 }

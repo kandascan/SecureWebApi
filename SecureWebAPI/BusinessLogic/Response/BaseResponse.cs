@@ -12,7 +12,7 @@ namespace SecureWebAPI.BusinessLogic.Response
         }
         public bool Success { get; set; }
         public Dictionary<string, string> Errors { get; set; }
-
-        public DateTime ResponseTime { get; set; } = DateTime.Now;
+        public string ResponseTime { get; set; } = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}";
+        public string Message { get; set; }
     }
 }
