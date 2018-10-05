@@ -12,15 +12,19 @@ namespace SecureWebAPI.DataAccess.Entities
             : base(options)
         {
         }
-        public DbSet<UserEntity> Users { get; set; } 
+        public DbSet<UserEntity> Users { get; set; }
         public DbSet<TodoEntity> Todos { get; set; }
-
+        protected override void OnConfiguring(DbContextOptionsBuilder builder)
+        {
+            var connectionString = "Data Source=DESKTOP-BVKHG2F;Initial Catalog=Todo;Integrated Security=True";
+            builder.UseSqlServer(connectionString);
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TodoEntity>(ConfigureTodoEntity);           
+            modelBuilder.Entity<TodoEntity>(ConfigureTodoEntity);
             base.OnModelCreating(modelBuilder);
         }
-        
+
         private void ConfigureTodoEntity(EntityTypeBuilder<TodoEntity> entity)
         {
             entity.ToTable("Todo");

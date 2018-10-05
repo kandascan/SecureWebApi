@@ -35,7 +35,7 @@ namespace SecureWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserVM model)
         {
-            var request = new UserRequest{User = model, RequestId = new Guid()};  
+            var request = new UserRequest{User = model};  
             var response = await _service.RegisterUser(request);
             return Ok(response);
         }
@@ -43,7 +43,7 @@ namespace SecureWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] UserVM model)
         {
-            var request = new UserRequest { User = model, RequestId = new Guid() };
+            var request = new UserRequest { User = model };
             var response = await _service.LoginUser(request);
             return Ok(response);           
         }
@@ -52,7 +52,7 @@ namespace SecureWebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            var request = new UserRequest { RequestId = new Guid() };
+            var request = new UserRequest();
             var response = await _service.LogOutUser(request);
             return Ok(response);
         }

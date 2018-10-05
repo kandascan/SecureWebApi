@@ -29,9 +29,10 @@ namespace SecureWebAPI.DataAccess.Repository
             return _objectSet.FirstOrDefault(predicate);
         }
 
-        public void Add(T entity)
+        public T Add(T entity)
         {
             _objectSet.Add(entity);
+            return entity;
         }
 
         public void Delete(T entity)
@@ -42,6 +43,17 @@ namespace SecureWebAPI.DataAccess.Repository
         public void AddMany(IEnumerable<T> entities)
         {
             _objectSet.AddRange(entities);
+        }
+
+        public T Update(T entity)
+        {
+            _objectSet.Update(entity);
+            return entity;
+        }
+
+        public IEnumerable<T> GetAll(Func<T, bool> predicate = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }
