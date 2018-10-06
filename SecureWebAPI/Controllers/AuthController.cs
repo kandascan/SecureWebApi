@@ -20,7 +20,6 @@ using SecureWebAPI.BusinessLogic.Response;
 using SecureWebAPI.DataAccess.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 
-
 namespace SecureWebAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
