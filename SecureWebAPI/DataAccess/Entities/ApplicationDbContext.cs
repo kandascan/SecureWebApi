@@ -16,7 +16,7 @@ namespace SecureWebAPI.DataAccess.Entities
         public DbSet<TodoEntity> Todos { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
-            var connectionString = "Data Source=DESKTOP-BVKHG2F;Initial Catalog=Todo;Integrated Security=True";
+            var connectionString = "Data Source=.\\DEVSQLSERVER;Initial Catalog=Todo;Integrated Security=True";
             builder.UseSqlServer(connectionString);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
