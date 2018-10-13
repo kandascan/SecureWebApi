@@ -7,7 +7,6 @@ namespace SecureWebAPI.DataAccess.Repository
     public interface IRepository<T> where T : class
     {
         IEnumerable<T> GetAll(Func<T, bool> predicate = null);
-
         IEnumerable<T> GetOverview(Func<T, bool> predicate = null);
         T GetDetails(Func<T, bool> predicate);
         T Add(T entity);
