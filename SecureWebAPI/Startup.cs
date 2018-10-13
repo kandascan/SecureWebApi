@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
 using System.IO;
@@ -37,7 +32,7 @@ namespace SecureWebAPI
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options => 
+            services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddSingleton<IUnitOfWork, UnitOfWork>();
@@ -46,7 +41,7 @@ namespace SecureWebAPI
             services.AddIdentity<UserEntity, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-               
+
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services
                 .AddAuthentication(options =>
@@ -54,7 +49,7 @@ namespace SecureWebAPI
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    
+
                 })
                 .AddJwtBearer(cfg =>
                 {
@@ -73,12 +68,13 @@ namespace SecureWebAPI
                 {
                     options.AddPolicy("ApiUser", policy =>
                     {
-                    policy.RequireAuthenticatedUser();
-                    policy.RequireClaim("Role", "Admin");
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireClaim("Role", "Admin");
                     });
                 });
             services
-                .Configure<IdentityOptions>(options => {
+                .Configure<IdentityOptions>(options =>
+                {
                     options.Password.RequireDigit = false;
                     options.Password.RequiredLength = 5;
                     options.Password.RequireLowercase = true;
@@ -103,11 +99,18 @@ namespace SecureWebAPI
             {
                 app.UseHsts();
             }
-            
+
             dbContext.Database.EnsureCreated();
             app.UseAuthentication();
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseStaticFiles();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                          name: "default",
+                          template: "{controller=Home}/{action=Index}/{id?}");
+            }
+            );
         }
     }
 }

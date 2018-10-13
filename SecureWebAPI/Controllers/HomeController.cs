@@ -7,11 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SecureWebAPI.Controllers
 {
-    [Route("/")]
     public class HomeController : Controller
     {
-        // GET: Home
-        public ActionResult Index()
+        public IActionResult Index()
         {
             return View();
         }
