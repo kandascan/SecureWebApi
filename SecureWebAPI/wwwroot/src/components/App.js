@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import NavBar from './NavBar';
+import Footer from './Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
 
 import LoginForm from './LoginForm';
@@ -12,10 +13,10 @@ class App extends Component {
       <BrowserRouter>
         <div>
           <NavBar/>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/register" component={RegisterForm} />
-            <Route exact path="/login" component={LoginForm} />
-          </div>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/register" component={RegisterForm} />
+          <Route exact path="/login" component={LoginForm} />
+        </div>
       </BrowserRouter>
     )
   }  

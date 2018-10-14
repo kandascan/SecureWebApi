@@ -23,6 +23,7 @@ using SecureWebAPI.DataAccess.Entities;
 using SecureWebAPI.DataAccess.UnitOfWork;
 using SecureWebAPI.DataAccess.Repository;
 using SecureWebAPI.BusinessLogic;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 
 namespace SecureWebAPI
 {
@@ -37,7 +38,7 @@ namespace SecureWebAPI
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options => 
+            services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddSingleton<IUnitOfWork, UnitOfWork>();
@@ -46,7 +47,7 @@ namespace SecureWebAPI
             services.AddIdentity<UserEntity, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-               
+
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services
                 .AddAuthentication(options =>
@@ -54,7 +55,7 @@ namespace SecureWebAPI
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    
+
                 })
                 .AddJwtBearer(cfg =>
                 {
@@ -73,12 +74,13 @@ namespace SecureWebAPI
                 {
                     options.AddPolicy("ApiUser", policy =>
                     {
-                    policy.RequireAuthenticatedUser();
-                    policy.RequireClaim("Role", "Admin");
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireClaim("Role", "Admin");
                     });
                 });
             services
-                .Configure<IdentityOptions>(options => {
+                .Configure<IdentityOptions>(options =>
+                {
                     options.Password.RequireDigit = false;
                     options.Password.RequiredLength = 5;
                     options.Password.RequireLowercase = true;
@@ -103,16 +105,21 @@ namespace SecureWebAPI
             {
                 app.UseHsts();
             }
-            
+
             dbContext.Database.EnsureCreated();
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
-                          name: "default",
-                          template: "{controller=Home}/{action=Index}/{id?}");
+                routes.MapSpaFallbackRoute(
+                        name: "spa-fallback",
+                        defaults: new { controller = "Home", action = "Index" });
             });
         }
     }

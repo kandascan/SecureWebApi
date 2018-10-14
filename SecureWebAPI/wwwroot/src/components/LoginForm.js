@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import HOC from './HOC';
 
 class LoginForm extends Component {
   render() {
@@ -23,4 +24,4 @@ class LoginForm extends Component {
     )
   }
 }
-export default LoginForm;
+export default HOC(LoginForm);
