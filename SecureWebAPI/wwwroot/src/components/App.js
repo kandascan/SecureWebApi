@@ -1,8 +1,23 @@
-import React from 'react'
-import RegisterForm from '../components/registration/RegisterForm';
+import React, { Component } from 'react'
+import NavBar from './NavBar';
+import { BrowserRouter, Route } from 'react-router-dom';
 
-export default function App() {
-  return (
-    <RegisterForm />
-  )
+import LoginForm from './LoginForm';
+import RegisterForm from './RegisterForm';
+import Home from './Home';
+
+class App extends Component {
+  render(){
+    return (
+      <BrowserRouter>
+        <div>
+          <NavBar/>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/register" component={RegisterForm} />
+            <Route exact path="/login" component={LoginForm} />
+          </div>
+      </BrowserRouter>
+    )
+  }  
 }
+export default App; 
