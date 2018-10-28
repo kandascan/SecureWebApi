@@ -1,16 +1,11 @@
 import React from 'react'
 
- const HOC = (WrappedComponent) => {
-    const style = {
-        //backgroundColor: "gray",
-        padding: "0 30em"
-    };
+ const HOC = (props) => (WrappedComponent) => {
 
-     return (props) => {
+   return (props) => {
+       console.log(props);
         return (
-            <div style={style}>
-              <WrappedComponent {...props} />
-            </div>
+            <WrappedComponent {...props} />          
           )
      }  
 }

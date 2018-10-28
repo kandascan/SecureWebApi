@@ -37,6 +37,25 @@ namespace SecureWebAPI.BusinessLogic
             _logger = logger;
         }
 
+        private Dictionary<string, string> RegisterValidation(UserVM user)
+        {
+            var response = new Dictionary<string, string>();
+
+            if (string.IsNullOrEmpty(user.UserName))
+            {
+                response.Add("username", "User name cannot be null");
+            }
+            if (string.IsNullOrEmpty(user.Password))
+            {
+                response.Add("password", "Password cannot be null");
+            }
+            if (string.IsNullOrEmpty(user.Email))
+            {
+                response.Add("email", "Email cannot be null");
+            }
+
+            return response;
+        }
 
         public TodoResponse GetTodoById(TodoRequest request)
         {
@@ -65,6 +84,11 @@ namespace SecureWebAPI.BusinessLogic
         public async Task<UserResponse> RegisterUser(UserRequest request)
         {
             var response = new UserResponse();
+            response.Errors = RegisterValidation(request.User);
+            if(response.Errors.Count() > 0)
+            {
+                return response;
+            }
             var user = _mapper.Map<UserEntity>(request.User);
             try
             {
@@ -74,8 +98,24 @@ namespace SecureWebAPI.BusinessLogic
                     response.Token = await user.GenerateJwtToken(_configuration);
                 else
                 {
-                    var error = result.Errors.FirstOrDefault();
-                    response.Errors.Add(error.Code, error.Description);
+                    if(response.Errors.Count() == 0)
+                    {
+                        var errorType = "";
+                        var error = result.Errors.FirstOrDefault();
+                        if (error.Code.Contains("Password"))
+                        {
+                            errorType = "password";
+                        }
+                        else if (error.Code.Contains("User"))
+                        {
+                            errorType = "username";
+                        }
+                        else if (error.Code.Contains("Email"))
+                        {
+                            errorType = "email";
+                        }
+                        response.Errors.Add(errorType, error.Description);
+                    }                    
                 }
             }
             catch (Exception ex)
