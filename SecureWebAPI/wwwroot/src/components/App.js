@@ -6,6 +6,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import Home from './Home';
+import Backlog from './backlogComponent/Backlog';
 
 class App extends Component {
   render(){
@@ -16,6 +17,8 @@ class App extends Component {
           <Route exact path="/" component={Home} />
           <Route exact path="/register" component={RegisterForm} />
           <Route exact path="/login" component={LoginForm} />
+          <Route exact path="/backlog" component={Backlog} />
+          <Footer />
         </div>
       </BrowserRouter>
     )

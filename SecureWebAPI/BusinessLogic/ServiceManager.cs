@@ -12,6 +12,7 @@ using SecureWebAPI.DataAccess.Entities;
 using SecureWebAPI.DataAccess.UnitOfWork;
 using SecureWebAPI.Enums;
 using SecureWebAPI.Extensions;
+using SecureWebAPI.Helpers;
 using SecureWebAPI.Models;
 
 namespace SecureWebAPI.BusinessLogic
@@ -35,26 +36,6 @@ namespace SecureWebAPI.BusinessLogic
             _signInManager = signInManager;
             _configuration = configuration;
             _logger = logger;
-        }
-
-        private Dictionary<string, string> RegisterValidation(UserVM user)
-        {
-            var response = new Dictionary<string, string>();
-
-            if (string.IsNullOrEmpty(user.UserName))
-            {
-                response.Add("username", "User name cannot be null");
-            }
-            if (string.IsNullOrEmpty(user.Password))
-            {
-                response.Add("password", "Password cannot be null");
-            }
-            if (string.IsNullOrEmpty(user.Email))
-            {
-                response.Add("email", "Email cannot be null");
-            }
-
-            return response;
         }
 
         public TodoResponse GetTodoById(TodoRequest request)
@@ -84,7 +65,7 @@ namespace SecureWebAPI.BusinessLogic
         public async Task<UserResponse> RegisterUser(UserRequest request)
         {
             var response = new UserResponse();
-            response.Errors = RegisterValidation(request.User);
+            response.Errors = Validator.Register(request.User);
             if(response.Errors.Count() > 0)
             {
                 return response;
@@ -129,22 +110,29 @@ namespace SecureWebAPI.BusinessLogic
         public async Task<UserResponse> LoginUser(UserRequest request)
         {
             var response = new UserResponse();
+            response.Errors = Validator.Login(request.User);
+            if (response.Errors.Count() > 0)
+            {
+                return response;
+            }
             var userName = _mapper.Map<UserEntity>(request.User).UserName;
             try
             {
                 var user = await _userManager.FindByNameAsync(userName);
                 if (user == null)
-                    response.Errors.Add(Errors.NOT_EXIST.ToString(), "User not found");
+                    response.Errors.Add("username", "User not found");
                 else if (!await _userManager.CheckPasswordAsync(user, request.User.Password))
-                    response.Errors.Add(Errors.PASSWORD_INCORRECT.ToString(), "User password incorrect");
-
-
-                var signIn = await _signInManager.PasswordSignInAsync(user, request.User.Password, true, false);
-                if (signIn.Succeeded)
+                    response.Errors.Add("password", "User password incorrect");
+                else
                 {
-                    response.Token = await user.GenerateJwtToken(_configuration);
-                }
-                response.Success = signIn.Succeeded;
+                    var signIn = await _signInManager.PasswordSignInAsync(user, request.User.Password, true, false);
+                    if (signIn.Succeeded)
+                    {
+                        response.Token = await user.GenerateJwtToken(_configuration);
+                        response.Success = signIn.Succeeded;
+                    }
+                }              
+               
             }
             catch (Exception ex)
             {

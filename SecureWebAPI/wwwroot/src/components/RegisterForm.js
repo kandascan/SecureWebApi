@@ -32,7 +32,6 @@ class RegisterForm extends Component {
         console.log(token);//tokena zapisac w local storage
         this.props.history.push("/login");
       }else{
-        console.log(errors);//dorobic errory
         this.setState({errors})
       }
     }).catch(err => console.log(err));  
@@ -48,7 +47,7 @@ class RegisterForm extends Component {
         <form noValidate className="form-signin" onSubmit={this.handleSubmit.bind(this)}>
             <img className="mb-4" src="dist/bootstrap-solid.svg" alt="" width="72" height="72" />
             <h1 className="h3 mb-3 font-weight-normal">Please sign up</h1>
-            <label htmlFor="username" className="sr-only">Email address</label> {/*utworzyc nowy komponent dla labela i inputa */}
+            <label htmlFor="username" className="sr-only">User name</label> {/*utworzyc nowy komponent dla labela i inputa */}
             <input type="text" id="username" onChange={this.handleChange.bind(this)} value={this.state.username} className={classnames("form-control", {
               'is-invalid' : errors.username
             })} placeholder="Name" autoFocus/>  

@@ -2,11 +2,9 @@ import React from 'react'
 
 const Footer = () => {
   return (
-    <footer className="footer">
-      <div className="container">
-        <span className="text-muted">Place sticky footer content here.</span>
-      </div>
-    </footer>
+    <footer className="bg-dark text-white mt-5 p-4 text-center">
+    Copyright &copy; {new Date().getFullYear()} Scrum Manager
+  </footer>
   )
 }
 
