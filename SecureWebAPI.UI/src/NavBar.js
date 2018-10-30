@@ -13,8 +13,8 @@ export default function NavBar() {
           <div className="collapse navbar-collapse" id="mobile-nav">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item">
-                <Link className="nav-link" to="/backlog"> Backlog
-                </Link>
+                <NavLink className="nav-link" to="/backlog"> Backlog
+                </NavLink>
               </li>
             </ul>
     

@@ -2,15 +2,21 @@ import React, { Component } from 'react'
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
 import ItemComponent from './ItemComponent';
 import '.././App.css'
-const SortableItem = SortableElement(({ value, onDeleteItem }) => <ItemComponent value={value} onDeleteItem={onDeleteItem} />);
+const SortableItem = SortableElement(({ index, value, onDeleteItem }) => <ItemComponent index={index} value={value} onDeleteItem={onDeleteItem} />);
 
 const SortableList = SortableContainer(({ items, onDeleteItem }) => {
     return (
-        <ul className="list-group container">
-            {items.map((value, index) => (
-                <SortableItem key={`item-${index}`} index={index} value={value} onDeleteItem={onDeleteItem} />
-            ))}
-        </ul>
+        <div className="landing landing-background-backlog">
+            <div className="dark-overlay landing-inner text-light">
+                <div className="container">
+                    <ul className="list-group">
+                        {items.map((value, index) => (
+                            <SortableItem key={`item-${index}`} index={index} value={value} onDeleteItem={onDeleteItem} />
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        </div>
     );
 });
 class BacklogComponent extends Component {

@@ -10,7 +10,7 @@ const Home = () => {
           <div className="col-md-12 text-center">
             <h1 className="display-3 mb-4">Scrum Manager
             </h1>
-            <p className="lead">Great and free tool for developer to smart manage their work</p>
+            <p className="lead">Great and free tool for developers to smart manage their work</p>
             <hr />
             <Link to="/register" className="btn btn-lg btn-info mr-2">Sign Up</Link>
             <Link to="/login" className="btn btn-lg btn-light">Login</Link>

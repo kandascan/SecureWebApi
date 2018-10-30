@@ -15,7 +15,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "postbuild": "del /q \"../SecureWebAPI/wwwroot\\*\" && for /d %x in (\"../SecureWebAPI/wwwroot\\*\") do @rd /s /q \"%x\" && mv build/*  ../SecureWebAPI/wwwroot",
+    "postbuild": "del /q \"../SecureWebAPI/wwwroot\\*\" && for /d %x in (\"../SecureWebAPI/wwwroot\\*\") do @rd /s /q \"%x\" && mv build/*  ../SecureWebAPI/wwwroot && rmdir build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
