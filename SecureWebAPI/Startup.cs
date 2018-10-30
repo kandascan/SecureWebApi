@@ -24,6 +24,8 @@ using SecureWebAPI.DataAccess.UnitOfWork;
 using SecureWebAPI.DataAccess.Repository;
 using SecureWebAPI.BusinessLogic;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 namespace SecureWebAPI
 {
@@ -109,18 +111,31 @@ namespace SecureWebAPI
             dbContext.Database.EnsureCreated();
             app.UseAuthentication();
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
             app.UseCors(builder => builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
-            app.UseMvc(routes =>
-            {
-                routes.MapSpaFallbackRoute(
-                        name: "spa-fallback",
-                        defaults: new { controller = "Home", action = "Index" });
-            });
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+            //DefaultFilesOptions options = new DefaultFilesOptions();
+            //options.DefaultFileNames.Clear();
+            //options.DefaultFileNames.Add("/build/index.html");
+            app.UseFileServer();
+            //app.UseStaticFiles(new StaticFileOptions()
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //    Path.Combine(Directory.GetCurrentDirectory(), @"angular")),
+            //    RequestPath = ""
+            //});
+            app.UseMvc();
+            //app.UseSpa(spa =>
+            //{
+            //    spa.Options.SourcePath = "wwwroot/build";
+            //    spa.UseProxyToSpaDevelopmentServer("http://localhost:50754");
+            //    if (env.IsDevelopment())
+            //    {
+            //        spa.UseReactDevelopmentServer(npmScript: "start");
+            //    }
+            //});
         }
     }
 }
