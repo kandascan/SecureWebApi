@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { loginUser } from './actions/authActions';
 import classnames from 'classnames';
 
 class LoginForm extends Component {
@@ -12,6 +14,23 @@ class LoginForm extends Component {
     };
   }  
 
+  componentDidMount() {
+    if(this.props.auth.isAuthenticated) {
+      this.props.history.push('/backlog');
+    }
+  }
+
+  componentWillReceiveProps = (nextProps) => {
+    if(nextProps.auth.isAuthenticated) {
+      this.props.history.push('/backlog');
+    }
+    if(nextProps.errors){
+        this.setState({
+            errors: nextProps.errors
+        });
+    }
+  }
+
   handleChange(e){
     this.setState({
       [e.target.id]: e.target.value
@@ -20,19 +39,12 @@ class LoginForm extends Component {
 
   handleSubmit(e){
     e.preventDefault();    
-    axios.post("api/auth/login", this.state).then(res => {
-      const { token, success, errors } = res.data;
-      if(success){
-        this.setState({
-          username: '',
-          password: ''
-        });        
-        console.log(token);//tokena zapisac w local storage
-        this.props.history.push("/backlog");
-      }else{
-        this.setState({errors})
-      }
-    }).catch(err => console.log(err));  
+    const user = {
+      username: this.state.username,
+      password: this.state.password
+    };
+
+    this.props.loginUser(user);
   }
   render() {
     const { errors } = this.state;
@@ -55,16 +67,27 @@ class LoginForm extends Component {
               'is-invalid' : errors.password
             })} placeholder="Password" />
             {errors.password && (<div className="invalid-feedback">{errors.password}</div>)}
-            <div className="checkbox mb-3">
+            {/* <div className="checkbox mb-3">
                 <label>
                 <input type="checkbox" value="remember-me" /> Remember me
                 </label>
-            </div>
+            </div> */}
             <button className="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-            <p className="mt-5 mb-3 text-muted">&copy; 2018-2019</p>
+            {/* <p className="mt-5 mb-3 text-muted">&copy; 2018-2019</p> */}
         </form>
         </div></div></div></div>
     )
   }
 }
-export default LoginForm;
+
+LoginForm.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+}
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+  errors: state.errors
+});
+export default connect(mapStateToProps, { loginUser })(LoginForm);

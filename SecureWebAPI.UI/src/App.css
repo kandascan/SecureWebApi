@@ -75,6 +75,12 @@ img {
   background: url('img/solution.jpg') no-repeat;
 }
 
+.landing-background-currentSprint {
+  background: url('img/computer.jpg') no-repeat;
+}
+.landing-background-profile {
+  background: url('img/form.jpg') no-repeat;
+}
 .landing-inner {
   padding-top: 80px;
 }

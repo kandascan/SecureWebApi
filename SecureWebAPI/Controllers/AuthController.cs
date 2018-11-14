@@ -37,7 +37,7 @@ namespace SecureWebAPI.Controllers
         {
             var request = new UserRequest{User = model};  
             var response = await _service.RegisterUser(request);
-            return Ok(response);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 
         [HttpPost]
@@ -45,7 +45,7 @@ namespace SecureWebAPI.Controllers
         {
             var request = new UserRequest { User = model };
             var response = await _service.LoginUser(request);
-            return Ok(response);           
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 
         [Authorize]
@@ -54,7 +54,7 @@ namespace SecureWebAPI.Controllers
         {
             var request = new UserRequest();
             var response = await _service.LogOutUser(request);
-            return Ok(response);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);        
         }
     }
 }
