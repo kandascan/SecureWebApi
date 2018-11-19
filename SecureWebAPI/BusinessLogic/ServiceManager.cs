@@ -26,7 +26,6 @@ namespace SecureWebAPI.BusinessLogic
         private readonly IConfiguration _configuration;
         private readonly ILoggerManager _logger;
 
-
         public ServiceManager(IUnitOfWork uow, IMapper mapper, UserManager<UserEntity> userManager,
         SignInManager<UserEntity> signInManager, IConfiguration configuration, ILoggerManager logger)
         {
@@ -66,7 +65,7 @@ namespace SecureWebAPI.BusinessLogic
         {
             var response = new UserResponse();
             response.Errors = Validator.Register(request.User);
-            if(response.Errors.Count() > 0)
+            if (response.Errors.Count() > 0)
             {
                 return response;
             }
@@ -79,7 +78,7 @@ namespace SecureWebAPI.BusinessLogic
                     response.Token = await user.GenerateJwtToken(_configuration);
                 else
                 {
-                    if(response.Errors.Count() == 0)
+                    if (response.Errors.Count() == 0)
                     {
                         var errorType = "";
                         var error = result.Errors.FirstOrDefault();
@@ -96,7 +95,7 @@ namespace SecureWebAPI.BusinessLogic
                             errorType = "email";
                         }
                         response.Errors.Add(errorType, error.Description);
-                    }                    
+                    }
                 }
             }
             catch (Exception ex)
@@ -107,6 +106,7 @@ namespace SecureWebAPI.BusinessLogic
 
             return response;
         }
+
         public async Task<UserResponse> LoginUser(UserRequest request)
         {
             var response = new UserResponse();
@@ -131,8 +131,7 @@ namespace SecureWebAPI.BusinessLogic
                         response.Token = await user.GenerateJwtToken(_configuration);
                         response.Success = signIn.Succeeded;
                     }
-                }              
-               
+                }
             }
             catch (Exception ex)
             {
@@ -281,6 +280,57 @@ namespace SecureWebAPI.BusinessLogic
                 response.Errors.Add("System Exception", ex.Message);
             }
 
+            return response;
+        }
+
+        public TaskResponse CreateTask(TaskRequest request)
+        {
+            var response = new TaskResponse();
+            try
+            {
+                var newTask = _mapper.Map<TaskEntity>(request.Task);
+                var task = _uow.Repository<TaskEntity>().Add(newTask);
+                _uow.Save();
+                if (task != null)
+                {
+                    response.Task = _mapper.Map<TaskVM>(task);
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Errors.Add("Create error", "Cannot create task");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+
+            return response;
+        }
+
+        public TaskResponse GetAllTasks(TaskRequest request)
+        {
+            var response = new TaskResponse();
+            try
+            {
+                var tasks = _uow.Repository<TaskEntity>().GetOverview().OrderBy(t => t.OrderId);
+                if (tasks != null)
+                {
+                    response.Tasks = _mapper.Map<List<TaskVM>>(tasks);
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Errors.Add("Get Tasks", "Cannot featch Tasks");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                response.Errors.Add("System Exception", ex.Message);
+            }
             return response;
         }
     }

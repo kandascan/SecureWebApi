@@ -6,6 +6,6 @@ namespace SecureWebAPI.BusinessLogic.Request
     {
         public int TodoId { get; set; }
         public TodoVM Todo { get; set; }
-        public string UserId { get; internal set; }
+        public string UserId { get; set; }
     }
 }
