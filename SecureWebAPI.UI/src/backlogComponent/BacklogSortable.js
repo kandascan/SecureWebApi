@@ -3,18 +3,24 @@ import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-ho
 import ItemComponent from './ItemComponent';
 import '.././App.css'
 
-const SortableItem = SortableElement(({ index, value, onDeleteItem }) => <ItemComponent index={index} value={value} onDeleteItem={onDeleteItem} />);
+const SortableItem = SortableElement(({ index, value, onDeleteItem, id }) => <ItemComponent index={index} value={value} onDeleteItem={onDeleteItem} id={id} />);
 const SortableList = SortableContainer(({ items, onDeleteItem }) => {
-    console.log('render1')
+    //console.log('render1')
+
+    let backlogItems;
+    if(items != null){
+        backlogItems = items.map((value, index) => (
+            <SortableItem key={`item-${index}`} index={index} value={value.name} onDeleteItem={onDeleteItem} id={value.id} />
+        ));
+    }
+    
     return (
         <div className="landing landing-background-backlog">
             <div className="dark-overlay landing-inner text-light">
             <h1 style={{textAlign: 'center'}}>Main Backlog</h1>
                 <div className="container">
                     <ul className="list-group">
-                        {items.map((value, index) => (
-                            <SortableItem key={`item-${index}`} index={index} value={value.name} onDeleteItem={onDeleteItem} />
-                        ))}
+                        {backlogItems}
                     </ul>
                 </div>
             </div>
@@ -24,17 +30,11 @@ const SortableList = SortableContainer(({ items, onDeleteItem }) => {
 
 class BacklogSortable extends Component {
     state = {
-        //items: ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6'],
         tasks: []
     };
 
     onDeleteItem = (id) => {
-        const newItems = this.state.items.filter(item => {
-            return item !== id
-        });
-        this.setState({
-            items: newItems
-        });
+        this.props.removeBacklogTask(id);
     }
 
     onSortEnd = ({ oldIndex, newIndex }) => {
@@ -49,7 +49,10 @@ class BacklogSortable extends Component {
             return <h2>Loading...</h2>    
         }
         else {
-            return <SortableList items={items.tasks} onSortEnd={this.onSortEnd} onDeleteItem={this.onDeleteItem} />;
+            return <SortableList 
+            items={items.tasks} 
+            onSortEnd={this.onSortEnd} 
+            onDeleteItem={this.onDeleteItem} />;
         }        
     }
 }

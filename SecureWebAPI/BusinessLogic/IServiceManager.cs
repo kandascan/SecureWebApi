@@ -31,5 +31,7 @@ namespace SecureWebAPI.BusinessLogic
         GetBacklogTasksResponse GetBacklogTasks(GetBacklogTasksRequest request);
 
         SortBacklogItemsResponse SortBacklogItems(SortBacklogItemsRequest request);
+
+        RemoveTaskResponse RemoveTask(RemoveTaskRequest request);
     }
 }

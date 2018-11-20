@@ -391,5 +391,37 @@ namespace SecureWebAPI.BusinessLogic
             }
             return response;
         }
+
+        public RemoveTaskResponse RemoveTask(RemoveTaskRequest request)
+        {
+            var response = new RemoveTaskResponse();
+            try
+            {
+                var dbTask = _uow.Repository<TaskEntity>().GetDetails(t => t.Id == request.Id);
+                if (dbTask != null)
+                {
+                    _uow.Repository<TaskEntity>().Delete(dbTask);
+
+                    _uow.Save();
+                    var backlogItems = GetBacklogTasks(new GetBacklogTasksRequest());
+                    if (backlogItems != null && backlogItems.Tasks.Count > 0)
+                    {
+                        response.Tasks = backlogItems.Tasks;
+                    }
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Errors.Add("Sort Backlog items", "Cannot featch Backlog items");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+
+            return response;
+        }
     }
 }

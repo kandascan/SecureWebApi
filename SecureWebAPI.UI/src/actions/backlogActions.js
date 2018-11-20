@@ -18,6 +18,24 @@ export const getBacklogItems = () => dispatch => {
     );
 }
 
+export const removeTask = (id) => dispatch => {
+    axios.delete("api/task", {
+        params: { id: id }
+        })
+    .then(res => {
+        dispatch({
+            type: GET_BACKLOG_ITEMS,
+            payload: res.data
+        });
+    })
+    .catch(err => {
+        dispatch({
+            type: GET_BACKLOG_ITEMS,
+            payload: {}
+        })
+    });
+};
+
 export const orderBacklogItems = (sortedItems) => dispatch => {
     axios.post("api/task/sortedbacklog", sortedItems)
     .then(res => {

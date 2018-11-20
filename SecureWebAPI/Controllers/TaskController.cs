@@ -46,6 +46,14 @@ namespace SecureWebAPI.Controllers
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 
+        [HttpDelete]
+        public IActionResult RemoveTask(int id)
+        {
+            var request = new RemoveTaskRequest { Id = id };
+            var response = _service.RemoveTask(request);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
+        }
+
         [HttpPost]
         public IActionResult Post([FromBody] TaskVM taskVm)
         {
