@@ -19,18 +19,18 @@ export const getBacklogItems = () => dispatch => {
 }
 
 export const orderBacklogItems = (sortedItems) => dispatch => {
-    console.log(sortedItems);
     axios.post("api/task/sortedbacklog", sortedItems)
     .then(res => {
-        console.log(res)
-        // dispatch({
-        //     type: ORDER_BACKLOG,
-        //     payload: err.response.data
-        // })
+        dispatch({
+            type: GET_BACKLOG_ITEMS,
+            payload: res.data
+        });
     })
-    .catch(err =>{
-    }
-        
+    .catch(err =>
+        dispatch({
+            type: GET_BACKLOG_ITEMS,
+            payload: {}
+        })
     );
 };
 

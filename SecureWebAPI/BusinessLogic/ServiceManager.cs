@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using LoggerService;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using SecureWebAPI.BusinessLogic.Request;
 using SecureWebAPI.BusinessLogic.Response;
@@ -365,13 +366,23 @@ namespace SecureWebAPI.BusinessLogic
             try
             {
                 var ids = request.Items.Select(i => i.Id).ToArray();
-                var dbTasks = _uow.Repository<TaskEntity>().GetOverview(i => ids.Contains(i.Id)).ToList();
-                for (int i = 0; i < ids.Length; i++)
-                {
-                    dbTasks[i].OrderId = i;
-                }
+                var dbTasks = _uow.Repository<TaskEntity>().GetOverview(i => ids.Contains(i.Id)).OrderBy(o => ids.IndexOf(o.Id)).ToList();
 
                 _uow.Save();
+
+                if (dbTasks != null && dbTasks.Count > 0)
+                {
+                    for (int i = 0; i < ids.Length; i++)
+                    {
+                        dbTasks[i].OrderId = i;
+                    }
+                    response.Tasks = _mapper.Map<List<TaskVM>>(dbTasks);
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Errors.Add("Sort Backlog items", "Cannot featch Backlog items");
+                }
             }
             catch (Exception ex)
             {

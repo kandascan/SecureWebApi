@@ -5,11 +5,11 @@ import '.././App.css'
 
 const SortableItem = SortableElement(({ index, value, onDeleteItem }) => <ItemComponent index={index} value={value} onDeleteItem={onDeleteItem} />);
 const SortableList = SortableContainer(({ items, onDeleteItem }) => {
+    console.log('render1')
     return (
         <div className="landing landing-background-backlog">
             <div className="dark-overlay landing-inner text-light">
             <h1 style={{textAlign: 'center'}}>Main Backlog</h1>
-
                 <div className="container">
                     <ul className="list-group">
                         {items.map((value, index) => (
