@@ -7,12 +7,12 @@ import BacklogSortable from './BacklogSortable';
 class BacklogComponent extends Component {
     componentDidMount() {
         if (!this.props.auth.isAuthenticated) {
-            this.props.history.push('/');            
+            this.props.history.push('/');
         }
         this.props.getBacklogItems();
     }
 
-    sortBacklogItems = (sortdItems)=>  {
+    sortBacklogItems = (sortdItems) => {
         this.props.orderBacklogItems(sortdItems);
     }
 
@@ -23,12 +23,21 @@ class BacklogComponent extends Component {
     render() {
         const { items, loading } = this.props.backlog;
         return (
-            <BacklogSortable 
-            items={items} 
-            loading={loading} 
-            sortBacklogItems={this.sortBacklogItems}
-            removeBacklogTask={this.removeBacklogTask}
-            />
+            <div className="landing landing-background-backlog">
+                <div className="dark-overlay landing-inner text-light">
+                    <h1 style={{ textAlign: 'center' }}>Main Backlog</h1>
+                    <div className="container">{items != null && items.tasks != null && !loading ?
+                        (
+                            <BacklogSortable
+                                items={items}
+                                sortBacklogItems={this.sortBacklogItems}
+                                removeBacklogTask={this.removeBacklogTask}
+                            />
+                        ) : (
+                            <div className="loader"></div>
+                        )}</div>
+                </div>
+            </div>
         )
     }
 }
