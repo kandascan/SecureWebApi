@@ -19,6 +19,7 @@ export const getBacklogItems = () => dispatch => {
 }
 
 export const removeTask = (id) => dispatch => {
+    dispatch(setBacklogLoading());
     axios.delete("api/task", {
         params: { id: id }
         })
@@ -37,6 +38,7 @@ export const removeTask = (id) => dispatch => {
 };
 
 export const orderBacklogItems = (sortedItems) => dispatch => {
+    dispatch(setBacklogLoading());
     axios.post("api/task/sortedbacklog", sortedItems)
     .then(res => {
         dispatch({

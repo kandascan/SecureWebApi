@@ -10,6 +10,7 @@ export default function(state = initialState, action) {
         case BACKLOG_LOADING:
             return {
                 ...state,
+                items: [],
                 loading: true
             }    
         case GET_BACKLOG_ITEMS: 
