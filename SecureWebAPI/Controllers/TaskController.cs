@@ -28,12 +28,21 @@ namespace SecureWebAPI.Controllers
             UserId = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         }
 
+        [HttpPost]
+        [Route("sortedbacklog")]
+        public IActionResult SortBacklogItems([FromBody] IEnumerable<TaskVM> taskVm)
+        {
+            var request = new SortBacklogItemsRequest { Items = taskVm };
+            var response = _service.SortBacklogItems(request);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
+        }
+
         [HttpGet]
-        [Route("backlog")]
+        [Route("getbacklogtasks")]
         public IActionResult GetBacklog()
         {
-            var request = new TaskRequest();
-            var response = _service.GetAllTasks(request);
+            var request = new GetBacklogTasksRequest();
+            var response = _service.GetBacklogTasks(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 

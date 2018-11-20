@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { logoutUser } from './actions/authActions';
-import { clearBacklog } from './actions/taskActions';
+import { clearBacklog } from './actions/backlogActions';
 
 class NavBar extends Component {
   onLogoutClick = (e) => {

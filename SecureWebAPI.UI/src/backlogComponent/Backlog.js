@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getBacklogItems } from '../actions/taskActions';
+import { getBacklogItems, orderBacklogItems } from '../actions/backlogActions';
 import BacklogSortable from './BacklogSortable';
 
 class BacklogComponent extends Component {
@@ -12,21 +12,14 @@ class BacklogComponent extends Component {
         this.props.getBacklogItems();
     }
 
-    // componentWillReceiveProps = (nextProps) => {
-    //     if (nextProps.auth.isAuthenticated) {
-    //       this.props.history.push('/backlog');
-    //     }
-    //   }
+    sortBacklogItems = (sortdItems)=>  {
+        this.props.orderBacklogItems(sortdItems);
+    }
 
     render() {
-        const { tasks, loading } = this.props.backlog;
-        // console.log(tasks);
-        // console.log(loading);
-
-
-
+        const { items, loading } = this.props.backlog;
         return (
-            <BacklogSortable tasks={tasks} loading={loading}/>
+            <BacklogSortable items={items} loading={loading} sortBacklogItems={this.sortBacklogItems}/>
         )
     }
 }
@@ -34,7 +27,8 @@ class BacklogComponent extends Component {
 BacklogComponent.propTypes = {
     auth: PropTypes.object.isRequired,
     backlog: PropTypes.object.isRequired,
-    getBacklogItems: PropTypes.func.isRequired
+    getBacklogItems: PropTypes.func.isRequired,
+    orderBacklogItems: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -42,4 +36,4 @@ const mapStateToProps = (state) => ({
     backlog: state.backlog
 });
 
-export default connect(mapStateToProps, {getBacklogItems})(BacklogComponent);
+export default connect(mapStateToProps, {getBacklogItems, orderBacklogItems})(BacklogComponent);

@@ -3,7 +3,7 @@ import { GET_BACKLOG_ITEMS, BACKLOG_LOADING, CLEAR_BACKLOG } from './types';
 
 export const getBacklogItems = () => dispatch => {
     dispatch(setBacklogLoading());
-    axios.get("api/task/backlog")
+    axios.get("api/task/getbacklogtasks")
     .then(res => {
         dispatch({
             type: GET_BACKLOG_ITEMS,
@@ -17,6 +17,22 @@ export const getBacklogItems = () => dispatch => {
         })
     );
 }
+
+export const orderBacklogItems = (sortedItems) => dispatch => {
+    console.log(sortedItems);
+    axios.post("api/task/sortedbacklog", sortedItems)
+    .then(res => {
+        console.log(res)
+        // dispatch({
+        //     type: ORDER_BACKLOG,
+        //     payload: err.response.data
+        // })
+    })
+    .catch(err =>{
+    }
+        
+    );
+};
 
 export const setBacklogLoading = () => {
     return {

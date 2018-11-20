@@ -1,7 +1,7 @@
 import { GET_BACKLOG_ITEMS, BACKLOG_LOADING, CLEAR_BACKLOG } from '../actions/types';
 
 const initialState = {
-    tasks: null,
+    items: null,
     loading: false
 };
 
@@ -15,13 +15,13 @@ export default function(state = initialState, action) {
         case GET_BACKLOG_ITEMS: 
             return {
                 ...state,
-                tasks: action.payload,
+                items: action.payload,
                 loading: false
             };
         case CLEAR_BACKLOG:
             return {
                 ...state,
-                tasks: null
+                items: null
             }
         default:
             return state;

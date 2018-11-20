@@ -334,5 +334,51 @@ namespace SecureWebAPI.BusinessLogic
             }
             return response;
         }
+
+        public GetBacklogTasksResponse GetBacklogTasks(GetBacklogTasksRequest request)
+        {
+            var response = new GetBacklogTasksResponse();
+            try
+            {
+                var tasks = _uow.Repository<TaskEntity>().GetOverview().OrderBy(t => t.OrderId);
+                if (tasks != null)
+                {
+                    response.Tasks = _mapper.Map<List<TaskVM>>(tasks);
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Errors.Add("Get Tasks", "Cannot featch Tasks");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public SortBacklogItemsResponse SortBacklogItems(SortBacklogItemsRequest request)
+        {
+            var response = new SortBacklogItemsResponse();
+            try
+            {
+                var ids = request.Items.Select(i => i.Id).ToArray();
+                var dbTasks = _uow.Repository<TaskEntity>().GetOverview(i => ids.Contains(i.Id)).ToList();
+                for (int i = 0; i < ids.Length; i++)
+                {
+                    dbTasks[i].OrderId = i;
+                }
+
+                _uow.Save();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
     }
 }
