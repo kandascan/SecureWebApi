@@ -12,6 +12,8 @@ namespace SecureWebAPI.Helpers
             CreateMap<UserVM, UserEntity>();
             CreateMap<TodoEntity, TodoVM>();
             CreateMap<TodoVM, TodoEntity>();
+            CreateMap<TaskEntity, TaskVM>();
+            CreateMap<TaskVM, TaskEntity>();
         }
     }
 }

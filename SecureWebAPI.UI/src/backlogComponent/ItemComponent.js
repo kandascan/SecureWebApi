@@ -9,7 +9,7 @@ export default class ItemComponent extends Component {
     }
     render() {
         const { index, value } = this.props;
-        console.log(this.props)
+        //console.log(this.props)
         return (
             <li className="list-group-item d-flex justify-content-between align-items-center list-group-item-light">
                 {value}

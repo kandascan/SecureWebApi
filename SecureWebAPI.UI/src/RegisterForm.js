@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { registerUser } from './actions/authActions';
+import TextFieldGroup from './TextFieldGroup';
 
 class RegisterForm extends Component {
     constructor() {
@@ -57,40 +57,31 @@ class RegisterForm extends Component {
                             <form noValidate className="form-signin" onSubmit={this.handleSubmit}>
                                 <img className="mb-4" src="dist/bootstrap-solid.svg" alt="" width="72" height="72" />
                                 <h1 className="h3 mb-3 font-weight-normal">Please sign up</h1>
-                                <label htmlFor="username" className="sr-only">User name</label> {/*utworzyc nowy komponent dla labela i inputa */}
-                                <input 
-                                type="text" 
-                                id="username" 
-                                onChange={this.handleChange} 
-                                value={this.state.username} 
-                                className={classnames("form-control", {
-                                    'is-invalid': errors.username
-                                })} 
-                                placeholder="Name" 
-                                autoFocus />
-                                {errors.username && (<div className="invalid-feedback">{errors.username}</div>)}
-                                <label htmlFor="email" className="sr-only">Email address</label>
-                                <input 
-                                type="email" 
-                                id="email" 
-                                onChange={this.handleChange} 
-                                value={this.state.email} 
-                                className={classnames("form-control", {
-                                    'is-invalid': errors.email
-                                })} 
-                                placeholder="Email address" />
-                                {errors.email && (<div className="invalid-feedback">{errors.email}</div>)}
-                                <label htmlFor="password" className="sr-only">Password</label>
-                                <input 
-                                type="password" 
-                                id="password" 
-                                onChange={this.handleChange} 
-                                value={this.state.password} className={classnames("form-control", {
-                                    'is-invalid': errors.password
-                                })} placeholder="Password" />
-                                {errors.password && (<div className="invalid-feedback">{errors.password}</div>)}
+                                <TextFieldGroup 
+                                    type="text" 
+                                    id="username" 
+                                    onChange={this.handleChange} 
+                                    value={this.state.username} 
+                                    placeholder="Name" 
+                                    error={errors.username}                                    
+                                />
+                                <TextFieldGroup 
+                                    type="email" 
+                                    id="email" 
+                                    onChange={this.handleChange} 
+                                    value={this.state.email} 
+                                    placeholder="Email" 
+                                    error={errors.email}                                    
+                                />
+                                <TextFieldGroup 
+                                    type="password" 
+                                    id="password" 
+                                    onChange={this.handleChange} 
+                                    value={this.state.password} 
+                                    placeholder="Password" 
+                                    error={errors.password}                                    
+                                />
                                 <button className="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
-                                {/* <p className="mt-5 mb-3 text-muted">&copy; 2018-2019</p> */}
                             </form>
                         </div>
                     </div>

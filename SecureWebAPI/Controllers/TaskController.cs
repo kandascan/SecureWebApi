@@ -14,36 +14,36 @@ namespace SecureWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class TaskController : Controller
     {
         private readonly ClaimsPrincipal claimsPrincipal;
         private readonly string UserId;
         private readonly IServiceManager _service;
 
-        public TaskController(IServiceManager service, IHttpContextAccessor httpContextAccessor)
+        public TaskController(IServiceManager service)
         {
             _service = service;
-            claimsPrincipal = httpContextAccessor.HttpContext.User;
-            UserId = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            //claimsPrincipal = httpContextAccessor.HttpContext.User;
+            //UserId = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         }
 
         [HttpGet]
-        [Route("all")]
-        public IActionResult GetAll()
+        [Route("backlog")]
+        public IActionResult GetBacklog()
         {
             var request = new TaskRequest();
             var response = _service.GetAllTasks(request);
-            return Ok(response);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 
         [HttpPost]
         public IActionResult Post([FromBody] TaskVM taskVm)
         {
-            taskVm.UserId = UserId;
+            //taskVm.UserId = UserId;
             var request = new TaskRequest { Task = taskVm };
             var response = _service.CreateTask(request);
-            return Ok(response);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
     }
 }

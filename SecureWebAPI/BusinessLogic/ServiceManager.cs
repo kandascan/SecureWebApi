@@ -289,6 +289,7 @@ namespace SecureWebAPI.BusinessLogic
             try
             {
                 var newTask = _mapper.Map<TaskEntity>(request.Task);
+                newTask.BacklogItem = true;
                 var task = _uow.Repository<TaskEntity>().Add(newTask);
                 _uow.Save();
                 if (task != null)

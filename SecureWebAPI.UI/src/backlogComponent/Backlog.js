@@ -1,66 +1,45 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
-import ItemComponent from './ItemComponent';
-import '.././App.css'
-const SortableItem = SortableElement(({ index, value, onDeleteItem }) => <ItemComponent index={index} value={value} onDeleteItem={onDeleteItem} />);
-
-const SortableList = SortableContainer(({ items, onDeleteItem }) => {
-    return (
-        <div className="landing landing-background-backlog">
-            <div className="dark-overlay landing-inner text-light">
-            <h1 style={{textAlign: 'center'}}>Main Backlog</h1>
-
-                <div className="container">
-                    <ul className="list-group">
-                        {items.map((value, index) => (
-                            <SortableItem key={`item-${index}`} index={index} value={value} onDeleteItem={onDeleteItem} />
-                        ))}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    );
-});
+import { getBacklogItems } from '../actions/taskActions';
+import BacklogSortable from './BacklogSortable';
 
 class BacklogComponent extends Component {
-    state = {
-        items: ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6'],
-    };
-
     componentDidMount() {
         if (!this.props.auth.isAuthenticated) {
-            this.props.history.push('/');
+            this.props.history.push('/');            
         }
+        this.props.getBacklogItems();
     }
 
-    onDeleteItem = (id) => {
-        console.log(`Delete: ${id}`);
-        const newItems = this.state.items.filter(item => {
-            return item !== id
-        });
-        this.setState({
-            items: newItems
-        });
-    }
-
-    onSortEnd = ({ oldIndex, newIndex }) => {
-        this.setState({
-            items: arrayMove(this.state.items, oldIndex, newIndex),
-        });
-    };
+    // componentWillReceiveProps = (nextProps) => {
+    //     if (nextProps.auth.isAuthenticated) {
+    //       this.props.history.push('/backlog');
+    //     }
+    //   }
 
     render() {
-        return <SortableList items={this.state.items} onSortEnd={this.onSortEnd} onDeleteItem={this.onDeleteItem} />;
+        const { tasks, loading } = this.props.backlog;
+        // console.log(tasks);
+        // console.log(loading);
+
+
+
+        return (
+            <BacklogSortable tasks={tasks} loading={loading}/>
+        )
     }
 }
 
 BacklogComponent.propTypes = {
-    auth: PropTypes.object.isRequired
+    auth: PropTypes.object.isRequired,
+    backlog: PropTypes.object.isRequired,
+    getBacklogItems: PropTypes.func.isRequired
 }
+
 const mapStateToProps = (state) => ({
     auth: state.auth,
+    backlog: state.backlog
 });
 
-export default connect(mapStateToProps)(BacklogComponent);
+export default connect(mapStateToProps, {getBacklogItems})(BacklogComponent);
