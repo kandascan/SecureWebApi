@@ -20,7 +20,7 @@ export const loginUser = (userData) => dispatch => {
     axios.post("api/auth/login", userData)
         .then(res => {
             const { token } = res.data;
-            localStorage.setItem('smToken', token);
+            localStorage.setItem('smToken', `Bearer ${token}`);
             setAuthToken(token);
             const decoded = jwt_decode(token);
             dispatch(setCurrentUser(decoded));

@@ -14,18 +14,18 @@ namespace SecureWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class TaskController : Controller
     {
         private readonly ClaimsPrincipal claimsPrincipal;
         private readonly string UserId;
         private readonly IServiceManager _service;
 
-        public TaskController(IServiceManager service)
+        public TaskController(IServiceManager service, IHttpContextAccessor httpContextAccessor)
         {
             _service = service;
-            //claimsPrincipal = httpContextAccessor.HttpContext.User;
-            //UserId = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            claimsPrincipal = httpContextAccessor.HttpContext.User;
+            UserId = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         }
 
         [HttpGet]
