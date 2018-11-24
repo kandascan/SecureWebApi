@@ -4,3 +4,4 @@ export const GET_BACKLOG_ITEMS = 'GET_BACKLOG_ITEMS';
 export const BACKLOG_LOADING = 'BACKLOG_LOADING';
 export const CLEAR_BACKLOG = 'CLEAR_BACKLOG';
 export const REMOVE_TASK = 'REMOVE_TASK';
+export const TOGGLE_MODAL = 'TOGGLE_MODAL';

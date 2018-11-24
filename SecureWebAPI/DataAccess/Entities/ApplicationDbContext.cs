@@ -14,18 +14,16 @@ namespace SecureWebAPI.DataAccess.Entities
         }
 
         public DbSet<UserEntity> Users { get; set; }
-        public DbSet<TodoEntity> Todos { get; set; }
         public DbSet<TaskEntity> Tasks { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
-            var connectionString = "Data Source=DESKTOP-MCHSM44\\DEVSQLSERVER;Initial Catalog=Todo;Integrated Security=True";
+            var connectionString = "Data Source=(local);Initial Catalog=SM;Integrated Security=True";
             builder.UseSqlServer(connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TodoEntity>(ConfigureTodoEntity);
             modelBuilder.Entity<TaskEntity>(ConfigureTaskEntity);
             base.OnModelCreating(modelBuilder);
         }
@@ -34,18 +32,13 @@ namespace SecureWebAPI.DataAccess.Entities
         {
             entity.ToTable("Task");
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Name);
-            entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
-        }
-
-        private void ConfigureTodoEntity(EntityTypeBuilder<TodoEntity> entity)
-        {
-            entity.ToTable("Todo");
-            entity.HasKey(e => e.Id);
-            entity
-            .HasOne(e => e.User)
-            .WithMany(c => c.Todos);
-            entity.Property(e => e.Name);
+            entity.Property(e => e.Taskname);
+            entity.Property(e => e.Description);
+            entity.Property(e => e.Effort);
+            entity.Property(e => e.Priority);
+            entity.Property(e => e.Username);
+            entity.Property(e => e.OrderId);
+            entity.Property(e => e.BacklogItem);
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
         }
     }

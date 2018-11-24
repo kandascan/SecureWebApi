@@ -93,7 +93,7 @@ namespace SecureWebAPI
             services.AddTransient<IServiceManager, ServiceManager>();
 
             services.AddTransient<IRepository<UserEntity>, Repository<UserEntity>>();
-            services.AddTransient<IRepository<TodoEntity>, Repository<TodoEntity>>();
+            services.AddTransient<IRepository<TaskEntity>, Repository<TaskEntity>>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

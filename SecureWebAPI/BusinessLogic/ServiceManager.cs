@@ -36,31 +36,7 @@ namespace SecureWebAPI.BusinessLogic
             _signInManager = signInManager;
             _configuration = configuration;
             _logger = logger;
-        }
-
-        public TodoResponse GetTodoById(TodoRequest request)
-        {
-            var response = new TodoResponse();
-            try
-            {
-                var todo = _uow.Repository<TodoEntity>().GetDetails(x => x.Id == request.TodoId);
-                if (todo != null)
-                {
-                    response.Todo = _mapper.Map<TodoVM>(todo);
-                    response.Success = true;
-                }
-                else
-                {
-                    response.Errors.Add("Not Exist", "Task not exist in database");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-            }
-
-            return response;
-        }
+        }      
 
         public async Task<UserResponse> RegisterUser(UserRequest request)
         {
@@ -160,130 +136,7 @@ namespace SecureWebAPI.BusinessLogic
 
             return response;
         }
-
-        public TodoResponse GetUserTodos(TodoRequest request)
-        {
-            var response = new TodoResponse();
-            try
-            {
-                var todos = _uow.Repository<TodoEntity>().GetOverview(u => u.UserId == request.UserId).ToArray();
-                if (todos != null)
-                {
-                    response.Todos = _mapper.Map<List<TodoVM>>(todos);
-                    response.Success = true;
-                }
-                else
-                {
-                    response.Errors.Add("Get User Todos", "Cannot featch User Todos");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                response.Errors.Add("System Exception", ex.Message);
-            }
-            return response;
-        }
-
-        public TodoResponse GetAllTodos(TodoRequest request)
-        {
-            var response = new TodoResponse();
-            try
-            {
-                var todos = _uow.Repository<TodoEntity>().GetOverview();
-                if (todos != null)
-                {
-                    response.Todos = _mapper.Map<List<TodoVM>>(todos);
-                    response.Success = true;
-                }
-                else
-                {
-                    response.Errors.Add("Get Todos", "Cannot featch Todos");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                response.Errors.Add("System Exception", ex.Message);
-            }
-            return response;
-        }
-
-        public TodoResponse UpdateTodo(TodoRequest request)
-        {
-            var response = new TodoResponse();
-            try
-            {
-                var updateTodo = _uow.Repository<TodoEntity>().GetDetails(t => t.Id == request.Todo.Id);
-                updateTodo.Name = request.Todo.Name;
-                var todo = _uow.Repository<TodoEntity>().Update(updateTodo);
-                _uow.Save();
-
-                if (todo != null)
-                {
-                    response.Todo = _mapper.Map<TodoVM>(todo);
-                    response.Success = true;
-                }
-                else
-                {
-                    response.Errors.Add("Updated error", "Cannot update task");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                response.Errors.Add("System Exception", ex.Message);
-            }
-            return response;
-        }
-
-        public TodoResponse RemoveTodo(TodoRequest request)
-        {
-            var response = new TodoResponse();
-            try
-            {
-                var todo = _uow.Repository<TodoEntity>().GetDetails(t => t.Id == request.TodoId);
-                _uow.Repository<TodoEntity>().Delete(todo);
-                _uow.Save();
-
-                response.Success = true;
-                response.Message = "Todo removed successfuly";
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                response.Errors.Add("System Exception", ex.Message);
-            }
-            return response;
-        }
-
-        public TodoResponse CreateTodo(TodoRequest request)
-        {
-            var response = new TodoResponse();
-            try
-            {
-                var newTodo = _mapper.Map<TodoEntity>(request.Todo);
-                var todo = _uow.Repository<TodoEntity>().Add(newTodo);
-                _uow.Save();
-                if (todo != null)
-                {
-                    response.Todo = _mapper.Map<TodoVM>(todo);
-                    response.Success = true;
-                }
-                else
-                {
-                    response.Errors.Add("Create error", "Cannot create task");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                response.Errors.Add("System Exception", ex.Message);
-            }
-
-            return response;
-        }
-
+       
         public TaskResponse CreateTask(TaskRequest request)
         {
             var response = new TaskResponse();
@@ -341,7 +194,7 @@ namespace SecureWebAPI.BusinessLogic
             var response = new GetBacklogTasksResponse();
             try
             {
-                var tasks = _uow.Repository<TaskEntity>().GetOverview().OrderBy(t => t.OrderId);
+                var tasks = _uow.Repository<TaskEntity>().GetOverview().OrderBy(t => t.OrderId).ThenByDescending(t => t.Id);
                 if (tasks != null)
                 {
                     response.Tasks = _mapper.Map<List<TaskVM>>(tasks);

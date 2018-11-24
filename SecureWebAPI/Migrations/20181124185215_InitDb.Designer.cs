@@ -10,8 +10,8 @@ using SecureWebAPI.DataAccess.Entities;
 namespace SecureWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181119095430_CreateTask")]
-    partial class CreateTask
+    [Migration("20181124185215_InitDb")]
+    partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -210,34 +210,10 @@ namespace SecureWebAPI.Migrations
                     b.ToTable("Task");
                 });
 
-            modelBuilder.Entity("SecureWebAPI.DataAccess.Entities.TodoEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Todo");
-                });
-
             modelBuilder.Entity("SecureWebAPI.DataAccess.Entities.UserEntity", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
-                    b.Property<string>("FirstName");
-
-                    b.Property<string>("LastName");
 
                     b.ToTable("UserEntity");
 
@@ -287,13 +263,6 @@ namespace SecureWebAPI.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("SecureWebAPI.DataAccess.Entities.TodoEntity", b =>
-                {
-                    b.HasOne("SecureWebAPI.DataAccess.Entities.UserEntity", "User")
-                        .WithMany("Todos")
-                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }
