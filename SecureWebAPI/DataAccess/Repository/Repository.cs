@@ -51,9 +51,9 @@ namespace SecureWebAPI.DataAccess.Repository
             return entity;
         }
 
-        public IEnumerable<T> GetAll(Func<T, bool> predicate = null)
+        public IEnumerable<T> GetAll()
         {
-            throw new NotImplementedException();
+            return _objectSet;
         }
     }
 }

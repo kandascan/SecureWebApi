@@ -3,15 +3,20 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createTask, toggleModal } from '../actions/backlogActions';
+import { getEffortsAndPriorities } from '../actions/dictionaryActions';
 
 class CreateTask extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { taskname: '', description: '', effort: '', priority: '', username: '' };
+        this.state = { taskname: '', description: '', effort: -1, priority: -1, username: '' };
     }
 
     toggle = () => {
         this.props.toggleModal();
+        const { priorities, efforts } = this.props.dics;
+        if(priorities === null && efforts === null){
+            this.props.getEffortsAndPriorities();
+        }
     }
 
     handleChange = (e) => {
@@ -23,16 +28,32 @@ class CreateTask extends React.Component {
         let newTask = {
             taskname: this.state.taskname,
             description: this.state.description,
-            effort: this.state.effort,
-            priority: this.state.priority,
+            effortId: +this.state.effort,
+            priorityId: +this.state.priority,
             username: this.state.username,
         }
+        console.log(newTask)
         this.props.createTask(newTask);
-        this.setState({ taskname: '', description: '', effort: '', priority: '', username: '' });
+        this.setState({ taskname: '', description: '', effort: -1, priority: -1, username: '' });
     }
 
     render() {
         const { modal } = this.props.backlog;
+        const { priorities, efforts } = this.props.dics;
+        let ddlPriorities = null;
+        if(priorities !== null){
+            ddlPriorities = priorities.priorities.map((priority) => 
+            <option key={priority.priorityId} value={priority.priorityId}>{priority.priorityName}</option>
+            );
+        }
+
+        let ddlEfforts = null;
+        if(efforts !== null){
+            ddlEfforts = efforts.efforts.map((effort) => 
+            <option key={effort.effortId} value={effort.effortId}>{effort.effortName}</option>
+            );
+        }
+       
         return (
             <div >
                 <div className="container">
@@ -57,13 +78,19 @@ class CreateTask extends React.Component {
                             <div className="row">
                                 <div className="form-group col-md-12">
                                     <label>Effort:</label>
-                                    <input name="effort" type="text" value={this.effort} onChange={this.handleChange} className="form-control" />
+                                    <select className="custom-select mr-sm-2" name="effort" onChange={this.handleChange} disabled={efforts === null} >
+                                        <option key={-1} value={-1}>Choose...</option>
+                                        {ddlEfforts}
+                                    </select>
                                 </div>
                             </div>
                             <div className="row">
                                 <div className="form-group col-md-12">
                                     <label>Priority:</label>
-                                    <input name="priority" type="text" value={this.priority} onChange={this.handleChange} className="form-control" />
+                                    <select className="custom-select mr-sm-2" name="priority" onChange={this.handleChange} disabled={priorities === null} >
+                                        <option key={-1} value={-1}>Choose...</option>
+                                        {ddlPriorities}
+                                    </select>
                                 </div>
                             </div>
                             <div className="row">
@@ -86,13 +113,14 @@ class CreateTask extends React.Component {
 }
 
 CreateTask.propTypes = {
-    backlog: PropTypes.object.isRequired,
     createTask: PropTypes.func.isRequired,
-    toggleModal: PropTypes.func.isRequired
+    toggleModal: PropTypes.func.isRequired,
+    getEffortsAndPriorities: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    backlog: state.backlog
+    backlog: state.backlog,
+    dics: state.dics
 });
 
-export default connect(mapStateToProps, { createTask, toggleModal })(CreateTask);
+export default connect(mapStateToProps, { createTask, toggleModal, getEffortsAndPriorities })(CreateTask);

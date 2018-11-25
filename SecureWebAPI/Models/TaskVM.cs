@@ -10,8 +10,8 @@ namespace SecureWebAPI.Models
         public int Id { get; set; }
         public string Taskname { get; set; }
         public string Description { get; set; }
-        public string Effort { get; set; }
-        public string Priority { get; set; }
+        public int? EffortId { get; set; }
+        public int? PriorityId { get; set; }
         public string Username { get; set; }
         public int OrderId { get; set; }
         public bool BacklogItem { get; set; }

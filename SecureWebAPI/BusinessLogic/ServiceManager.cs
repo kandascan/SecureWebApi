@@ -276,5 +276,45 @@ namespace SecureWebAPI.BusinessLogic
 
             return response;
         }
+
+        public GetPrioritiesResponse GetPriorities(GetPrioritiesRequest request)
+        {
+            var response = new GetPrioritiesResponse();
+            try
+            {
+                var dbPriorites = _uow.Repository<PriorityEntity>().GetAll();
+                if(dbPriorites != null && dbPriorites.Count() > 0)
+                {
+                    response.Priorities = _mapper.Map<List<PriorityVM>>(dbPriorites);
+                    response.Success = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public GetEffortsResponse GetEfforts(GetEffortsRequest request)
+        {
+            var response = new GetEffortsResponse();
+            try
+            {
+                var dbEfforts = _uow.Repository<EffortEntity>().GetAll();
+                if (dbEfforts != null && dbEfforts.Count() > 0)
+                {
+                    response.Efforts = _mapper.Map<List<EffortVM>>(dbEfforts);
+                    response.Success = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
     }
 }

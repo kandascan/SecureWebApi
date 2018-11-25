@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SecureWebAPI.DataAccess.Entities;
 
 namespace SecureWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181125203947_AddPriorityAndEffort")]
+    partial class AddPriorityAndEffort
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,11 +223,11 @@ namespace SecureWebAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<int?>("EffortId");
+                    b.Property<string>("EffortId");
 
                     b.Property<int>("OrderId");
 
-                    b.Property<int?>("PriorityId");
+                    b.Property<string>("PriorityId");
 
                     b.Property<string>("TaskName");
 
