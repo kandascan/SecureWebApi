@@ -5,8 +5,7 @@ import '.././App.css'
 
 const SortableItem = SortableElement(({ index, value, onDeleteItem, id }) => <ItemComponent index={index} value={value} onDeleteItem={onDeleteItem} id={id} />);
 const SortableList = SortableContainer(({ items, onDeleteItem }) => {
-    return (
-
+    return (        
         <ul className="list-group">
             {items.map((value, index) => (
                 <SortableItem key={`item-${index}`} index={index} value={value.taskname} onDeleteItem={onDeleteItem} id={value.id} />
