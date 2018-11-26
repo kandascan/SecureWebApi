@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { getBacklogItems, orderBacklogItems, removeTask } from '../actions/backlogActions';
 import BacklogSortable from './BacklogSortable';
 import CreateTask from './CreateTask';
+import Spinner from '../CommonComponent/Spinner';
 
 class BacklogComponent extends Component {
     componentDidMount() {
@@ -38,7 +39,7 @@ class BacklogComponent extends Component {
                             <br />
                             <h5 className="centerText">There is no items on the backlog yet, create first Task!</h5>
                         </div>)}
-                        <div>{showSpinner ? (<div className="loader"></div>) : (null)}</div>
+                        <div>{showSpinner ? (<Spinner />) : (null)}</div>
                     </div>
                 </div>
             </div>
