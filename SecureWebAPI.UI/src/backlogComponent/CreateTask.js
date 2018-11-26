@@ -72,7 +72,7 @@ class CreateTask extends React.Component {
                             <div className="row">
                                 <div className="form-group col-md-12">
                                     <label>Description</label>
-                                    <input name="description" type="text" value={this.state.description} onChange={this.handleChange} className="form-control" />
+                                    <textarea rows="3" name="description" value={this.state.description} onChange={this.handleChange} className="form-control"></textarea>
                                 </div>
                             </div>
                             <div className="row">
