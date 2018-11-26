@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createTask, toggleModal } from '../actions/backlogActions';
 import { getEffortsAndPriorities } from '../actions/dictionaryActions';
-
+import $ from 'jquery';
+window.jQuery = window.$ = $;
 class CreateTask extends React.Component {
     constructor(props) {
         super(props);
@@ -101,8 +102,8 @@ class CreateTask extends React.Component {
                             </div>
                         </ModalBody>
                         <ModalFooter>
-                            <input type="submit" value="Submit" color="primary" className="btn btn-primary" />
                             <Button color="danger" onClick={this.toggle}>Cancel</Button>
+                            <input type="submit" value="Submit" color="primary" className="btn btn-primary" />
                         </ModalFooter>
                     </form>
                 </Modal>
