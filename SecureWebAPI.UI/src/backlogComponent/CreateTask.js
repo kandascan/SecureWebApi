@@ -33,7 +33,6 @@ class CreateTask extends React.Component {
             priorityId: +this.state.priority,
             username: this.state.username,
         }
-        console.log(newTask)
         this.props.createTask(newTask);
         this.setState({ taskname: '', description: '', effort: -1, priority: -1, username: '' });
     }
@@ -108,7 +107,6 @@ class CreateTask extends React.Component {
                     </form>
                 </Modal>
             </div>
-
         );
     }
 }

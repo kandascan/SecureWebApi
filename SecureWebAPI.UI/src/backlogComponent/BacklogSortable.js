@@ -11,7 +11,6 @@ const SortableList = SortableContainer(({ items, onDeleteItem }) => {
                 <SortableItem key={`item-${index}`} index={index} value={value.taskname} onDeleteItem={onDeleteItem} id={value.id} />
             ))}
         </ul>
-
     );
 });
 
@@ -32,7 +31,6 @@ class BacklogSortable extends Component {
             items={items.tasks}
             onSortEnd={this.onSortEnd}
             onDeleteItem={this.onDeleteItem} />;
-
     }
 }
 

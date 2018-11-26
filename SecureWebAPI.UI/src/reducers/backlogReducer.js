@@ -10,17 +10,16 @@ const initialState = {
 
 export default function (state = initialState, action) {
     switch (action.type) {
-        case SORTED_BACKLOG_ITEMS: 
+        case SORTED_BACKLOG_ITEMS:
             return {
                 ...state,
                 items: {
                     tasks: action.payload
-                } 
+                }
             }
         case BACKLOG_LOADING:
             return {
                 ...state,
-               
                 loading: true
             }
         case GET_BACKLOG_ITEMS:

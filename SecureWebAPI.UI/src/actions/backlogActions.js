@@ -65,18 +65,23 @@ export const orderBacklogItems = (sortedItems) => dispatch => {
         type: SORTED_BACKLOG_ITEMS,
         payload: sortedItems
     });
+    dispatch(toggleSpinner());
+
     axios.post("api/task/sortedbacklog", sortedItems)
         .then(res => {
             dispatch({
                 type: GET_BACKLOG_ITEMS,
                 payload: res.data
             });
+            dispatch(toggleSpinner());
         })
-        .catch(err =>
+        .catch(err => {
             dispatch({
                 type: GET_BACKLOG_ITEMS,
                 payload: {}
             })
+            dispatch(toggleSpinner());
+        }
         );
 };
 

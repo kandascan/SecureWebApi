@@ -22,11 +22,8 @@ class BacklogComponent extends Component {
     }
 
     render() {
-        const { items } = this.props.backlog;
-        console.log(items);
-        
+        const { items } = this.props.backlog;       
         const { showSpinner } = this.props.spinner;
-        console.log(showSpinner)
         return (
             <div className="landing landing-background-backlog">
                 <div className="dark-overlay landing-inner text-light">
