@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
-import NavBar from './NavBar';
-import Footer from './Footer';
+import NavBar from './CommonComponent/NavBar';
+import Footer from './CommonComponent/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 import setAuthToken from './utils/setAuthToken';
 import { setCurrentUser, logoutUser } from './actions/authActions';
 import { Provider } from 'react-redux';
 import store from './store';
-import LoginForm from './LoginForm';
-import RegisterForm from './RegisterForm';
-import Home from './Home';
-import Backlog from './backlogComponent/Backlog';
-import CurrentSprint from './CurrentSprint';
-import Profile from './Profile';
+import LoginForm from './AuthComponent/LoginForm';
+import RegisterForm from './AuthComponent/RegisterForm';
+import Home from './CommonComponent/Home';
+import Backlog from './BacklogComponent/Backlog';
+import CurrentSprint from './SprintComponent/CurrentSprint';
+import Profile from './ProfileComponent/Profile';
 import './App.css';
 
 if(localStorage.smToken) {

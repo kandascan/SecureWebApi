@@ -114,7 +114,14 @@ img {
   height: 120px;
   -webkit-animation: spin 2s linear infinite; /* Safari */
   animation: spin 2s linear infinite;
-  margin: 30px auto;
+  margin: 50px auto;
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 1060;
+  overflow: show; 
+  top: 10%;
+  bottom: 0;
 }
 
 /* Safari */

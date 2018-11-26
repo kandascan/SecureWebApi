@@ -1,17 +1,25 @@
-import { GET_BACKLOG_ITEMS, BACKLOG_LOADING, CLEAR_BACKLOG, TOGGLE_MODAL } from '../actions/types';
+import { GET_BACKLOG_ITEMS, BACKLOG_LOADING, CLEAR_BACKLOG, TOGGLE_MODAL, SORTED_BACKLOG_ITEMS } from '../actions/types';
 
 const initialState = {
-    items: null,
+    items: {
+        tasks: []
+    },
     loading: false,
     modal: false
 };
 
 export default function (state = initialState, action) {
     switch (action.type) {
+        case SORTED_BACKLOG_ITEMS:
+            return {
+                ...state,
+                items: {
+                    tasks: action.payload
+                }
+            }
         case BACKLOG_LOADING:
             return {
                 ...state,
-                items: [],
                 loading: true
             }
         case GET_BACKLOG_ITEMS:

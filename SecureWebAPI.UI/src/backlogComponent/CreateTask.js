@@ -33,7 +33,6 @@ class CreateTask extends React.Component {
             priorityId: +this.state.priority,
             username: this.state.username,
         }
-        console.log(newTask)
         this.props.createTask(newTask);
         this.setState({ taskname: '', description: '', effort: -1, priority: -1, username: '' });
     }
@@ -73,7 +72,7 @@ class CreateTask extends React.Component {
                             <div className="row">
                                 <div className="form-group col-md-12">
                                     <label>Description</label>
-                                    <input name="description" type="text" value={this.state.description} onChange={this.handleChange} className="form-control" />
+                                    <textarea rows="3" name="description" value={this.state.description} onChange={this.handleChange} className="form-control"></textarea>
                                 </div>
                             </div>
                             <div className="row">
@@ -108,7 +107,6 @@ class CreateTask extends React.Component {
                     </form>
                 </Modal>
             </div>
-
         );
     }
 }

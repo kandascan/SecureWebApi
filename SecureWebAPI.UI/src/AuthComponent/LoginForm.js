@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { loginUser } from './actions/authActions';
-import TextFieldGroup from './TextFieldGroup';
+import { loginUser } from '../actions/authActions';
+import TextFieldGroup from '../CommonComponent/TextFieldGroup';
 
 class LoginForm extends Component {
   constructor(props) {
