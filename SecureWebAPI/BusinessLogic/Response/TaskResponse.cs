@@ -9,6 +9,5 @@ namespace SecureWebAPI.BusinessLogic.Response
     public class TaskResponse : BaseResponse
     {
         public TaskVM Task { get; set; }
-        public List<TaskVM> Tasks { get; set; }
     }
 }

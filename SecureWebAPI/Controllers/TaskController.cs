@@ -46,6 +46,15 @@ namespace SecureWebAPI.Controllers
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 
+        [HttpGet]
+        [Route("gettaskbyid/{id}")]
+        public IActionResult GetTaskById(string id)
+        {
+            var request = new TaskRequest { TaskId =  Int32.Parse(id) };
+            var response = _service.GetTaskById(request);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
+        }
+
         [HttpDelete]
         public IActionResult RemoveTask(int id)
         {

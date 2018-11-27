@@ -165,20 +165,20 @@ namespace SecureWebAPI.BusinessLogic
             return response;
         }
 
-        public TaskResponse GetAllTasks(TaskRequest request)
+        public TaskResponse GetTaskById(TaskRequest request)
         {
             var response = new TaskResponse();
             try
             {
-                var tasks = _uow.Repository<TaskEntity>().GetOverview().OrderBy(t => t.OrderId);
-                if (tasks != null)
+                var task = _uow.Repository<TaskEntity>().GetOverview(x=> x.Id == request.TaskId).FirstOrDefault();
+                if (task != null)
                 {
-                    response.Tasks = _mapper.Map<List<TaskVM>>(tasks);
+                    response.Task = _mapper.Map<TaskVM>(task);
                     response.Success = true;
                 }
                 else
                 {
-                    response.Errors.Add("Get Tasks", "Cannot featch Tasks");
+                    response.Errors.Add("Get Task", "Cannot featch Task");
                 }
             }
             catch (Exception ex)
@@ -221,14 +221,15 @@ namespace SecureWebAPI.BusinessLogic
                 var ids = request.Items.Select(i => i.Id).ToArray();
                 var dbTasks = _uow.Repository<TaskEntity>().GetOverview(i => ids.Contains(i.Id)).OrderBy(o => ids.IndexOf(o.Id)).ToList();
 
-                _uow.Save();
-
                 if (dbTasks != null && dbTasks.Count > 0)
                 {
                     for (int i = 0; i < ids.Length; i++)
                     {
                         dbTasks[i].OrderId = i;
                     }
+
+                    _uow.Save();
+
                     response.Tasks = _mapper.Map<List<TaskVM>>(dbTasks);
                     response.Success = true;
                 }

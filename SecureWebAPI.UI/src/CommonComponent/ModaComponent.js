@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { toggleModal } from '../actions/backlogActions';
 
 class ModaComponent extends Component {
   render() {

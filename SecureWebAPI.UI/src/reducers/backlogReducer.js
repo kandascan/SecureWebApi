@@ -1,15 +1,19 @@
-import { GET_BACKLOG_ITEMS, BACKLOG_LOADING, CLEAR_BACKLOG, TOGGLE_MODAL, SORTED_BACKLOG_ITEMS } from '../actions/types';
+import { GET_BACKLOG_ITEMS, CLEAR_BACKLOG, SORTED_BACKLOG_ITEMS, GET_TASK_BY_ID } from '../actions/types';
 
 const initialState = {
     items: {
         tasks: []
     },
-    loading: false,
-    modal: false
+    task: {}
 };
 
 export default function (state = initialState, action) {
     switch (action.type) {
+        case GET_TASK_BY_ID:
+            return {
+                ...state,
+                task: action.payload
+            }
         case SORTED_BACKLOG_ITEMS:
             return {
                 ...state,
@@ -17,26 +21,15 @@ export default function (state = initialState, action) {
                     tasks: action.payload
                 }
             }
-        case BACKLOG_LOADING:
-            return {
-                ...state,
-                loading: true
-            }
         case GET_BACKLOG_ITEMS:
             return {
                 ...state,
-                items: action.payload,
-                loading: false
+                items: action.payload
             };
         case CLEAR_BACKLOG:
             return {
                 ...state,
                 items: null
-            }
-        case TOGGLE_MODAL:
-            return {
-                ...state,
-                modal: !state.modal
             }
         default:
             return state;
