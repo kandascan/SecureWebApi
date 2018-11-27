@@ -3,7 +3,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createTask, toggleModal } from '../actions/backlogActions';
-import { getEffortsAndPriorities } from '../actions/dictionaryActions';
+import { getEfforts, getPriorities } from '../actions/dictionaryActions';
 import $ from 'jquery';
 window.jQuery = window.$ = $;
 class CreateTask extends React.Component {
@@ -15,8 +15,9 @@ class CreateTask extends React.Component {
     toggle = () => {
         this.props.toggleModal();
         const { priorities, efforts } = this.props.dics;
-        if(priorities === null && efforts === null){
-            this.props.getEffortsAndPriorities();
+        if (priorities === null && efforts === null) {
+            this.props.getEfforts();
+            this.props.getPriorities();
         }
     }
 
@@ -40,20 +41,17 @@ class CreateTask extends React.Component {
     render() {
         const { modal } = this.props.backlog;
         const { priorities, efforts } = this.props.dics;
-        let ddlPriorities = null;
-        if(priorities !== null){
-            ddlPriorities = priorities.priorities.map((priority) => 
-            <option key={priority.priorityId} value={priority.priorityId}>{priority.priorityName}</option>
+        let ddlPriorities, ddlEfforts = null;
+        if (priorities != null && efforts != null) {
+            ddlPriorities = priorities.priorities.map((priority) =>
+                <option key={priority.priorityId} value={priority.priorityId}>{priority.priorityName}</option>
+            );
+            ddlEfforts = efforts.efforts.map((effort) =>
+                <option key={effort.effortId} value={effort.effortId}>{effort.effortName}</option>
             );
         }
 
-        let ddlEfforts = null;
-        if(efforts !== null){
-            ddlEfforts = efforts.efforts.map((effort) => 
-            <option key={effort.effortId} value={effort.effortId}>{effort.effortName}</option>
-            );
-        }
-       
+
         return (
             <div >
                 <div className="container">
@@ -106,7 +104,7 @@ class CreateTask extends React.Component {
                         </ModalFooter>
                     </form>
                 </Modal>
-            </div>
+            </div >
         );
     }
 }
@@ -114,7 +112,8 @@ class CreateTask extends React.Component {
 CreateTask.propTypes = {
     createTask: PropTypes.func.isRequired,
     toggleModal: PropTypes.func.isRequired,
-    getEffortsAndPriorities: PropTypes.func.isRequired
+    getEfforts: PropTypes.func.isRequired,
+    getPriorities: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -122,4 +121,4 @@ const mapStateToProps = (state) => ({
     dics: state.dics
 });
 
-export default connect(mapStateToProps, { createTask, toggleModal, getEffortsAndPriorities })(CreateTask);
+export default connect(mapStateToProps, { createTask, toggleModal, getEfforts, getPriorities })(CreateTask);
