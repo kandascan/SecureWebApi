@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getBacklogItems, orderBacklogItems, removeTask } from '../actions/backlogActions';
+import { getBacklogItems, orderBacklogItems, removeTask, getTaskById } from '../actions/backlogActions';
 import BacklogSortable from './BacklogSortable';
 import CreateTask from './CreateTask';
+import EditTask from './EditTask';
 import Spinner from '../CommonComponent/Spinner';
 
 class BacklogComponent extends Component {
@@ -22,6 +23,10 @@ class BacklogComponent extends Component {
         this.props.removeTask(id);
     }
 
+    getTaskById = (id) => {
+        this.props.getTaskById(id);
+    }
+
     render() {
         const { items } = this.props.backlog;       
         const { showSpinner } = this.props.spinner;
@@ -29,12 +34,14 @@ class BacklogComponent extends Component {
             <div className="landing landing-background-backlog">
                 <div className="dark-overlay landing-inner text-light">
                     <CreateTask />
+                    <EditTask onEditTask={this.getTaskById} />
                     <h1 className="centerText" style={{ marginTop: "-50px" }}>Main Backlog</h1>
                     <div className="container">{items.tasks != null  ?
                         (<BacklogSortable
                             items={items}
                             sortBacklogItems={this.sortBacklogItems}
                             removeBacklogTask={this.removeBacklogTask}
+                            getTaskById={this.getTaskById}
                         />) : (<div>
                             <br />
                             <h5 className="centerText">There is no items on the backlog yet, create first Task!</h5>
@@ -52,7 +59,8 @@ BacklogComponent.propTypes = {
     backlog: PropTypes.object.isRequired,
     spinner: PropTypes.object.isRequired,
     getBacklogItems: PropTypes.func.isRequired,
-    orderBacklogItems: PropTypes.func.isRequired
+    orderBacklogItems: PropTypes.func.isRequired, 
+    getTaskById: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -61,4 +69,4 @@ const mapStateToProps = (state) => ({
     spinner: state.spinner
 });
 
-export default connect(mapStateToProps, { getBacklogItems, orderBacklogItems, removeTask })(BacklogComponent);
+export default connect(mapStateToProps, { getBacklogItems, orderBacklogItems, removeTask, getTaskById })(BacklogComponent);

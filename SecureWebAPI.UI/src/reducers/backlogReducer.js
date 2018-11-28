@@ -4,7 +4,11 @@ const initialState = {
     items: {
         tasks: []
     },
-    task: {}
+    task: {
+        task: {
+            taskname: '', description: '', effort: -1, priority: -1, username: ''
+        }
+    }
 };
 
 export default function (state = initialState, action) {

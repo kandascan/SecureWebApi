@@ -87,7 +87,7 @@ class CreateTask extends React.Component {
                 <div className="row">
                     <div className="form-group col-md-12">
                         <label>Username:</label>
-                        <input name="username" type="text" value={this.username} onChange={this.handleChange} className="form-control" />
+                        <input name="username" type="text" value={this.state.username} onChange={this.handleChange} className="form-control" />
                     </div>
                 </div>
         </form>);

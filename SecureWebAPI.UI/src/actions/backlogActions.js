@@ -8,7 +8,7 @@ export const getTaskById = (id) => dispatch => {
     axios.get(`api/task/gettaskbyid/${id}`)
         .then(res => {
             dispatch({
-                GET_TASK_BY_ID,
+                type: GET_TASK_BY_ID,
                 payload: res.data
             });
             dispatch({
@@ -19,7 +19,6 @@ export const getTaskById = (id) => dispatch => {
             });
         })
         .catch(err => {
-            console.log(err)
             dispatch({
                 type: GET_TASK_BY_ID,
                 payload: {}
