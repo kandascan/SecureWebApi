@@ -55,7 +55,7 @@ class EditTask extends React.Component {
             orderId: this.state.orderId
         }
         this.props.updateTask(task);
-        this.setState({ taskId: 0, orderId: 0, taskname: '', description: '', effort: -1, priority: -1, username: '', toggleEdit: true });
+        this.setState({ toggleEdit: true });
     }
 
     render() {
