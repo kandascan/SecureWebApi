@@ -17,9 +17,9 @@ class NavBar extends Component {
     const authLinks = (
       <div className="collapse navbar-collapse" id="mobile-nav">
         <ul className="navbar-nav mr-auto">
-          {/* <li className="nav-item">
+          <li className="nav-item">
             <NavLink className="nav-link" to="/backlog">Backlog</NavLink>
-          </li> */}
+          </li>
           <li className="nav-item">
             <NavLink className="nav-link" to="/currentSprint">Current Sprint</NavLink>
           </li>

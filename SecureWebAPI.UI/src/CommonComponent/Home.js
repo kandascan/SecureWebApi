@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 class Home extends Component {
   componentDidMount() {
     if (this.props.auth.isAuthenticated) {
-      this.props.history.push('/backlog');
+      this.props.history.push('/');
     }
   }
   render() {
@@ -16,12 +16,16 @@ class Home extends Component {
           <div className="container">
             <div className="row">
               <div className="col-md-12 text-center">
-                <h1 className="display-3 mb-4">Scrum Manager
+                {!this.props.auth.isAuthenticated ? (<div><h1 className="display-3 mb-4">Scrum Manager
             </h1>
-                <p className="lead">Great and free tool for developers to smart manage their work</p>
-                <hr />
-                <Link to="/register" className="btn btn-lg btn-info mr-2">Sign Up</Link>
-                <Link to="/login" className="btn btn-lg btn-light">Login</Link>
+                  <p className="lead">Great and free tool for developers to smart manage their work</p>
+                  <hr /><Link to="/register" className="btn btn-lg btn-info mr-2">Sign Up</Link>
+                  <Link to="/login" className="btn btn-lg btn-light">Login</Link></div>) : (
+                    <div className="container">
+                      <h1 className="display-4">You are login into Scrum Manager </h1>
+                      <p className="lead">Start your work from review current Sprint or if you are here first time go to backlog and create first task.</p>
+                    </div>
+                  )}
               </div>
             </div>
           </div>
