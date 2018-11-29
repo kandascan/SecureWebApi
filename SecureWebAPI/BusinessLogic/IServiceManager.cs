@@ -11,7 +11,7 @@ namespace SecureWebAPI.BusinessLogic
         Task<UserResponse> LoginUser(UserRequest request);
 
         Task<UserResponse> LogOutUser(UserRequest request);
-              
+
         TaskResponse CreateTask(TaskRequest request);
 
         TaskResponse GetTaskById(TaskRequest request);
@@ -25,5 +25,7 @@ namespace SecureWebAPI.BusinessLogic
         GetPrioritiesResponse GetPriorities(GetPrioritiesRequest request);
 
         GetEffortsResponse GetEfforts(GetEffortsRequest request);
+
+        TaskResponse UpdateTask(TaskRequest request);
     }
 }

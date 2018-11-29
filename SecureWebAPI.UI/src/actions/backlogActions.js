@@ -56,6 +56,32 @@ export const getBacklogItems = () => dispatch => {
         );
 }
 
+export const updateTask = (task) => dispatch => {
+    dispatch({
+        type: TOGGLE_SPINNER
+    });
+    axios.put("api/task", task)
+        .then(res => {
+            dispatch({
+                type: SHOW_EDIT_TASK_MODAL
+            });
+            dispatch({
+                type: TOGGLE_SPINNER
+            });
+            dispatch(getBacklogItems());
+        })
+        .catch(err => {
+            dispatch({
+                type: TOGGLE_SPINNER
+            });
+            dispatch({
+                type: GET_ERRORS,
+                payload: err.response.data
+            })
+        }
+        );
+}
+
 export const createTask = (newTask) => dispatch => {
     dispatch({
         type: TOGGLE_SPINNER

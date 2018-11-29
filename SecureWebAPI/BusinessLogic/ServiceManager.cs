@@ -36,7 +36,7 @@ namespace SecureWebAPI.BusinessLogic
             _signInManager = signInManager;
             _configuration = configuration;
             _logger = logger;
-        }      
+        }
 
         public async Task<UserResponse> RegisterUser(UserRequest request)
         {
@@ -136,7 +136,7 @@ namespace SecureWebAPI.BusinessLogic
 
             return response;
         }
-       
+
         public TaskResponse CreateTask(TaskRequest request)
         {
             var response = new TaskResponse();
@@ -170,7 +170,7 @@ namespace SecureWebAPI.BusinessLogic
             var response = new TaskResponse();
             try
             {
-                var task = _uow.Repository<TaskEntity>().GetOverview(x=> x.Id == request.TaskId).FirstOrDefault();
+                var task = _uow.Repository<TaskEntity>().GetOverview(x => x.Id == request.TaskId).FirstOrDefault();
                 if (task != null)
                 {
                     response.Task = _mapper.Map<TaskVM>(task);
@@ -284,7 +284,7 @@ namespace SecureWebAPI.BusinessLogic
             try
             {
                 var dbPriorites = _uow.Repository<PriorityEntity>().GetAll();
-                if(dbPriorites != null && dbPriorites.Count() > 0)
+                if (dbPriorites != null && dbPriorites.Count() > 0)
                 {
                     response.Priorities = _mapper.Map<List<PriorityVM>>(dbPriorites);
                     response.Success = true;
@@ -315,6 +315,34 @@ namespace SecureWebAPI.BusinessLogic
                 _logger.LogError(ex.Message);
                 response.Errors.Add("System Exception", ex.Message);
             }
+            return response;
+        }
+
+        public TaskResponse UpdateTask(TaskRequest request)
+        {
+            var response = new TaskResponse();
+            try
+            {
+                var editedTask = _mapper.Map<TaskEntity>(request.Task);
+                editedTask.BacklogItem = true;
+                var task = _uow.Repository<TaskEntity>().Update(editedTask);
+                _uow.Save();
+                if (task != null)
+                {
+                    response.Task = _mapper.Map<TaskVM>(task);
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Errors.Add("Update error", "Cannot update task");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+
             return response;
         }
     }

@@ -10,6 +10,7 @@ class ModaComponent extends Component {
                 {this.props.content}
             </ModalBody>
             <ModalFooter>
+                {this.props.onEditSwitch}
                 <Button onClick={this.props.onCancelClick} color="danger">Cancel</Button>
                 <Button onClick={this.props.onSubmitClick} color="primary">Submit</Button>
             </ModalFooter>

@@ -50,7 +50,7 @@ namespace SecureWebAPI.Controllers
         [Route("gettaskbyid/{id}")]
         public IActionResult GetTaskById(string id)
         {
-            var request = new TaskRequest { TaskId =  Int32.Parse(id) };
+            var request = new TaskRequest { TaskId = Int32.Parse(id) };
             var response = _service.GetTaskById(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
@@ -60,6 +60,15 @@ namespace SecureWebAPI.Controllers
         {
             var request = new RemoveTaskRequest { Id = id };
             var response = _service.RemoveTask(request);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
+        }
+
+        [HttpPut]
+        public IActionResult Put([FromBody] TaskVM taskVm)
+        {
+            //taskVm.UserId = UserId;
+            var request = new TaskRequest { Task = taskVm };
+            var response = _service.UpdateTask(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 

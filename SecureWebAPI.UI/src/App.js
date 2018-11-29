@@ -14,6 +14,7 @@ import Backlog from './BacklogComponent/Backlog';
 import CurrentSprint from './SprintComponent/CurrentSprint';
 import Profile from './ProfileComponent/Profile';
 import './App.css';
+import '../node_modules/react-bootstrap-toggle/dist/react-bootstrap2-toggle';
 
 if(localStorage.smToken) {
   setAuthToken(localStorage.smToken);
