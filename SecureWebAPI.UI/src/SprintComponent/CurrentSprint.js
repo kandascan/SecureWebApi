@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import SortableComponent from './Sortable';
+import $ from 'jquery';
+window.jQuery = window.$ = $;
 
 class CurrentSprint extends Component {
-    componentDidMount() {
-        if (!this.props.auth.isAuthenticated) {
-            this.props.history.push('/');
-        }
-    }
     render() {
         return (
             <div className="landing landing-background-currentSprint">
@@ -16,6 +14,7 @@ class CurrentSprint extends Component {
                         <div className="row">
                             <div className="col-md-12 text-center">
                                 <h1>Here will be board with current task for users</h1>
+                                <SortableComponent />
                             </div>
                         </div>
                     </div>
