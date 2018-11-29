@@ -78,7 +78,7 @@ namespace SecureWebAPI.BusinessLogic
             catch (Exception ex)
             {
                 response.Errors.Add("System Exception", ex.Message);
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.Message + ex.StackTrace);
             }
 
             return response;
@@ -113,7 +113,7 @@ namespace SecureWebAPI.BusinessLogic
             catch (Exception ex)
             {
                 response.Errors.Add("System Exception", ex.Message);
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.Message + ex.StackTrace);
             }
 
             return response;
@@ -131,7 +131,7 @@ namespace SecureWebAPI.BusinessLogic
             catch (Exception ex)
             {
                 response.Errors.Add("System Exception", ex.Message);
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.Message + ex.StackTrace);
             }
 
             return response;
@@ -158,7 +158,7 @@ namespace SecureWebAPI.BusinessLogic
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.Message + ex.StackTrace);
                 response.Errors.Add("System Exception", ex.Message);
             }
 
@@ -183,7 +183,7 @@ namespace SecureWebAPI.BusinessLogic
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.Message + ex.StackTrace);
                 response.Errors.Add("System Exception", ex.Message);
             }
             return response;
@@ -207,7 +207,7 @@ namespace SecureWebAPI.BusinessLogic
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.Message + ex.StackTrace);
                 response.Errors.Add("System Exception", ex.Message);
             }
             return response;
@@ -240,7 +240,7 @@ namespace SecureWebAPI.BusinessLogic
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.Message + ex.StackTrace);
                 response.Errors.Add("System Exception", ex.Message);
             }
             return response;
@@ -271,7 +271,7 @@ namespace SecureWebAPI.BusinessLogic
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.Message + ex.StackTrace);
                 response.Errors.Add("System Exception", ex.Message);
             }
 
@@ -292,7 +292,7 @@ namespace SecureWebAPI.BusinessLogic
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.Message + ex.StackTrace);
                 response.Errors.Add("System Exception", ex.Message);
             }
             return response;
@@ -312,7 +312,7 @@ namespace SecureWebAPI.BusinessLogic
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.Message + ex.StackTrace);
                 response.Errors.Add("System Exception", ex.Message);
             }
             return response;
@@ -339,7 +339,7 @@ namespace SecureWebAPI.BusinessLogic
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.Message + ex.StackTrace);
                 response.Errors.Add("System Exception", ex.Message);
             }
 
