@@ -35,6 +35,11 @@ class EditTask extends React.Component {
         }
     }
 
+    onToggleCancel = () => {
+        this.props.toggleEditTaskModal();
+        this.setState({ toggleEdit: true });
+    }
+
     onToggleEdit = () => {
         this.setState({ toggleEdit: !this.state.toggleEdit });
       }
@@ -119,7 +124,7 @@ class EditTask extends React.Component {
                     show={showEditTaskModal}
                     header="Task details"
                     content={content}
-                    onCancelClick={this.props.toggleEditTaskModal}
+                    onCancelClick={this.onToggleCancel}
                     onSubmitClick={this.handleSubmit}
                     onEditSwitch={toggleEdit}
                 />

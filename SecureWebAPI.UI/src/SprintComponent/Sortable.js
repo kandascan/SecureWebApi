@@ -59,7 +59,7 @@ const getParts = (countParts, countLessons) => {
         const lessons = [];
 
         for (let j = 0; j < countLessons; j++) {
-            lessons.push('Lesson-' + (i + 1) + '-' + (j + 1));
+            lessons.push('Task-' + (i + 1) + '-' + (j + 1));
         }
         parts.push({
             name: 'Part',
