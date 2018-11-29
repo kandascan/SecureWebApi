@@ -12,7 +12,7 @@ window.jQuery = window.$ = $;
 class EditTask extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { taskId: 0, taskname: '', description: '', effort: -1, priority: -1, username: '', toggleEdit: true };
+        this.state = { taskId: 0, orderId: 0, taskname: '', description: '', effort: -1, priority: -1, username: '', toggleEdit: true };
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -22,6 +22,7 @@ class EditTask extends React.Component {
             description: nextProps.backlog.task.task.description, 
             effort: nextProps.backlog.task.task.effortId, 
             priority: nextProps.backlog.task.task.priorityId, 
+            orderId: nextProps.backlog.task.task.orderId,
             username: nextProps.backlog.task.task.username
         })
     }
@@ -51,9 +52,10 @@ class EditTask extends React.Component {
             effortId: +this.state.effort,
             priorityId: +this.state.priority,
             username: this.state.username,
+            orderId: this.state.orderId
         }
         this.props.updateTask(task);
-        this.setState({ taskId: 0, taskname: '', description: '', effort: -1, priority: -1, username: '', toggleEdit: true });
+        this.setState({ taskId: 0, orderId: 0, taskname: '', description: '', effort: -1, priority: -1, username: '', toggleEdit: true });
     }
 
     render() {
