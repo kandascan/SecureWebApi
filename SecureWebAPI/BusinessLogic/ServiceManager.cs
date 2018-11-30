@@ -140,6 +140,11 @@ namespace SecureWebAPI.BusinessLogic
         public TaskResponse CreateTask(TaskRequest request)
         {
             var response = new TaskResponse();
+            response.Errors = Validator.CreateTask(request.Task);
+            if (response.Errors.Count() > 0)
+            {
+                return response;
+            }
             try
             {
                 var newTask = _mapper.Map<TaskEntity>(request.Task);

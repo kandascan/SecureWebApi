@@ -1,4 +1,4 @@
-import { SHOW_CREATE_TASK_MODAL, SHOW_EDIT_TASK_MODAL} from './types';
+import { SHOW_CREATE_TASK_MODAL, SHOW_EDIT_TASK_MODAL, GET_ERRORS} from './types';
 
 export const toggleCreateTaskModal = () => {
     return {
@@ -9,5 +9,12 @@ export const toggleCreateTaskModal = () => {
 export const toggleEditTaskModal = () => {
     return {
         type: SHOW_EDIT_TASK_MODAL
+    }
+}
+
+export const clearErrorsModal = () => {
+    return {
+        type: GET_ERRORS,
+        payload: {}
     }
 }

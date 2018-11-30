@@ -8,10 +8,37 @@ namespace SecureWebAPI.Helpers
 {
     public class Validator
     {
+        public static Dictionary<string, string> CreateTask(TaskVM task)
+        {
+            var response = new Dictionary<string, string>();
+
+            if (string.IsNullOrEmpty(task.Taskname))
+            {
+                response.Add("taskname", "Task name cannot be null");
+            }
+
+            if (string.IsNullOrEmpty(task.Description))
+            {
+                response.Add("description", "Description cannot be null");
+            }
+
+            if (task.EffortId < 1)
+            {
+                response.Add("effort", "You need to select effort");
+            }
+
+            if (task.PriorityId < 1)
+            {
+                response.Add("priority", "You need to select priority");
+            }
+
+            return response;
+        }
+
         public static Dictionary<string, string> Register(UserVM user)
         {
             var response = Validator.Login(user);
-            
+
             if (string.IsNullOrEmpty(user.Email))
             {
                 response.Add("email", "Email cannot be null");
@@ -31,7 +58,7 @@ namespace SecureWebAPI.Helpers
             if (string.IsNullOrEmpty(user.Password))
             {
                 response.Add("password", "Password cannot be null");
-            }            
+            }
 
             return response;
         }

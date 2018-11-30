@@ -95,6 +95,10 @@ export const createTask = (newTask) => dispatch => {
                 type: TOGGLE_SPINNER
             });
             dispatch(getBacklogItems());
+            dispatch({
+                type: GET_ERRORS,
+                payload: {}
+            })
         })
         .catch(err => {
             dispatch({
