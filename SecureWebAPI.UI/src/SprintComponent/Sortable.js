@@ -5,10 +5,32 @@ import { sortableContainer, sortableElement, arrayMove, DragLayer } from '../rea
 const dragLayer = new DragLayer();
 
 const SortableItem = sortableElement((props) => {
-    return (<li className="list-group-item list-group-item-light" onClick={props.onSelect}>
+    return (<li style={{textAlign: "left"}} className="list-group-item list-group-item-light" onClick={props.onSelect}>
             {/* {props.item.ind}  */}
-            {props.item.val}
+            {/* {props.item.val} */}
+            <h6>{props.item.val} </h6>
+            <div style={{textAlign: "right"}}>
+            <span  className="badge badge-light">Username</span></div>
+            <div style={{textAlign: "left"}}>
+            <div><span style={{float: "right"}} className="badge badge-light">Effort: 3</span></div>
+            <a href="#" className="badge badge-danger">DEL</a>
+            <a href="#" className="badge badge-light">More</a>
+            </div>
         </li>);
+//     return (<div className="card" style={{width: "18rem", background: "light-blue"}}>
+//     <div className="card-body">
+//       <h6 className="card-title">{props.item.val}</h6>
+//       <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+//       <div className="btn-group btn-group-toggle" data-toggle="buttons">
+//   <label className="btn btn-primary btn-sm">
+//      De
+//   </label>
+//   <label className="btn btn-danger btn-sm">
+//      Rm
+//   </label>
+// </div>
+//     </div>
+//   </div>)
 });
 
 const SortableListItems = sortableContainer(({ items }) =>
@@ -33,7 +55,7 @@ const SortablePart = sortableElement(props =>
             distance={3}
             helperClass={'selected'}
             isMultiple={true}
-            helperCollision={{ top: 0, bottom: 0 }}
+            helperCollision={{ top: 1, bottom: 1 }}
         />
     </div>
 );
@@ -74,7 +96,7 @@ export default class SortableComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            parts: getParts(3, 5),
+            parts: getParts(4, 2),
         };
     }
     onSortEnd = ({ oldIndex, newIndex }) => {

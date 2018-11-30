@@ -13,7 +13,22 @@ class CurrentSprint extends Component {
                     <div className="container">
                         <div className="row">
                             <div className="col-md-12 text-center">
-                                <h1>Here will be board with current task for users</h1>
+                                <div className="container">
+                                    <div className="row">
+                                        <div className="col-sm ">
+                                        <h6>ToDO:</h6>
+                                        </div>
+                                        <div className="col-sm">
+                                        <h6>In Progress:</h6>
+                                        </div>
+                                        <div className="col-sm">
+                                        <h6>QA</h6>
+                                        </div>
+                                        <div className="col-sm">
+                                        <h6>Done:</h6>
+                                        </div>
+                                    </div>
+                                </div>
                                 <SortableComponent />
                             </div>
                         </div>

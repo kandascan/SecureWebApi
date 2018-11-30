@@ -201,3 +201,6 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+.card{
+  background-color: rgba(97, 137, 152, 0.85);
+}
