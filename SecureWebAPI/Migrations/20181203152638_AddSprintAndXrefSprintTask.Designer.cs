@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SecureWebAPI.DataAccess.Entities;
 
 namespace SecureWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181203152638_AddSprintAndXrefSprintTask")]
+    partial class AddSprintAndXrefSprintTask
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,21 +226,6 @@ namespace SecureWebAPI.Migrations
                     b.ToTable("Priority");
                 });
 
-            modelBuilder.Entity("SecureWebAPI.DataAccess.Entities.RoleEntity", b =>
-                {
-                    b.Property<int>("RoleId");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("RoleName");
-
-                    b.HasKey("RoleId");
-
-                    b.ToTable("Role");
-                });
-
             modelBuilder.Entity("SecureWebAPI.DataAccess.Entities.SprintEntity", b =>
                 {
                     b.Property<int>("SprintId")
@@ -337,8 +324,6 @@ namespace SecureWebAPI.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int?>("RoleId");
 
                     b.Property<int>("TeamId");
 

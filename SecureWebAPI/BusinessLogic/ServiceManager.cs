@@ -350,5 +350,34 @@ namespace SecureWebAPI.BusinessLogic
 
             return response;
         }
+
+        public TeamResponse CreateTeam(TeamRequest request)
+        {
+            var response = new TeamResponse();
+            response.Errors = Validator.CreateTeam(request.Team);
+            if (response.Errors.Count() > 0)
+            {
+                return response;
+            }
+            try
+            {
+                var newTeam = _mapper.Map<TeamEntity>(request.Team);
+                _uow.Repository<TeamEntity>().Add(newTeam);
+                _uow.Save();
+
+                var newXrefTeamUser = new XRefTeamUserEntity { TeamId = newTeam.TeamId, UserId = request.UserId, RoleId = (int)Role.SCRUM_MASTER };
+                _uow.Repository<XRefTeamUserEntity>().Add(newXrefTeamUser);
+                _uow.Save();
+
+                response.Team = _mapper.Map<TeamVM>(newTeam);
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
     }
 }

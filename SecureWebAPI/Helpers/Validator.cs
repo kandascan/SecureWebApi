@@ -62,5 +62,17 @@ namespace SecureWebAPI.Helpers
 
             return response;
         }
+
+        internal static Dictionary<string, string> CreateTeam(TeamVM team)
+        {
+            var response = new Dictionary<string, string>();
+
+            if (string.IsNullOrEmpty(team.TeamName))
+            {
+                response.Add("teamname", "Team name cannot be null");
+            }
+
+            return response;
+        }
     }
 }

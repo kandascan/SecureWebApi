@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SecureWebAPI.DataAccess.Entities;
 
 namespace SecureWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181203150805_AddTeamsAndBacklog")]
+    partial class AddTeamsAndBacklog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,44 +226,6 @@ namespace SecureWebAPI.Migrations
                     b.ToTable("Priority");
                 });
 
-            modelBuilder.Entity("SecureWebAPI.DataAccess.Entities.RoleEntity", b =>
-                {
-                    b.Property<int>("RoleId");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("RoleName");
-
-                    b.HasKey("RoleId");
-
-                    b.ToTable("Role");
-                });
-
-            modelBuilder.Entity("SecureWebAPI.DataAccess.Entities.SprintEntity", b =>
-                {
-                    b.Property<int>("SprintId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<DateTime?>("EndDate");
-
-                    b.Property<DateTime>("StartDate")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int>("TeamId");
-
-                    b.HasKey("SprintId");
-
-                    b.ToTable("Sprint");
-                });
-
             modelBuilder.Entity("SecureWebAPI.DataAccess.Entities.TaskEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -307,46 +271,6 @@ namespace SecureWebAPI.Migrations
                     b.HasKey("TeamId");
 
                     b.ToTable("Team");
-                });
-
-            modelBuilder.Entity("SecureWebAPI.DataAccess.Entities.XRefSprintTaskEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int>("SprintId");
-
-                    b.Property<int>("TaskId");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("XRefSprintTask");
-                });
-
-            modelBuilder.Entity("SecureWebAPI.DataAccess.Entities.XRefTeamUserEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int?>("RoleId");
-
-                    b.Property<int>("TeamId");
-
-                    b.Property<string>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("XRefTeamUser");
                 });
 
             modelBuilder.Entity("SecureWebAPI.DataAccess.Entities.UserEntity", b =>
