@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import Team from '../TeamComponent/Team';
-import Spinner from '../CommonComponent/Spinner';
 
 
 class Home extends Component {
@@ -27,6 +26,7 @@ class Home extends Component {
                     <div className="container">
                       <h1 className="display-4">You are login into Scrum Manager </h1>
                       <p className="lead">Start your work from review current Sprint or if you are here first time go to backlog and create first task.</p>
+                      <br />  
                       <Team />
                     </div>
                   )}

@@ -7,6 +7,7 @@ using LoggerService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
+using SecureWebAPI.BusinessLogic.Model;
 using SecureWebAPI.BusinessLogic.Request;
 using SecureWebAPI.BusinessLogic.Response;
 using SecureWebAPI.DataAccess.Entities;
@@ -371,6 +372,42 @@ namespace SecureWebAPI.BusinessLogic
 
                 response.Team = _mapper.Map<TeamVM>(newTeam);
                 response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public TeamResponse GetUserTeams(TeamRequest request)
+        {
+            var response = new TeamResponse();
+            try
+            {
+                var teams = _uow.Repository<TeamEntity>().GetOverview();
+                var xrefTeamsUsers = _uow.Repository<XRefTeamUserEntity>().GetOverview();
+                var userRoles = _uow.Repository<RoleEntity>().GetOverview();
+                var userTeams = (from ut in xrefTeamsUsers
+                                 join t in teams
+                                 on ut.TeamId equals t.TeamId
+                                 join r in userRoles
+                                 on ut.RoleId equals r.RoleId
+                                 where ut.UserId == request.UserId
+                                 select new UserTeams
+                                 {
+                                     TeamId = t.TeamId,
+                                     TeamName = t.TeamName,
+                                     UserRole = r.RoleName,
+                                     ScrumMasterUser = r.RoleId == (int)Role.SCRUM_MASTER ? true : false
+                                 }).ToList();
+
+                if (userTeams != null && userTeams.Count() > 0)
+                {
+                    response.UserTeams = userTeams;
+                    response.Success = true;
+                }
             }
             catch (Exception ex)
             {

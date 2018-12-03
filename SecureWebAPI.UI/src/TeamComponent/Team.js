@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ModalComponent from '../CommonComponent/ModaComponent';
 import { toggleCreateTeamModal, clearErrorsModal } from '../actions/modalActions';
-import { createTeam } from '../actions/teamActions';
+import { createTeam, getUserTeams } from '../actions/teamActions';
 import TextFieldGroup from '../CommonComponent/TextFieldGroup';
 import Spinner from '../CommonComponent/Spinner';
 import classnames from 'classnames';
@@ -13,6 +13,10 @@ class Team extends Component {
     constructor(props) {
         super(props);
         this.state = { teamname: '', errors: {} };
+    }
+
+    componentDidMount = () => {
+        this.props.getUserTeams();
     }
 
     toggle = () => {
@@ -40,43 +44,52 @@ class Team extends Component {
 
     render() {
         const { showCreateTeamModal } = this.props.modal;
-        const { teams } = this.props.team;
+        const { userteams, areteamsloaded } = this.props.team;
+        console.log(areteamsloaded)
         const { errors } = this.props;
         const { showSpinner } = this.props.spinner;
 
-        const userTeams =  teams.map((team) => (
-            <Link 
-                to="#" 
-                key={team.id} 
+        const userTeams = userteams.length === 0 ? (
+            <div>{ areteamsloaded ?  (<div className="jumbotron homeColor">
+            <h4>You have not assigned to any teams, or you haven't any own teams, create first team now!</h4>
+            </div>)       : (null)      
+            }</div>
+        ) : (userteams.map((team) => (
+            <Link
+                to="#"
+                key={team.teamId}
                 className={classnames("list-group-item list-group-item-action list-group-item-light", {
                     'active': team.scrumMasterUser
                 })}>
-                {team.teamname}
+                {team.teamName}
             </Link>
-        ));
+        ))) ;
 
         const modalContent = (
             <form onSubmit={this.handleSubmit}>
-            <div className="row">
-            <div className="form-group col-md-12">
-                <label>Team name:</label>
-                <TextFieldGroup
-                    type="text"
-                    name="teamname"
-                    onChange={this.handleChange}
-                    value={this.state.teamname}
-                    placeholder=""
-                    error={errors.teamname}
-                />
-            </div>
-        </div>
-        </form>
+                <div className="row">
+                    <div className="form-group col-md-12">
+                        <label>Team name:</label>
+                        <TextFieldGroup
+                            type="text"
+                            name="teamname"
+                            onChange={this.handleChange}
+                            value={this.state.teamname}
+                            placeholder=""
+                            error={errors.teamname}
+                        />
+                    </div>
+                </div>
+            </form>
         );
 
         return (
             <div className="row">
+            
                 <div className="col-md-6">
-                    <button type="button" class="btn btn-primary" onClick={this.toggle}>Creat team</button>
+                              <br />
+
+                    <button type="button" className="btn btn-primary btn-lg" onClick={this.toggle}>Creat team</button>
                 </div>
                 <div className="col-md-6">
                     <div className="list-group">
@@ -90,8 +103,7 @@ class Team extends Component {
                     onCancelClick={this.handleCancel}
                     onSubmitClick={this.handleSubmit}
                 />
-                                        <div>{showSpinner ? (<Spinner />) : (null)}</div>
-
+                <div>{showSpinner ? (<Spinner />) : (null)}</div>
             </div>
         )
     }
@@ -100,6 +112,7 @@ class Team extends Component {
 Team.propTypes = {
     toggleCreateTeamModal: PropTypes.func.isRequired,
     createTeam: PropTypes.func.isRequired,
+    getUserTeams: PropTypes.func.isRequired,
     clearErrorsModal: PropTypes.func.isRequired,
     team: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
@@ -113,4 +126,4 @@ const mapStateToProps = (state) => ({
     spinner: state.spinner
 });
 
-export default connect(mapStateToProps, {toggleCreateTeamModal, clearErrorsModal, createTeam})(Team);
+export default connect(mapStateToProps, { toggleCreateTeamModal, clearErrorsModal, createTeam, getUserTeams })(Team);

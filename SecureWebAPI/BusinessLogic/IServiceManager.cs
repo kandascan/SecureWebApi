@@ -29,5 +29,7 @@ namespace SecureWebAPI.BusinessLogic
         TaskResponse UpdateTask(TaskRequest request);
 
         TeamResponse CreateTeam(TeamRequest request);
+
+        TeamResponse GetUserTeams(TeamRequest request);
     }
 }
