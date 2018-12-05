@@ -14,16 +14,18 @@ class NavBar extends Component {
   }
   render() {
     const { isAuthenticated, user } = this.props.auth;
+    const { teamid } = this.props.team;
     const authLinks = (
       <div className="collapse navbar-collapse" id="mobile-nav">
-        <ul className="navbar-nav mr-auto">
+        {teamid == null ? (null) : (<ul className="navbar-nav mr-auto">
           <li className="nav-item">
-            <NavLink className="nav-link" to="/backlog">Backlog</NavLink>
+            <NavLink className="nav-link" to={`/backlog/${teamid}`}>Backlog</NavLink>
           </li>
           <li className="nav-item">
             <NavLink className="nav-link" to="/currentSprint">Current Sprint</NavLink>
+            {/* to samo co wyzej */}
           </li>
-        </ul>
+        </ul>)}
         <ul className="navbar-nav ml-auto">
           <li className="nav-item">
             <NavLink className="nav-link" to="/profile">{user.sub}</NavLink>
@@ -66,11 +68,13 @@ class NavBar extends Component {
 
 NavBar.propTypes = {
   logoutUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  team: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
-  auth: state.auth
+  auth: state.auth,
+  team: state.team
 });
 
 export default connect(mapStateToProps, { logoutUser, clearBacklog })(NavBar);

@@ -148,12 +148,23 @@ namespace SecureWebAPI.BusinessLogic
             }
             try
             {
-                var newTask = _mapper.Map<TaskEntity>(request.Task);
-                newTask.BacklogItem = true;
+                var newTask = _mapper.Map<TaskEntity>(request.Task);               
                 var task = _uow.Repository<TaskEntity>().Add(newTask);
                 _uow.Save();
                 if (task != null)
                 {
+                    if (task.Sprint != -1)
+                    {
+                        var xRefSprintTask = new XRefSprintTaskEntity { SprintId = (int)task.Sprint, TaskId = task.Id };
+                    }
+                    else
+                    {
+                        var backlog = _uow.Repository<BacklogEntity>().GetOverview(b => b.TeamId == request.Task.TeamId).FirstOrDefault();
+                        var xRefBacklogTask = new XRefBacklogTaskEntity { TaskId = task.Id, BacklogId = backlog.BacklogId };
+                        _uow.Repository<XRefBacklogTaskEntity>().Add(xRefBacklogTask);
+                        _uow.Save();
+                    }
+
                     response.Task = _mapper.Map<TaskVM>(task);
                     response.Success = true;
                 }
@@ -200,7 +211,11 @@ namespace SecureWebAPI.BusinessLogic
             var response = new GetBacklogTasksResponse();
             try
             {
-                var tasks = _uow.Repository<TaskEntity>().GetOverview().Where(x => x.TeamId == request.TeamId).OrderBy(t => t.OrderId).ThenByDescending(t => t.Id);
+                var backlog = _uow.Repository<BacklogEntity>().GetOverview(b => b.TeamId == request.TeamId).FirstOrDefault();
+
+                var xRefBacklogTask = _uow.Repository<XRefBacklogTaskEntity>().GetOverview(x => x.BacklogId == backlog.BacklogId).Select(t => t.TaskId);
+
+                var tasks = _uow.Repository<TaskEntity>().GetOverview().Where(t => xRefBacklogTask.Contains(t.Id)).OrderBy(t => t.OrderId).ThenByDescending(t => t.Id);
                 if (tasks != null)
                 {
                     response.Tasks = _mapper.Map<List<TaskVM>>(tasks);
@@ -330,11 +345,22 @@ namespace SecureWebAPI.BusinessLogic
             try
             {
                 var editedTask = _mapper.Map<TaskEntity>(request.Task);
-                editedTask.BacklogItem = true;
                 var task = _uow.Repository<TaskEntity>().Update(editedTask);
                 _uow.Save();
                 if (task != null)
                 {
+                    if (task.Sprint != -1)
+                    {
+                        var xRefSprintTask = new XRefSprintTaskEntity { SprintId = (int)task.Sprint, TaskId = task.Id };
+                    }
+                    else
+                    {
+                        var backlog = _uow.Repository<BacklogEntity>().GetOverview(b => b.TeamId == request.Task.TeamId).FirstOrDefault();
+                        var xRefBacklogTask = new XRefBacklogTaskEntity { TaskId = task.Id, BacklogId = backlog.BacklogId };
+                        _uow.Repository<XRefBacklogTaskEntity>().Add(xRefBacklogTask);
+                        _uow.Save();
+                    }
+
                     response.Task = _mapper.Map<TaskVM>(task);
                     response.Success = true;
                 }
@@ -426,12 +452,18 @@ namespace SecureWebAPI.BusinessLogic
             var response = new BacklogResponse();
             try
             {
-                var tasks = _uow.Repository<TaskEntity>().GetOverview().OrderBy(t => t.OrderId).ThenByDescending(t => t.Id).Where(t => t.TeamId == request.TeamId);
-                if (tasks != null)
+                var teamBacklog = _uow.Repository<BacklogEntity>().GetOverview().Where(b => b.TeamId == request.TeamId).FirstOrDefault();
+                if(teamBacklog != null)
                 {
-                    response.Tasks = _mapper.Map<List<TaskVM>>(tasks);
-                    response.Success = true;
+                    var xRefBacklogTask = _uow.Repository<XRefBacklogTaskEntity>().GetOverview().Where(x => x.BacklogId == teamBacklog.BacklogId).Select(i => i.TaskId);
+                    var tasks = _uow.Repository<TaskEntity>().GetOverview().Where(t => xRefBacklogTask.Contains(t.Id)).OrderBy(t => t.OrderId).ThenByDescending(t => t.Id);
+                    if (tasks != null)
+                    {
+                        response.Tasks = _mapper.Map<List<TaskVM>>(tasks);
+                        response.Success = true;
+                    }
                 }
+                
                 else
                 {
                     response.Errors.Add("Get Tasks", "Cannot featch Tasks");

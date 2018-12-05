@@ -15,7 +15,7 @@ namespace SecureWebAPI.DataAccess.Entities
         public int? PriorityId { get; set; }
         public string Username { get; set; }
         public int OrderId { get; set; }
-        public bool BacklogItem { get; set; }
+        public int? Sprint { get; set; }
         public DateTime CreatedDate { get; set; }
     }
 }

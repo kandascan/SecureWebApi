@@ -57,8 +57,11 @@ class Team extends Component {
             <Link
                 to={`backlog/${team.teamId}`}
                 key={team.teamId}
+                // className={classnames("list-group-item list-group-item-action d-flex justify-content-between align-items-center list-group-item-light", {
+                //     'active': !team.scrumMasterUser
+                // })}> tutaj cos podobnego ale tylko dla przycisku do zarzadzania teamem uzyc tej propercji scrumMasterUser
                 className={classnames("list-group-item list-group-item-action d-flex justify-content-between align-items-center list-group-item-light", {
-                    'active': !team.scrumMasterUser
+                    'active': this.props.team.teamid == team.teamId
                 })}>
                 {team.teamName}
                 <div style={{ float: "right", textAlign: "right" }} className="row">
@@ -69,6 +72,7 @@ class Team extends Component {
                     <div className="col-md-1"></div>
                     <div style={{ padding: "7px 7px 7px 0" }}>
                         <button className="btn btn-danger"><i class="fas fa-trash"></i></button>
+                        {/* moze zamiast tego korza cos do zarzadzania jak wyzej koentasz */}
                     </div>
                 </div>
             </Link>
@@ -94,10 +98,8 @@ class Team extends Component {
 
         return (
             <div className="row">
-
                 <div className="col-md-6">
                     <br />
-
                     <button type="button" className="btn btn-primary btn-lg" onClick={this.toggle}>Creat team</button>
                 </div>
                 <div className="col-md-6">
@@ -125,7 +127,7 @@ Team.propTypes = {
     clearErrorsModal: PropTypes.func.isRequired,
     team: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
-    spinner: PropTypes.object.isRequired,
+    spinner: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({

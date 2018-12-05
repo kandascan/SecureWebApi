@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getBacklogItems, orderBacklogItems, removeTask, getTaskById } from '../actions/backlogActions';
+import { currentTeam } from '../actions/teamActions';
 import BacklogSortable from './BacklogSortable';
 import CreateTask from './CreateTask';
 import EditTask from './EditTask';
@@ -14,6 +15,7 @@ class BacklogComponent extends Component {
         }
         if (this.props.match.params.teamid) {
             this.props.getBacklogItems(this.props.match.params.teamid);
+            this.props.currentTeam(this.props.match.params.teamid);
         }
     }
 
@@ -72,7 +74,8 @@ BacklogComponent.propTypes = {
     spinner: PropTypes.object.isRequired,
     getBacklogItems: PropTypes.func.isRequired,
     orderBacklogItems: PropTypes.func.isRequired,
-    getTaskById: PropTypes.func.isRequired
+    getTaskById: PropTypes.func.isRequired,
+    currentTeam: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -81,4 +84,4 @@ const mapStateToProps = (state) => ({
     spinner: state.spinner
 });
 
-export default connect(mapStateToProps, { getBacklogItems, orderBacklogItems, removeTask, getTaskById })(BacklogComponent);
+export default connect(mapStateToProps, { getBacklogItems, orderBacklogItems, removeTask, getTaskById, currentTeam })(BacklogComponent);

@@ -16,11 +16,11 @@ window.jQuery = window.$ = $;
 class CreateTask extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { teamid: '', taskname: '', description: '', effort: -1, priority: -1, username: '', errors: {} };
+        this.state = { teamid: '', taskname: '', description: '', effort: -1, priority: -1, username: '', sprint: -1, errors: {} };
     }
 
     toggle = () => {
-        this.setState({ taskname: '', description: '', effort: -1, priority: -1, username: '', errors: {} });
+        this.setState({ taskname: '', description: '', effort: -1, priority: -1, username: '', sprint: -1, errors: {} });
         this.props.toggleCreateTaskModal();
         const { priorities, efforts } = this.props.dics;
         if (priorities === null && efforts === null) {
@@ -47,6 +47,7 @@ class CreateTask extends React.Component {
             effortId: +this.state.effort,
             priorityId: +this.state.priority,
             username: this.state.username,
+            sprint: this.state.sprint
         }
         this.props.createTask(newTask);
     }
@@ -54,7 +55,7 @@ class CreateTask extends React.Component {
     render() {
         const { errors } = this.props;
         const { showCreateTaskModal } = this.props.modal;
-        const { priorities, efforts } = this.props.dics;
+        const { priorities, efforts } = this.props.dics; //get team sprint
         let ddlPriorities, ddlEfforts = null;
         if (priorities != null && efforts != null) {
             ddlPriorities = priorities.priorities.map((priority) =>
@@ -63,6 +64,7 @@ class CreateTask extends React.Component {
             ddlEfforts = efforts.efforts.map((effort) =>
                 <option key={effort.effortId} value={effort.effortId}>{effort.effortName}</option>
             );
+            //ddlTeamSprints
         }
 
         const content = (<form onSubmit={this.handleSubmit}>
@@ -128,6 +130,20 @@ class CreateTask extends React.Component {
             </div>
             <div className="row">
                 <div className="form-group col-md-12">
+                    <label>Sprint:</label>
+                    <select
+                        className={"custom-select mr-sm-2"}
+                        name="sprint"
+                        onChange={this.handleChange}
+                        disabled={true} // disabled={sprint === null} 
+                        >
+                        <option key={-1} value={-1}>Choose...</option>
+                        {/* {ddlTeamSprints} */}
+                    </select>
+                </div>
+            </div>
+            <div className="row">
+                <div className="form-group col-md-12">
                     <label>Username:</label>
                     <input name="username" type="text" value={this.state.username} onChange={this.handleChange} className="form-control" />
                 </div>
@@ -135,7 +151,7 @@ class CreateTask extends React.Component {
         </form>);
         return (
             <div>
-                    <Button color="success" style={{ float: "right" }} onClick={this.toggle} >Create task</Button>
+                <Button color="success" style={{ float: "right" }} onClick={this.toggle} >Create task</Button>
                 <ModalComponent
                     show={showCreateTaskModal}
                     header="New task for backlog"

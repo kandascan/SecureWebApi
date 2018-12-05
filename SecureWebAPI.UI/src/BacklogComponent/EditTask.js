@@ -12,7 +12,7 @@ window.jQuery = window.$ = $;
 class EditTask extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { taskId: 0, orderId: 0, taskname: '', description: '', effort: -1, priority: -1, username: '', toggleEdit: true };
+        this.state = { taskId: 0, orderId: 0, taskname: '', description: '', effort: -1, priority: -1, username: '', sprint: -1, toggleEdit: true };
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -24,6 +24,7 @@ class EditTask extends React.Component {
             effort: nextProps.backlog.task.task.effortId, 
             priority: nextProps.backlog.task.task.priorityId, 
             orderId: nextProps.backlog.task.task.orderId,
+            sprint: nextProps.backlog.task.task.sprint,
             username: nextProps.backlog.task.task.username
         })
     }
@@ -59,7 +60,8 @@ class EditTask extends React.Component {
             effortId: +this.state.effort,
             priorityId: +this.state.priority,
             username: this.state.username,
-            orderId: this.state.orderId
+            orderId: this.state.orderId,
+            sprint: this.state.sprint
         }
         this.props.updateTask(task);
         this.setState({ toggleEdit: true });
@@ -106,6 +108,20 @@ class EditTask extends React.Component {
                     <select className="custom-select mr-sm-2" name="priority" onChange={this.handleChange} disabled={priorities === null || this.state.toggleEdit} value={this.state.priority} >
                         <option key={-1} value={-1}>Choose...</option>
                         {ddlPriorities}
+                    </select>
+                </div>
+            </div>
+            <div className="row">
+                <div className="form-group col-md-12">
+                    <label>Sprint:</label>
+                    <select
+                        className={"custom-select mr-sm-2"}
+                        name="sprint"
+                        onChange={this.handleChange}
+                        disabled={true} // disabled={sprint === null} 
+                        >
+                        <option key={-1} value={-1}>Choose...</option>
+                        {/* {ddlTeamSprints} */}
                     </select>
                 </div>
             </div>

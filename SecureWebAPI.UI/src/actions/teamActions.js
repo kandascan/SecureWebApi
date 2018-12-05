@@ -1,5 +1,12 @@
 import axios from 'axios';
-import { TOGGLE_SPINNER, SHOW_CREATE_TEAM_MODAL, GET_ERRORS, GET_USER_TEAMS  } from './types';
+import { TOGGLE_SPINNER, SHOW_CREATE_TEAM_MODAL, GET_ERRORS, GET_USER_TEAMS, CURRENT_TEAM  } from './types';
+
+export const currentTeam = (teamid) => dispatch => {
+    dispatch({
+        type: CURRENT_TEAM,
+        payload: teamid
+    })
+}
 
 export const getUserTeams = () => dispatch => {
     dispatch({
