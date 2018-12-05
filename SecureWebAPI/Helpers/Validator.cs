@@ -32,6 +32,11 @@ namespace SecureWebAPI.Helpers
                 response.Add("priority", "You need to select priority");
             }
 
+            if (task.TeamId == null)
+            {
+                response.Add("teamid", "Team id unknown");
+            }
+
             return response;
         }
 
@@ -58,6 +63,18 @@ namespace SecureWebAPI.Helpers
             if (string.IsNullOrEmpty(user.Password))
             {
                 response.Add("password", "Password cannot be null");
+            }
+
+            return response;
+        }
+
+        internal static Dictionary<string, string> CreateTeam(TeamVM team)
+        {
+            var response = new Dictionary<string, string>();
+
+            if (string.IsNullOrEmpty(team.TeamName))
+            {
+                response.Add("teamname", "Team name cannot be null");
             }
 
             return response;

@@ -7,6 +7,7 @@ using LoggerService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
+using SecureWebAPI.BusinessLogic.Model;
 using SecureWebAPI.BusinessLogic.Request;
 using SecureWebAPI.BusinessLogic.Response;
 using SecureWebAPI.DataAccess.Entities;
@@ -199,7 +200,7 @@ namespace SecureWebAPI.BusinessLogic
             var response = new GetBacklogTasksResponse();
             try
             {
-                var tasks = _uow.Repository<TaskEntity>().GetOverview().OrderBy(t => t.OrderId).ThenByDescending(t => t.Id);
+                var tasks = _uow.Repository<TaskEntity>().GetOverview().Where(x => x.TeamId == request.TeamId).OrderBy(t => t.OrderId).ThenByDescending(t => t.Id);
                 if (tasks != null)
                 {
                     response.Tasks = _mapper.Map<List<TaskVM>>(tasks);
@@ -262,7 +263,7 @@ namespace SecureWebAPI.BusinessLogic
                     _uow.Repository<TaskEntity>().Delete(dbTask);
 
                     _uow.Save();
-                    var backlogItems = GetBacklogTasks(new GetBacklogTasksRequest());
+                    var backlogItems = GetBacklogTasks(new GetBacklogTasksRequest { TeamId = dbTask.TeamId });
                     if (backlogItems != null && backlogItems.Tasks.Count > 0)
                     {
                         response.Tasks = backlogItems.Tasks;
@@ -348,6 +349,95 @@ namespace SecureWebAPI.BusinessLogic
                 response.Errors.Add("System Exception", ex.Message);
             }
 
+            return response;
+        }
+
+        public TeamResponse CreateTeam(TeamRequest request)
+        {
+            var response = new TeamResponse();
+            response.Errors = Validator.CreateTeam(request.Team);
+            if (response.Errors.Count() > 0)
+            {
+                return response;
+            }
+            try
+            {
+                var newTeam = _mapper.Map<TeamEntity>(request.Team);
+                _uow.Repository<TeamEntity>().Add(newTeam);
+                _uow.Save();
+
+                var newXrefTeamUser = new XRefTeamUserEntity { TeamId = newTeam.TeamId, UserId = request.UserId, RoleId = (int)Role.SCRUM_MASTER };
+                _uow.Repository<XRefTeamUserEntity>().Add(newXrefTeamUser);
+                _uow.Save();
+
+                response.Team = _mapper.Map<TeamVM>(newTeam);
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public TeamResponse GetUserTeams(TeamRequest request)
+        {
+            var response = new TeamResponse();
+            try
+            {
+                var teams = _uow.Repository<TeamEntity>().GetOverview();
+                var xrefTeamsUsers = _uow.Repository<XRefTeamUserEntity>().GetOverview();
+                var userRoles = _uow.Repository<RoleEntity>().GetOverview();
+                var userTeams = (from ut in xrefTeamsUsers
+                                 join t in teams
+                                 on ut.TeamId equals t.TeamId
+                                 join r in userRoles
+                                 on ut.RoleId equals r.RoleId
+                                 where ut.UserId == request.UserId
+                                 select new UserTeams
+                                 {
+                                     TeamId = t.TeamId,
+                                     TeamName = t.TeamName,
+                                     UserRole = r.RoleName,
+                                     ScrumMasterUser = r.RoleId == (int)Role.SCRUM_MASTER ? true : false
+                                 }).ToList();
+
+                if (userTeams != null && userTeams.Count() > 0)
+                {
+                    response.UserTeams = userTeams;
+                    response.Success = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public BacklogResponse GetTeamBacklog(BacklogRequest request)
+        {
+            var response = new BacklogResponse();
+            try
+            {
+                var tasks = _uow.Repository<TaskEntity>().GetOverview().OrderBy(t => t.OrderId).ThenByDescending(t => t.Id).Where(t => t.TeamId == request.TeamId);
+                if (tasks != null)
+                {
+                    response.Tasks = _mapper.Map<List<TaskVM>>(tasks);
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Errors.Add("Get Tasks", "Cannot featch Tasks");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
             return response;
         }
     }

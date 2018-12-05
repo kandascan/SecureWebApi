@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace SecureWebAPI.BusinessLogic.Request
 {
-    public class GetBacklogTasksRequest : BaseRequest
+    public class BacklogRequest : BaseRequest
     {
-        public int? TeamId { get; set; }
+        public int BacklogId { get; set; }
+        public int TeamId { get; set; }
     }
 }

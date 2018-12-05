@@ -18,6 +18,8 @@ namespace SecureWebAPI.BusinessLogic
 
         GetBacklogTasksResponse GetBacklogTasks(GetBacklogTasksRequest request);
 
+        BacklogResponse GetTeamBacklog(BacklogRequest request);
+
         SortBacklogItemsResponse SortBacklogItems(SortBacklogItemsRequest request);
 
         RemoveTaskResponse RemoveTask(RemoveTaskRequest request);
@@ -27,5 +29,9 @@ namespace SecureWebAPI.BusinessLogic
         GetEffortsResponse GetEfforts(GetEffortsRequest request);
 
         TaskResponse UpdateTask(TaskRequest request);
+
+        TeamResponse CreateTeam(TeamRequest request);
+
+        TeamResponse GetUserTeams(TeamRequest request);
     }
 }

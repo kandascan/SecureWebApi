@@ -38,10 +38,10 @@ namespace SecureWebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("getbacklogtasks")]
-        public IActionResult GetBacklog()
+        [Route("getbacklogtasks/{teamid}")]
+        public IActionResult GetBacklog(string teamid)
         {
-            var request = new GetBacklogTasksRequest();
+            var request = new GetBacklogTasksRequest { TeamId = Int32.Parse(teamid) };
             var response = _service.GetBacklogTasks(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
@@ -52,6 +52,15 @@ namespace SecureWebAPI.Controllers
         {
             var request = new TaskRequest { TaskId = Int32.Parse(id) };
             var response = _service.GetTaskById(request);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
+        }
+
+        [HttpGet]
+        [Route("getteambacklog/{teamid}")]
+        public IActionResult GetTeamBacklog(string teamid)
+        {
+            var request = new BacklogRequest { TeamId = Int32.Parse(teamid) };
+            var response = _service.GetTeamBacklog(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 

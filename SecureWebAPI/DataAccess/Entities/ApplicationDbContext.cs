@@ -18,6 +18,10 @@ namespace SecureWebAPI.DataAccess.Entities
         public DbSet<TaskEntity> Tasks { get; set; }
         public DbSet<PriorityEntity> Priorities { get; set; }
         public DbSet<EffortEntity> Efforts { get; set; }
+        public DbSet<TeamEntity> Teams { get; set; }
+        public DbSet<BacklogEntity> Backlogs { get; set; }
+        public DbSet<XRefTeamUserEntity> xRefTeamsUsers { get; set; }
+        public DbSet<RoleEntity> Roles { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
@@ -30,7 +34,67 @@ namespace SecureWebAPI.DataAccess.Entities
             modelBuilder.Entity<TaskEntity>(ConfigureTaskEntity);
             modelBuilder.Entity<PriorityEntity>(ConfigurePrioritykEntity);
             modelBuilder.Entity<EffortEntity>(ConfigureEffortkEntity);
+            modelBuilder.Entity<TeamEntity>(ConfigureTeamEntity);
+            modelBuilder.Entity<BacklogEntity>(ConfigureBacklogEntity);
+            modelBuilder.Entity<XRefTeamUserEntity>(ConfigureXrefTeamUserEntity);
+            modelBuilder.Entity<SprintEntity>(ConfigureSprintEntity);
+            modelBuilder.Entity<XRefSprintTaskEntity>(ConfigureXrefSprintTaskEntity);
+            modelBuilder.Entity<RoleEntity>(ConfigureRolekEntity);
+
             base.OnModelCreating(modelBuilder);
+        }
+
+        private void ConfigureRolekEntity(EntityTypeBuilder<RoleEntity> entity)
+        {
+            entity.ToTable("Role");
+            entity.HasKey(e => e.RoleId);
+            entity.Property(e => e.RoleId).ValueGeneratedNever();
+            entity.Property(e => e.RoleName);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
+        }
+
+        private void ConfigureXrefSprintTaskEntity(EntityTypeBuilder<XRefSprintTaskEntity> entity)
+        {
+            entity.ToTable("XRefSprintTask");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.SprintId);
+            entity.Property(e => e.TaskId);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
+        }
+
+        private void ConfigureSprintEntity(EntityTypeBuilder<SprintEntity> entity)
+        {
+            entity.ToTable("Sprint");
+            entity.HasKey(e => e.SprintId);
+            entity.Property(e => e.TeamId);
+            entity.Property(e => e.StartDate).HasDefaultValueSql("GETDATE()");
+            entity.Property(e => e.EndDate);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
+        }
+
+        private void ConfigureXrefTeamUserEntity(EntityTypeBuilder<XRefTeamUserEntity> entity)
+        {
+            entity.ToTable("XRefTeamUser");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.TeamId);
+            entity.Property(e => e.UserId);
+            entity.Property(e => e.RoleId);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
+        }
+
+        private void ConfigureBacklogEntity(EntityTypeBuilder<BacklogEntity> entity)
+        {
+            entity.ToTable("Backlog");
+            entity.HasKey(e => e.BacklogId);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
+        }
+
+        private void ConfigureTeamEntity(EntityTypeBuilder<TeamEntity> entity)
+        {
+            entity.ToTable("Team");
+            entity.HasKey(e => e.TeamId);
+            entity.Property(e => e.TeamName).IsUnicode(true);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
         }
 
         private void ConfigureEffortkEntity(EntityTypeBuilder<EffortEntity> entity)
@@ -54,6 +118,7 @@ namespace SecureWebAPI.DataAccess.Entities
             entity.ToTable("Task");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.TaskName);
+            entity.Property(e => e.TeamId);
             entity.Property(e => e.Description);
             entity.Property(e => e.EffortId);
             entity.Property(e => e.PriorityId);

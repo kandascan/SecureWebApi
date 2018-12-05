@@ -5,6 +5,7 @@ import backlogReducer from './backlogReducer';
 import dictionaryReducer from './dictionaryReducer';
 import spinnerReducer from './spinnerReducer';
 import modalReducer from './modalReducer';
+import teamReducer from './teamReducer';
 
 export default combineReducers({
     auth: authReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
     backlog: backlogReducer,
     dics: dictionaryReducer,
     spinner: spinnerReducer,
-    modal: modalReducer
+    modal: modalReducer,
+    team: teamReducer
 });
