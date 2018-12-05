@@ -134,10 +134,8 @@ class CreateTask extends React.Component {
             </div>
         </form>);
         return (
-            <div >
-                <div className="container">
-                    <Button color="success" style={{ marginTop: "-70px", float: "right" }} onClick={this.toggle} >Create task</Button>
-                </div>
+            <div>
+                    <Button color="success" style={{ float: "right" }} onClick={this.toggle} >Create task</Button>
                 <ModalComponent
                     show={showCreateTaskModal}
                     header="New task for backlog"
@@ -145,7 +143,7 @@ class CreateTask extends React.Component {
                     onCancelClick={this.handleCancel}
                     onSubmitClick={this.handleSubmit}
                 />
-            </div >
+            </div>
         );
     }
 }

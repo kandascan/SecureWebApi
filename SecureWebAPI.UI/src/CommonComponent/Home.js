@@ -14,7 +14,7 @@ class Home extends Component {
   render() {
     return (
       <div className="landing landing-background-home">
-        <div className="dark-overlay landing-inner text-light">
+        <div className="dark-overlay text-light">
           <div className="container">
             <div className="row">
               <div className="col-md-12 text-center">
@@ -23,10 +23,8 @@ class Home extends Component {
                   <p className="lead">Great and free tool for developers to smart manage their work</p>
                   <hr /><Link to="/register" className="btn btn-lg btn-info mr-2">Sign Up</Link>
                   <Link to="/login" className="btn btn-lg btn-light">Login</Link></div>) : (
-                    <div className="container">
+                    <div>
                       <h1 className="display-4">You are login into Scrum Manager </h1>
-                      <p className="lead">Start your work from review current Sprint or if you are here first time go to backlog and create first task.</p>
-                      <br />  
                       <Team />
                     </div>
                   )}

@@ -12,7 +12,7 @@ class BacklogComponent extends Component {
         if (!this.props.auth.isAuthenticated) {
             this.props.history.push('/');
         }
-        if(this.props.match.params.teamid){
+        if (this.props.match.params.teamid) {
             this.props.getBacklogItems(this.props.match.params.teamid);
         }
     }
@@ -30,28 +30,37 @@ class BacklogComponent extends Component {
     }
 
     render() {
-        const { items } = this.props.backlog;       
+        const { items } = this.props.backlog;
         const { showSpinner } = this.props.spinner;
         const { teamid } = this.props.match.params;
         return (
             <div className="landing landing-background-backlog">
-                <div className="dark-overlay landing-inner text-light">
-                    <CreateTask teamid={teamid} />
-                    <EditTask teamid={teamid} onEditTask={this.getTaskById} />
-                    <h1 className="centerText" style={{ marginTop: "-50px" }}>Main Backlog</h1>
-                    <div className="container">{items.tasks.length > 0  ?
-                        (<BacklogSortable
-                            items={items}
-                            sortBacklogItems={this.sortBacklogItems}
-                            removeBacklogTask={this.removeBacklogTask}
-                            getTaskById={this.getTaskById}
-                        />) : (<div>
-                            <br />
-                            <h5 className="centerText">There is no items on the backlog yet, create first Task!</h5>
-                        </div>)}
-                        <div>{showSpinner ? (<Spinner />) : (null)}</div>
-                    </div>
-                </div>
+                <div className="dark-overlay text-light">
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-md-2">
+                                <EditTask teamid={teamid} onEditTask={this.getTaskById} />
+                            </div>
+                            <div className="col-md-8 text-center">
+                                <h1 className="display-4 mb-4">Main Backlog</h1>
+                            </div>
+                            <div className="col-md-2" style={{padding: "20px"}}>
+                                <CreateTask teamid={teamid} />
+                            </div>
+                            <div className="container">{items.tasks.length > 0 ?
+                                (<BacklogSortable
+                                    items={items}
+                                    sortBacklogItems={this.sortBacklogItems}
+                                    removeBacklogTask={this.removeBacklogTask}
+                                    getTaskById={this.getTaskById}
+                                />) : (<div>
+                                    <br />
+                                    <h5 className="centerText">There is no items on the backlog yet, create first Task!</h5>
+                                </div>)}
+                                <div>{showSpinner ? (<Spinner />) : (null)}</div>
+                            </div>
+                        </div> </div> </div>
+
             </div>
         )
     }
@@ -62,7 +71,7 @@ BacklogComponent.propTypes = {
     backlog: PropTypes.object.isRequired,
     spinner: PropTypes.object.isRequired,
     getBacklogItems: PropTypes.func.isRequired,
-    orderBacklogItems: PropTypes.func.isRequired, 
+    orderBacklogItems: PropTypes.func.isRequired,
     getTaskById: PropTypes.func.isRequired
 }
 

@@ -370,6 +370,10 @@ namespace SecureWebAPI.BusinessLogic
                 _uow.Repository<XRefTeamUserEntity>().Add(newXrefTeamUser);
                 _uow.Save();
 
+                var backlog = new BacklogEntity { TeamId = newTeam.TeamId };
+                _uow.Repository<BacklogEntity>().Add(backlog);
+                _uow.Save();
+
                 response.Team = _mapper.Map<TeamVM>(newTeam);
                 response.Success = true;
             }

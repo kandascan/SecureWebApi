@@ -49,20 +49,30 @@ class Team extends Component {
         const { showSpinner } = this.props.spinner;
 
         const userTeams = userteams.length === 0 ? (
-            <div>{ areteamsloaded ?  (<div className="jumbotron homeColor">
-            <h4>You have not assigned to any teams, or you haven't any own teams, create first team now!</h4>
-            </div>)       : (null)      
+            <div>{areteamsloaded ? (<div className="jumbotron homeColor">
+                <h4>You have not assigned to any teams, or you haven't any own teams, create first team now!</h4>
+            </div>) : (null)
             }</div>
         ) : (userteams.map((team) => (
             <Link
                 to={`backlog/${team.teamId}`}
                 key={team.teamId}
-                className={classnames("list-group-item list-group-item-action list-group-item-light", {
-                    'active': team.scrumMasterUser
+                className={classnames("list-group-item list-group-item-action d-flex justify-content-between align-items-center list-group-item-light", {
+                    'active': !team.scrumMasterUser
                 })}>
                 {team.teamName}
+                <div style={{ float: "right", textAlign: "right" }} className="row">
+                    <div>
+                        <span class="badge badge-light">Tasks:</span>{' '}<span class="badge badge-info">5</span><br />
+                        <span class="badge badge-light">Members:</span>{' '}<span class="badge badge-success">2</span>
+                    </div>
+                    <div className="col-md-1"></div>
+                    <div style={{ padding: "7px 7px 7px 0" }}>
+                        <button className="btn btn-danger"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
             </Link>
-        ))) ;
+        )));
 
         const modalContent = (
             <form onSubmit={this.handleSubmit}>
@@ -84,16 +94,16 @@ class Team extends Component {
 
         return (
             <div className="row">
-            
+
                 <div className="col-md-6">
-                              <br />
+                    <br />
 
                     <button type="button" className="btn btn-primary btn-lg" onClick={this.toggle}>Creat team</button>
                 </div>
                 <div className="col-md-6">
-                    <div className="list-group">
+                    <ul className="list-group">
                         {userTeams}
-                    </div>
+                    </ul>
                 </div>
                 <ModalComponent
                     show={showCreateTeamModal}

@@ -22,6 +22,8 @@ namespace SecureWebAPI.DataAccess.Entities
         public DbSet<BacklogEntity> Backlogs { get; set; }
         public DbSet<XRefTeamUserEntity> xRefTeamsUsers { get; set; }
         public DbSet<RoleEntity> Roles { get; set; }
+        public DbSet<XRefBacklogTaskEntity> xRefBacklogTask { get; set; }
+        public DbSet<XRefSprintTaskEntity> xRefSprintTask { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
@@ -40,8 +42,18 @@ namespace SecureWebAPI.DataAccess.Entities
             modelBuilder.Entity<SprintEntity>(ConfigureSprintEntity);
             modelBuilder.Entity<XRefSprintTaskEntity>(ConfigureXrefSprintTaskEntity);
             modelBuilder.Entity<RoleEntity>(ConfigureRolekEntity);
+            modelBuilder.Entity<XRefBacklogTaskEntity>(ConfigureXrefBacklogTaskEntity);
 
             base.OnModelCreating(modelBuilder);
+        }
+
+        private void ConfigureXrefBacklogTaskEntity(EntityTypeBuilder<XRefBacklogTaskEntity> entity)
+        {
+            entity.ToTable("XRefBacklogTask");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.BacklogId);
+            entity.Property(e => e.TaskId);
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
         }
 
         private void ConfigureRolekEntity(EntityTypeBuilder<RoleEntity> entity)
