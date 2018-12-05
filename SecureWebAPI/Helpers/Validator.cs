@@ -32,6 +32,11 @@ namespace SecureWebAPI.Helpers
                 response.Add("priority", "You need to select priority");
             }
 
+            if (task.TeamId == null)
+            {
+                response.Add("teamid", "Team id unknown");
+            }
+
             return response;
         }
 

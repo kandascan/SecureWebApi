@@ -37,7 +37,7 @@ class App extends Component {
           <Route exact path="/" component={Home} />
           <Route exact path="/register" component={RegisterForm} />
           <Route exact path="/login" component={LoginForm} />
-          <Route exact path="/backlog" component={Backlog} />
+          <Route exact path="/backlog/:teamid" component={Backlog} />
           <Route exact path="/currentSprint" component={CurrentSprint} />
           <Route exact path="/profile" component={Profile} />
           <Footer />

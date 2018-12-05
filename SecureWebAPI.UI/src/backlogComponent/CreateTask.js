@@ -16,7 +16,7 @@ window.jQuery = window.$ = $;
 class CreateTask extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { taskname: '', description: '', effort: -1, priority: -1, username: '', errors: {} };
+        this.state = { teamid: '', taskname: '', description: '', effort: -1, priority: -1, username: '', errors: {} };
     }
 
     toggle = () => {
@@ -41,6 +41,7 @@ class CreateTask extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault();
         let newTask = {
+            teamid: this.props.teamid,
             taskname: this.state.taskname,
             description: this.state.description,
             effortId: +this.state.effort,

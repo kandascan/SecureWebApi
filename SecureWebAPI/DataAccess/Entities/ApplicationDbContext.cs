@@ -118,6 +118,7 @@ namespace SecureWebAPI.DataAccess.Entities
             entity.ToTable("Task");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.TaskName);
+            entity.Property(e => e.TeamId);
             entity.Property(e => e.Description);
             entity.Property(e => e.EffortId);
             entity.Property(e => e.PriorityId);

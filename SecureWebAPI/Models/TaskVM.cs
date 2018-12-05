@@ -9,6 +9,7 @@ namespace SecureWebAPI.Models
     {
         public int Id { get; set; }
         public string Taskname { get; set; }
+        public int? TeamId { get; set; }
         public string Description { get; set; }
         public int? EffortId { get; set; }
         public int? PriorityId { get; set; }

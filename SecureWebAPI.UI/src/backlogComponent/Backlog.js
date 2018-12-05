@@ -12,7 +12,9 @@ class BacklogComponent extends Component {
         if (!this.props.auth.isAuthenticated) {
             this.props.history.push('/');
         }
-        this.props.getBacklogItems();
+        if(this.props.match.params.teamid){
+            this.props.getBacklogItems(this.props.match.params.teamid);
+        }
     }
 
     sortBacklogItems = (sortdItems) => {
@@ -30,13 +32,14 @@ class BacklogComponent extends Component {
     render() {
         const { items } = this.props.backlog;       
         const { showSpinner } = this.props.spinner;
+        const { teamid } = this.props.match.params;
         return (
             <div className="landing landing-background-backlog">
                 <div className="dark-overlay landing-inner text-light">
-                    <CreateTask />
-                    <EditTask onEditTask={this.getTaskById} />
+                    <CreateTask teamid={teamid} />
+                    <EditTask teamid={teamid} onEditTask={this.getTaskById} />
                     <h1 className="centerText" style={{ marginTop: "-50px" }}>Main Backlog</h1>
-                    <div className="container">{items.tasks != null  ?
+                    <div className="container">{items.tasks.length > 0  ?
                         (<BacklogSortable
                             items={items}
                             sortBacklogItems={this.sortBacklogItems}

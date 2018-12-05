@@ -18,6 +18,7 @@ class EditTask extends React.Component {
     componentWillReceiveProps = (nextProps) => {
         this.setState({
             taskId: nextProps.backlog.task.task.id,
+            teamid: nextProps.backlog.task.task.teamid,
             taskname: nextProps.backlog.task.task.taskname, 
             description: nextProps.backlog.task.task.description, 
             effort: nextProps.backlog.task.task.effortId, 
@@ -52,6 +53,7 @@ class EditTask extends React.Component {
         e.preventDefault();
         let task = {
             id: this.state.taskId,
+            teamid: this.props.teamid,
             taskname: this.state.taskname,
             description: this.state.description,
             effortId: +this.state.effort,

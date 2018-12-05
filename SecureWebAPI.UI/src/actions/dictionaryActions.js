@@ -2,7 +2,7 @@ import axios from 'axios';
 import { GET_PRIORITIES, GET_EFFORTS } from './types';
 
 export const getEfforts = () => async dispatch => {
-    axios.get("api/list/getefforts")
+    axios.get("/api/list/getefforts")
         .then(res => {
             dispatch({
                 type: GET_EFFORTS,
@@ -17,7 +17,7 @@ export const getEfforts = () => async dispatch => {
         );
 }
 export const getPriorities = () => async dispatch => {
-    axios.get("api/list/getpriorities")
+    axios.get("/api/list/getpriorities")
         .then(res => {
             dispatch({
                 type: GET_PRIORITIES,

@@ -5,7 +5,7 @@ export const getTaskById = (id) => dispatch => {
     dispatch({
         type: TOGGLE_SPINNER
     });
-    axios.get(`api/task/gettaskbyid/${id}`)
+    axios.get(`/api/task/gettaskbyid/${id}`)
         .then(res => {
             dispatch({
                 type: GET_TASK_BY_ID,
@@ -30,11 +30,11 @@ export const getTaskById = (id) => dispatch => {
         );
 } 
 
-export const getBacklogItems = () => dispatch => {
+export const getBacklogItems = (teamid) => dispatch => {
     dispatch({
         type: TOGGLE_SPINNER
     });
-    axios.get("api/task/getbacklogtasks")
+    axios.get(`/api/task/getbacklogtasks/${teamid}`)
         .then(res => {
             dispatch({
                 type: GET_BACKLOG_ITEMS,
@@ -60,7 +60,7 @@ export const updateTask = (task) => dispatch => {
     dispatch({
         type: TOGGLE_SPINNER
     });
-    axios.put("api/task", task)
+    axios.put("/api/task", task)
         .then(res => {
             dispatch({
                 type: SHOW_EDIT_TASK_MODAL
@@ -68,7 +68,7 @@ export const updateTask = (task) => dispatch => {
             dispatch({
                 type: TOGGLE_SPINNER
             });
-            dispatch(getBacklogItems());
+            dispatch(getBacklogItems(task.teamid));
         })
         .catch(err => {
             dispatch({
@@ -86,7 +86,7 @@ export const createTask = (newTask) => dispatch => {
     dispatch({
         type: TOGGLE_SPINNER
     });
-    axios.post("api/task", newTask)
+    axios.post("/api/task", newTask)
         .then(res => {
             dispatch({
                 type: SHOW_CREATE_TASK_MODAL
@@ -94,7 +94,7 @@ export const createTask = (newTask) => dispatch => {
             dispatch({
                 type: TOGGLE_SPINNER
             });
-            dispatch(getBacklogItems());
+            dispatch(getBacklogItems(newTask.teamid));
             dispatch({
                 type: GET_ERRORS,
                 payload: {}
@@ -116,7 +116,7 @@ export const removeTask = (id) => dispatch => {
     dispatch({
         type: TOGGLE_SPINNER
     });
-    axios.delete("api/task", {
+    axios.delete("/api/task", {
         params: { id: id }
     })
         .then(res => {
@@ -148,7 +148,7 @@ export const orderBacklogItems = (sortedItems) => dispatch => {
         type: TOGGLE_SPINNER
     });
 
-    axios.post("api/task/sortedbacklog", sortedItems)
+    axios.post("/api/task/sortedbacklog", sortedItems)
         .then(res => {
             dispatch({
                 type: GET_BACKLOG_ITEMS,

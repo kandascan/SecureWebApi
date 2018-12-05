@@ -200,7 +200,7 @@ namespace SecureWebAPI.BusinessLogic
             var response = new GetBacklogTasksResponse();
             try
             {
-                var tasks = _uow.Repository<TaskEntity>().GetOverview().OrderBy(t => t.OrderId).ThenByDescending(t => t.Id);
+                var tasks = _uow.Repository<TaskEntity>().GetOverview().Where(x => x.TeamId == request.TeamId).OrderBy(t => t.OrderId).ThenByDescending(t => t.Id);
                 if (tasks != null)
                 {
                     response.Tasks = _mapper.Map<List<TaskVM>>(tasks);
@@ -263,7 +263,7 @@ namespace SecureWebAPI.BusinessLogic
                     _uow.Repository<TaskEntity>().Delete(dbTask);
 
                     _uow.Save();
-                    var backlogItems = GetBacklogTasks(new GetBacklogTasksRequest());
+                    var backlogItems = GetBacklogTasks(new GetBacklogTasksRequest { TeamId = dbTask.TeamId });
                     if (backlogItems != null && backlogItems.Tasks.Count > 0)
                     {
                         response.Tasks = backlogItems.Tasks;
@@ -407,6 +407,30 @@ namespace SecureWebAPI.BusinessLogic
                 {
                     response.UserTeams = userTeams;
                     response.Success = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public BacklogResponse GetTeamBacklog(BacklogRequest request)
+        {
+            var response = new BacklogResponse();
+            try
+            {
+                var tasks = _uow.Repository<TaskEntity>().GetOverview().OrderBy(t => t.OrderId).ThenByDescending(t => t.Id).Where(t => t.TeamId == request.TeamId);
+                if (tasks != null)
+                {
+                    response.Tasks = _mapper.Map<List<TaskVM>>(tasks);
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Errors.Add("Get Tasks", "Cannot featch Tasks");
                 }
             }
             catch (Exception ex)

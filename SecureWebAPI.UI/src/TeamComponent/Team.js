@@ -45,7 +45,6 @@ class Team extends Component {
     render() {
         const { showCreateTeamModal } = this.props.modal;
         const { userteams, areteamsloaded } = this.props.team;
-        console.log(areteamsloaded)
         const { errors } = this.props;
         const { showSpinner } = this.props.spinner;
 
@@ -56,7 +55,7 @@ class Team extends Component {
             }</div>
         ) : (userteams.map((team) => (
             <Link
-                to="#"
+                to={`backlog/${team.teamId}`}
                 key={team.teamId}
                 className={classnames("list-group-item list-group-item-action list-group-item-light", {
                     'active': team.scrumMasterUser
