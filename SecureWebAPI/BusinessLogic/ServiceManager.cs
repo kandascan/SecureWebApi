@@ -431,7 +431,7 @@ namespace SecureWebAPI.BusinessLogic
                                      TeamName = t.TeamName,
                                      UserRole = r.RoleName,
                                      ScrumMasterUser = r.RoleId == (int)Role.SCRUM_MASTER ? true : false
-                                 }).ToList();
+                                 }).OrderByDescending(t => t.TeamId).ToList();
 
                 if (userTeams != null && userTeams.Count() > 0)
                 {

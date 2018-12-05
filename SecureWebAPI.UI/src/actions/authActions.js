@@ -1,7 +1,7 @@
 import axios from 'axios';
 import setAuthToken from '../utils/setAuthToken';
 import jwt_decode from 'jwt-decode';
-import { GET_ERRORS, SET_CURRENT_USER } from './types';
+import { GET_ERRORS, SET_CURRENT_USER, SET_CURRENT_TEAM } from './types';
 
 export const registerUser = (userData, history) => dispatch => {
     axios.post("api/auth/register", userData)
@@ -42,6 +42,11 @@ export const setCurrentUser = (decoded) => {
 
 export const logoutUser = () => dispatch => {
     localStorage.removeItem('smToken');
+    localStorage.removeItem('teamid');
+    dispatch({
+        type: SET_CURRENT_TEAM,
+        payload: false
+    })
     setAuthToken(false);
     dispatch(setCurrentUser({}));
 }

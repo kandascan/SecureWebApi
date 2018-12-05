@@ -12,9 +12,15 @@ class NavBar extends Component {
     this.props.logoutUser();
     window.location.href = '/';
   }
+
+  componentWillReceiveProps = (nextProps) => {
+    console.log("componentWillReceiveProps"+localStorage.teamid)
+
+  }
+
   render() {
     const { isAuthenticated, user } = this.props.auth;
-    const { teamid } = this.props.team;
+    const { teamid } = localStorage;
     const authLinks = (
       <div className="collapse navbar-collapse" id="mobile-nav">
         {teamid == null ? (null) : (<ul className="navbar-nav mr-auto">

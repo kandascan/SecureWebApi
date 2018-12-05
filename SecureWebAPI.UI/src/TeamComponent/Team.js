@@ -61,17 +61,17 @@ class Team extends Component {
                 //     'active': !team.scrumMasterUser
                 // })}> tutaj cos podobnego ale tylko dla przycisku do zarzadzania teamem uzyc tej propercji scrumMasterUser
                 className={classnames("list-group-item list-group-item-action d-flex justify-content-between align-items-center list-group-item-light", {
-                    'active': this.props.team.teamid == team.teamId
+                    'active': localStorage.teamid == team.teamId
                 })}>
                 {team.teamName}
                 <div style={{ float: "right", textAlign: "right" }} className="row">
                     <div>
-                        <span class="badge badge-light">Tasks:</span>{' '}<span class="badge badge-info">5</span><br />
-                        <span class="badge badge-light">Members:</span>{' '}<span class="badge badge-success">2</span>
+                        <span className="badge badge-light">Tasks:</span>{' '}<span className="badge badge-info">5</span><br />
+                        <span className="badge badge-light">Members:</span>{' '}<span className="badge badge-success">2</span>
                     </div>
                     <div className="col-md-1"></div>
                     <div style={{ padding: "7px 7px 7px 0" }}>
-                        <button className="btn btn-danger"><i class="fas fa-trash"></i></button>
+                        <button className="btn btn-danger"><i className="fas fa-trash"></i></button>
                         {/* moze zamiast tego korza cos do zarzadzania jak wyzej koentasz */}
                     </div>
                 </div>

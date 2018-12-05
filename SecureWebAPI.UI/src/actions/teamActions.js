@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { TOGGLE_SPINNER, SHOW_CREATE_TEAM_MODAL, GET_ERRORS, GET_USER_TEAMS, CURRENT_TEAM  } from './types';
+import { TOGGLE_SPINNER, SHOW_CREATE_TEAM_MODAL, GET_ERRORS, GET_USER_TEAMS, SET_CURRENT_TEAM  } from './types';
 
 export const currentTeam = (teamid) => dispatch => {
+    localStorage.setItem('teamid', `${teamid}`);
     dispatch({
-        type: CURRENT_TEAM,
-        payload: teamid
+        type: SET_CURRENT_TEAM,
+        payload: true
     })
 }
 
@@ -35,6 +36,13 @@ export const getUserTeams = () => dispatch => {
             });
         }
         );
+
+        if(localStorage.teamid){
+            dispatch({
+                type: SET_CURRENT_TEAM,
+                payload: true
+            })
+        }
 }
 
 export const createTeam = (newTeam) => dispatch => {

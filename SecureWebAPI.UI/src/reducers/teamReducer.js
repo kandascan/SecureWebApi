@@ -1,17 +1,17 @@
-import { GET_USER_TEAMS, CURRENT_TEAM } from '../actions/types';
+import { GET_USER_TEAMS, SET_CURRENT_TEAM } from '../actions/types';
 
 const initialState = {
     userteams: [],
     areteamsloaded: false,
-    teamid: null
+    isSaveCurrentTeamToLocalStorage: false
 };
 
 export default function (state = initialState, action) {
     switch (action.type) {
-        case CURRENT_TEAM:
+        case SET_CURRENT_TEAM:
         return {
             ...state,
-            teamid: action.payload
+            isSaveCurrentTeamToLocalStorage: action.payload
         }
         case GET_USER_TEAMS:
             return {
