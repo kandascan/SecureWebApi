@@ -28,7 +28,7 @@ class NavBar extends Component {
             <NavLink className="nav-link" to={`/backlog/${teamid}`}>Backlog</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link" to="/currentSprint">Current Sprint</NavLink>
+            <NavLink className="nav-link" to={`/currentSprint/${teamid}`}>Current Sprint</NavLink>
             {/* to samo co wyzej */}
           </li>
         </ul>)}

@@ -476,5 +476,62 @@ namespace SecureWebAPI.BusinessLogic
             }
             return response;
         }
+
+        public SprintResponse GetCurrentSprint(SprintRequest request)
+        {
+            var response = new SprintResponse();
+            try
+            {
+                var sprint = _uow.Repository<SprintEntity>().GetOverview().Where(b => b.TeamId == request.TeamId).FirstOrDefault();
+                if (sprint != null)
+                {
+                    response.SprintId = sprint.SprintId;
+                    var tasks = _uow.Repository<TaskEntity>().GetOverview().Where(t => t.Sprint == sprint.SprintId).ToList();
+                    if (tasks != null)
+                    {
+                        response.Tasks = _mapper.Map<List<TaskVM>>(tasks);
+                        response.Success = true;
+                    }
+                    else
+                    {
+                        response.Errors.Add("Get Tasks", "There is no task in current sprint, back to backlog.");
+                    }
+                }
+                else
+                {
+                    response.Errors.Add("Get Sprint", "There is no active sprint, create sprint first.");
+                }
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public SprintResponse CreateSprint(SprintRequest request)
+        {
+            var response = new SprintResponse();
+
+            try
+            {
+                var newSprint = _mapper.Map<SprintEntity>(request.Sprint);
+                newSprint.StartDate = DateTime.Now;
+                newSprint.EndDate = DateTime.Now.AddDays(14);
+                _uow.Repository<SprintEntity>().Add(newSprint);
+                _uow.Save();
+                response.StartDate = newSprint.StartDate;
+                response.EndDate = newSprint.EndDate;
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
     }
 }

@@ -1,36 +1,56 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { getCurrentSprint } from '../actions/sprintActions';
 import SortableComponent from './Sortable';
 import $ from 'jquery';
 window.jQuery = window.$ = $;
 
 class CurrentSprint extends Component {
+    componentDidMount() {
+        if (!this.props.auth.isAuthenticated) {
+            this.props.history.push('/');
+        }
+        if (this.props.match.params.teamid) {
+            this.props.getCurrentSprint(this.props.match.params.teamid);
+        }
+    }
+
     render() {
+        const { sprint } = this.props;
+        let sprintView;
+        if (sprint.sprintId === 0) {
+            sprintView = (<div>
+                <h3>There is no active sprint yet for team: {this.props.match.params.teamid}</h3>
+                <button className="btn btn-info" >Create first Sprint</button>
+            </div>)
+        } else {
+            sprintView = (<div className="col-md-12 text-center">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-sm ">
+                            <h6>ToDO:</h6>
+                        </div>
+                        <div className="col-sm">
+                            <h6>In Progress:</h6>
+                        </div>
+                        <div className="col-sm">
+                            <h6>QA</h6>
+                        </div>
+                        <div className="col-sm">
+                            <h6>Done:</h6>
+                        </div>
+                    </div>
+                </div>
+                <SortableComponent />
+            </div>)
+        }
         return (
             <div className="landing landing-background-currentSprint">
                 <div className="dark-overlay landing-inner text-light">
                     <div className="container">
                         <div className="row">
-                            <div className="col-md-12 text-center">
-                                <div className="container">
-                                    <div className="row">
-                                        <div className="col-sm ">
-                                        <h6>ToDO:</h6>
-                                        </div>
-                                        <div className="col-sm">
-                                        <h6>In Progress:</h6>
-                                        </div>
-                                        <div className="col-sm">
-                                        <h6>QA</h6>
-                                        </div>
-                                        <div className="col-sm">
-                                        <h6>Done:</h6>
-                                        </div>
-                                    </div>
-                                </div>
-                                <SortableComponent />
-                            </div>
+                            {sprintView}
                         </div>
                     </div>
                 </div>
@@ -40,9 +60,11 @@ class CurrentSprint extends Component {
 }
 
 CurrentSprint.propTypes = {
-    auth: PropTypes.object.isRequired
+    auth: PropTypes.object.isRequired,
+    sprint: PropTypes.object.isRequired
 }
 const mapStateToProps = (state) => ({
     auth: state.auth,
+    sprint: state.sprint
 });
-export default connect(mapStateToProps)(CurrentSprint);
+export default connect(mapStateToProps, { getCurrentSprint })(CurrentSprint);

@@ -33,5 +33,9 @@ namespace SecureWebAPI.BusinessLogic
         TeamResponse CreateTeam(TeamRequest request);
 
         TeamResponse GetUserTeams(TeamRequest request);
+
+        SprintResponse GetCurrentSprint(SprintRequest request);
+
+        SprintResponse CreateSprint(SprintRequest request);
     }
 }
