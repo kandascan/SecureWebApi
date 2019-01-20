@@ -13,10 +13,9 @@ class NavBar extends Component {
     window.location.href = '/';
   }
 
-  componentWillReceiveProps = (nextProps) => {
-    console.log("componentWillReceiveProps"+localStorage.teamid)
-
-  }
+  // componentWillReceiveProps = (nextProps) => {
+  //   console.log("componentWillReceiveProps"+localStorage.teamid)
+  // }
 
   render() {
     const { isAuthenticated, user } = this.props.auth;
@@ -29,7 +28,6 @@ class NavBar extends Component {
           </li>
           <li className="nav-item">
             <NavLink className="nav-link" to={`/currentSprint/${teamid}`}>Current Sprint</NavLink>
-            {/* to samo co wyzej */}
           </li>
         </ul>)}
         <ul className="navbar-nav ml-auto">

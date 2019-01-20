@@ -522,8 +522,10 @@ namespace SecureWebAPI.BusinessLogic
                 newSprint.EndDate = DateTime.Now.AddDays(14);
                 _uow.Repository<SprintEntity>().Add(newSprint);
                 _uow.Save();
+                response.SprintId = newSprint.SprintId;
                 response.StartDate = newSprint.StartDate;
                 response.EndDate = newSprint.EndDate;
+                response.TeamId = newSprint.TeamId;
                 response.Success = true;
             }
             catch (Exception ex)
