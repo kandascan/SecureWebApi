@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SecureWebAPI.DataAccess.Entities;
 
 namespace SecureWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190120210145_UpdateSprint")]
+    partial class UpdateSprint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -261,10 +263,6 @@ namespace SecureWebAPI.Migrations
 
                     b.HasKey("SprintId");
 
-                    b.HasIndex("SprintName")
-                        .IsUnique()
-                        .HasFilter("[SprintName] IS NOT NULL");
-
                     b.ToTable("Sprint");
                 });
 
@@ -309,13 +307,10 @@ namespace SecureWebAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<string>("TeamName");
+                    b.Property<string>("TeamName")
+                        .IsUnicode(true);
 
                     b.HasKey("TeamId");
-
-                    b.HasIndex("TeamName")
-                        .IsUnique()
-                        .HasFilter("[TeamName] IS NOT NULL");
 
                     b.ToTable("Team");
                 });
@@ -336,9 +331,6 @@ namespace SecureWebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TaskId")
-                        .IsUnique();
-
                     b.ToTable("XRefBacklogTask");
                 });
 
@@ -357,9 +349,6 @@ namespace SecureWebAPI.Migrations
                     b.Property<int>("TaskId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TaskId")
-                        .IsUnique();
 
                     b.ToTable("XRefSprintTask");
                 });

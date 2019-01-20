@@ -37,5 +37,7 @@ namespace SecureWebAPI.BusinessLogic
         SprintResponse GetCurrentSprint(SprintRequest request);
 
         SprintResponse CreateSprint(SprintRequest request);
+
+        SprintResponse GetSprintsList(SprintRequest request);
     }
 }

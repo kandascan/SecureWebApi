@@ -3,7 +3,7 @@ import { Button } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getTaskById, updateTask } from '../actions/backlogActions';
-import { getEfforts, getPriorities } from '../actions/dictionaryActions';
+import { getEfforts, getPriorities, getSprintsList } from '../actions/dictionaryActions';
 import { toggleEditTaskModal } from '../actions/modalActions';
 import ModalComponent from '../CommonComponent/ModaComponent';
 import $ from 'jquery';
@@ -30,10 +30,14 @@ class EditTask extends React.Component {
     }
 
     componentDidMount = () =>{      
-        const { priorities, efforts } = this.props.dics;
+        const { priorities, efforts, sprints } = this.props.dics;
         if (priorities === null && efforts === null) {
             this.props.getEfforts();
             this.props.getPriorities();
+        }
+
+        if(sprints === null){
+            this.props.getSprintsList(this.props.teamid);
         }
     }
 
@@ -69,14 +73,20 @@ class EditTask extends React.Component {
 
     render() {
         const { showEditTaskModal } = this.props.modal;
-        const { priorities, efforts } = this.props.dics;
-        let ddlPriorities, ddlEfforts = null;
+        const { priorities, efforts, sprints } = this.props.dics;
+        let ddlPriorities, ddlEfforts, ddlTeamSprints = null;
         if (priorities != null && efforts != null) {
             ddlPriorities = priorities.priorities.map((priority) =>
                 <option key={priority.priorityId} value={priority.priorityId}>{priority.priorityName}</option>
             );
             ddlEfforts = efforts.efforts.map((effort) =>
                 <option key={effort.effortId} value={effort.effortId}>{effort.effortName}</option>
+            );
+        }
+
+        if(sprints != null){
+            ddlTeamSprints = sprints.sprintsList.map((sprint) =>
+                <option key={sprint.sprintId} value={sprint.sprintId}>{sprint.sprintName}</option>
             );
         }
 
@@ -118,10 +128,10 @@ class EditTask extends React.Component {
                         className={"custom-select mr-sm-2"}
                         name="sprint"
                         onChange={this.handleChange}
-                        disabled={true} // disabled={sprint === null} 
+                        disabled={sprints === null && !this.state.toggleEdit ? true : false} 
                         >
                         <option key={-1} value={-1}>Choose...</option>
-                        {/* {ddlTeamSprints} */}
+                        {ddlTeamSprints}
                     </select>
                 </div>
             </div>
@@ -154,7 +164,8 @@ EditTask.propTypes = {
     getTaskById: PropTypes.func.isRequired,
     updateTask: PropTypes.func.isRequired,
     getEfforts: PropTypes.func.isRequired,
-    getPriorities: PropTypes.func.isRequired
+    getPriorities: PropTypes.func.isRequired,
+    getSprintsList: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -163,4 +174,4 @@ const mapStateToProps = (state) => ({
     modal: state.modal
 });
 
-export default connect(mapStateToProps, { getTaskById, toggleEditTaskModal, getEfforts, getPriorities, updateTask })(EditTask);
+export default connect(mapStateToProps, { getTaskById, toggleEditTaskModal, getEfforts, getPriorities, updateTask, getSprintsList })(EditTask);

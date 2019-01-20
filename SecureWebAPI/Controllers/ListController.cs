@@ -46,5 +46,14 @@ namespace SecureWebAPI.Controllers
             var response = _service.GetEfforts(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
+
+        [HttpGet]
+        [Route("getsprintslist/{teamid}")]
+        public IActionResult GetSprintsList(string teamid)
+        {
+            var request = new SprintRequest { TeamId = Int32.Parse(teamid) };
+            var response = _service.GetSprintsList(request);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
+        }
     }
 }

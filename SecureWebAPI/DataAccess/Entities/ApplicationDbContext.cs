@@ -51,6 +51,7 @@ namespace SecureWebAPI.DataAccess.Entities
         {
             entity.ToTable("XRefBacklogTask");
             entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.TaskId).IsUnique();
             entity.Property(e => e.BacklogId);
             entity.Property(e => e.TaskId);
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
@@ -69,6 +70,7 @@ namespace SecureWebAPI.DataAccess.Entities
         {
             entity.ToTable("XRefSprintTask");
             entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.TaskId).IsUnique();
             entity.Property(e => e.SprintId);
             entity.Property(e => e.TaskId);
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
@@ -78,6 +80,8 @@ namespace SecureWebAPI.DataAccess.Entities
         {
             entity.ToTable("Sprint");
             entity.HasKey(e => e.SprintId);
+            entity.Property(e => e.SprintName);
+            entity.HasIndex(e => e.SprintName).IsUnique();
             entity.Property(e => e.TeamId);
             entity.Property(e => e.StartDate).HasDefaultValueSql("GETDATE()");
             entity.Property(e => e.EndDate);
@@ -105,7 +109,7 @@ namespace SecureWebAPI.DataAccess.Entities
         {
             entity.ToTable("Team");
             entity.HasKey(e => e.TeamId);
-            entity.Property(e => e.TeamName).IsUnicode(true);
+            entity.HasIndex(e => e.TeamName).IsUnique();
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
         }
 

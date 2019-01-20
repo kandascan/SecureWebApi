@@ -3,7 +3,7 @@ import { Button } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createTask } from '../actions/backlogActions';
-import { getEfforts, getPriorities } from '../actions/dictionaryActions';
+import { getEfforts, getPriorities, getSprintsList } from '../actions/dictionaryActions';
 import { toggleCreateTaskModal, clearErrorsModal } from '../actions/modalActions';
 import ModalComponent from '../CommonComponent/ModaComponent';
 import TextFieldGroup from '../CommonComponent/TextFieldGroup';
@@ -22,10 +22,14 @@ class CreateTask extends React.Component {
     toggle = () => {
         this.setState({ taskname: '', description: '', effort: -1, priority: -1, username: '', sprint: -1, errors: {} });
         this.props.toggleCreateTaskModal();
-        const { priorities, efforts } = this.props.dics;
+        const { priorities, efforts, sprints } = this.props.dics;
         if (priorities === null && efforts === null) {
             this.props.getEfforts();
             this.props.getPriorities();
+        }
+
+        if(sprints === null){
+            this.props.getSprintsList(this.props.teamid);
         }
     }
 
@@ -55,8 +59,8 @@ class CreateTask extends React.Component {
     render() {
         const { errors } = this.props;
         const { showCreateTaskModal } = this.props.modal;
-        const { priorities, efforts } = this.props.dics; //get team sprint
-        let ddlPriorities, ddlEfforts = null;
+        const { priorities, efforts, sprints } = this.props.dics;
+        let ddlPriorities, ddlEfforts, ddlTeamSprints = null;
         if (priorities != null && efforts != null) {
             ddlPriorities = priorities.priorities.map((priority) =>
                 <option key={priority.priorityId} value={priority.priorityId}>{priority.priorityName}</option>
@@ -64,7 +68,12 @@ class CreateTask extends React.Component {
             ddlEfforts = efforts.efforts.map((effort) =>
                 <option key={effort.effortId} value={effort.effortId}>{effort.effortName}</option>
             );
-            //ddlTeamSprints
+        }
+
+        if(sprints != null){
+            ddlTeamSprints = sprints.sprintsList.map((sprint) =>
+                <option key={sprint.sprintId} value={sprint.sprintId}>{sprint.sprintName}</option>
+            );
         }
 
         const content = (<form onSubmit={this.handleSubmit}>
@@ -135,10 +144,10 @@ class CreateTask extends React.Component {
                         className={"custom-select mr-sm-2"}
                         name="sprint"
                         onChange={this.handleChange}
-                        disabled={true} // disabled={sprint === null} 
+                        disabled={sprints === null ? true : false} 
                         >
                         <option key={-1} value={-1}>Choose...</option>
-                        {/* {ddlTeamSprints} */}
+                        {ddlTeamSprints}
                     </select>
                 </div>
             </div>
@@ -170,7 +179,8 @@ CreateTask.propTypes = {
     getEfforts: PropTypes.func.isRequired,
     getPriorities: PropTypes.func.isRequired,
     clearErrorsModal: PropTypes.func.isRequired,
-    errors: PropTypes.object.isRequired
+    errors: PropTypes.object.isRequired,
+    getSprintsList: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -180,4 +190,4 @@ const mapStateToProps = (state) => ({
     errors: state.errors
 });
 
-export default connect(mapStateToProps, { createTask, toggleCreateTaskModal, getEfforts, getPriorities, clearErrorsModal })(CreateTask);
+export default connect(mapStateToProps, { createTask, toggleCreateTaskModal, getEfforts, getPriorities, clearErrorsModal, getSprintsList })(CreateTask);

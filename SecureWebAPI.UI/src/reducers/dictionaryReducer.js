@@ -1,8 +1,9 @@
-import { GET_PRIORITIES, GET_EFFORTS } from '../actions/types';
+import { GET_PRIORITIES, GET_EFFORTS, GET_SPRINTS } from '../actions/types';
 
 const initialState = {
     priorities: null,
-    efforts: null
+    efforts: null,
+    sprints: null
 };
 
 export default function (state = initialState, action) {
@@ -16,6 +17,11 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 efforts: action.payload
+            }
+        case  GET_SPRINTS:
+            return {
+                ...state,
+                sprints: action.payload
             }
         default:
             return state;

@@ -156,14 +156,25 @@ namespace SecureWebAPI.BusinessLogic
                     if (task.Sprint != -1)
                     {
                         var xRefSprintTask = new XRefSprintTaskEntity { SprintId = (int)task.Sprint, TaskId = task.Id };
+                        _uow.Repository<XRefSprintTaskEntity>().Add(xRefSprintTask);
+                        var backlogTaskDb = _uow.Repository<XRefBacklogTaskEntity>().GetOverview(t => t.TaskId == task.Id).FirstOrDefault();
+                        if (backlogTaskDb != null)
+                        {
+                            _uow.Repository<XRefBacklogTaskEntity>().Delete(backlogTaskDb);
+                        }
                     }
                     else
                     {
                         var backlog = _uow.Repository<BacklogEntity>().GetOverview(b => b.TeamId == request.Task.TeamId).FirstOrDefault();
                         var xRefBacklogTask = new XRefBacklogTaskEntity { TaskId = task.Id, BacklogId = backlog.BacklogId };
                         _uow.Repository<XRefBacklogTaskEntity>().Add(xRefBacklogTask);
-                        _uow.Save();
+                        var sprintTaskDb = _uow.Repository<XRefSprintTaskEntity>().GetOverview(t => t.TaskId == task.Id).FirstOrDefault();
+                        if (sprintTaskDb != null)
+                        {
+                            _uow.Repository<XRefSprintTaskEntity>().Delete(sprintTaskDb);
+                        }
                     }
+                    _uow.Save();
 
                     response.Task = _mapper.Map<TaskVM>(task);
                     response.Success = true;
@@ -352,14 +363,25 @@ namespace SecureWebAPI.BusinessLogic
                     if (task.Sprint != -1)
                     {
                         var xRefSprintTask = new XRefSprintTaskEntity { SprintId = (int)task.Sprint, TaskId = task.Id };
+                        _uow.Repository<XRefSprintTaskEntity>().Add(xRefSprintTask);//albo update
+                        var backlogTaskDb = _uow.Repository<XRefBacklogTaskEntity>().GetOverview(t => t.TaskId == editedTask.Id).FirstOrDefault();
+                        if(backlogTaskDb != null)
+                        {
+                            _uow.Repository<XRefBacklogTaskEntity>().Delete(backlogTaskDb);
+                        }
                     }
                     else
                     {
                         var backlog = _uow.Repository<BacklogEntity>().GetOverview(b => b.TeamId == request.Task.TeamId).FirstOrDefault();
                         var xRefBacklogTask = new XRefBacklogTaskEntity { TaskId = task.Id, BacklogId = backlog.BacklogId };
-                        _uow.Repository<XRefBacklogTaskEntity>().Add(xRefBacklogTask);
-                        _uow.Save();
+                        _uow.Repository<XRefBacklogTaskEntity>().Add(xRefBacklogTask);//albo update
+                        var sprintTaskDb = _uow.Repository<XRefSprintTaskEntity>().GetOverview(t => t.TaskId == editedTask.Id).FirstOrDefault();
+                        if (sprintTaskDb != null)
+                        {
+                            _uow.Repository<XRefSprintTaskEntity>().Delete(sprintTaskDb);
+                        }
                     }
+                    _uow.Save();
 
                     response.Task = _mapper.Map<TaskVM>(task);
                     response.Success = true;
@@ -517,16 +539,65 @@ namespace SecureWebAPI.BusinessLogic
 
             try
             {
+                int sprintNumber = 1;
+                string sprintName = string.Empty;
+                var teamName = _uow.Repository<TeamEntity>().GetOverview()
+                       .Where(t => t.TeamId == request.Sprint.TeamId)
+                       .Select(n => n.TeamName).FirstOrDefault();
+                if (!string.IsNullOrEmpty(teamName))
+                {
+                    sprintName = $"{teamName} - Sprint: {sprintNumber}";  
+                }
+
+                var teamSprints = _uow.Repository<SprintEntity>().GetOverview()
+                    .Where(b => b.TeamId == request.Sprint.TeamId)
+                    .Select(s => s.SprintId).ToList();
+                if(teamSprints != null && teamSprints.Count > 0)
+                {
+                    sprintNumber = teamSprints.Count;
+                    sprintName = $"{teamName} - Sprint: {sprintNumber++}";
+                }
+
                 var newSprint = _mapper.Map<SprintEntity>(request.Sprint);
                 newSprint.StartDate = DateTime.Now;
                 newSprint.EndDate = DateTime.Now.AddDays(14);
+                newSprint.SprintName = sprintName;
                 _uow.Repository<SprintEntity>().Add(newSprint);
                 _uow.Save();
                 response.SprintId = newSprint.SprintId;
                 response.StartDate = newSprint.StartDate;
                 response.EndDate = newSprint.EndDate;
                 response.TeamId = newSprint.TeamId;
+                response.SprintName = newSprint.SprintName;
                 response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public SprintResponse GetSprintsList(SprintRequest request)
+        {
+            var response = new SprintResponse();
+            try
+            {
+                var sprints = _uow.Repository<SprintEntity>().GetOverview()
+                    .Where(b => b.TeamId == request.TeamId)
+                    .Select(s => new ShortSprint { SprintName = s.SprintName, SprintId = s.SprintId }).ToList();
+                if (sprints != null && sprints.Count > 0)
+                {
+                    response.SprintsList = sprints;
+                    response.Success = true;                   
+                }
+                else
+                {
+                    response.SprintsList = new List<ShortSprint>();
+                    response.Success = true;
+                    response.Errors.Add("Get Sprints", "This team cannot have any sprints yet.");
+                }
             }
             catch (Exception ex)
             {
