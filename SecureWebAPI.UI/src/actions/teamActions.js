@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TOGGLE_SPINNER, SHOW_CREATE_TEAM_MODAL, GET_ERRORS, GET_USER_TEAMS, SET_CURRENT_TEAM  } from './types';
+import { TOGGLE_SPINNER, SHOW_CREATE_TEAM_MODAL, GET_ERRORS, GET_USER_TEAMS, SET_CURRENT_TEAM } from './types';
 
 export const currentTeam = (teamid) => dispatch => {
     localStorage.setItem('teamid', `${teamid}`);

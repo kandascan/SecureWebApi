@@ -13,6 +13,7 @@ import Home from './CommonComponent/Home';
 import Backlog from './BacklogComponent/Backlog';
 import CurrentSprint from './SprintComponent/CurrentSprint';
 import Profile from './ProfileComponent/Profile';
+import ManageTeam from './TeamComponent/ManageTeam';
 import './App.css';
 import '../node_modules/react-bootstrap-toggle/dist/react-bootstrap2-toggle';
 
@@ -38,6 +39,7 @@ class App extends Component {
           <Route exact path="/register" component={RegisterForm} />
           <Route exact path="/login" component={LoginForm} />
           <Route exact path="/backlog/:teamid" component={Backlog} />
+          <Route exact path="/manageteam/:teamid" component={ManageTeam} />
           <Route exact path="/currentSprint/:teamid" component={CurrentSprint} />
           <Route exact path="/profile" component={Profile} />
           <Footer />

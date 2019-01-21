@@ -66,13 +66,14 @@ class Team extends Component {
                 {team.teamName}
                 <div style={{ float: "right", textAlign: "right" }} className="row">
                     <div>
-                        <span className="badge badge-light">Tasks:</span>{' '}<span className="badge badge-info">5</span><br />
-                        <span className="badge badge-light">Members:</span>{' '}<span className="badge badge-success">2</span>
+                        <span className="badge badge-light">Tasks:</span>{' '}<span className="badge badge-info">{team.taskNumber}</span><br />
+                        <span className="badge badge-light">Members:</span>{' '}<span className="badge badge-success">{team.teamUserNumber}</span>
                     </div>
                     <div className="col-md-1"></div>
                     <div style={{ padding: "7px 7px 7px 0" }}>
-                        <button className="btn btn-danger"><i className="fas fa-trash"></i></button>
-                        {/* moze zamiast tego korza cos do zarzadzania jak wyzej koentasz */}
+                        {/* <button className="btn btn-danger"><i className="fas fa-trash"></i></button> */}
+                        {team.scrumMasterUser ? 
+                            (<Link to={`manageteam/${team.teamId}`} key={team.teamId} className="btn btn-warning"><i className="fas fa-edit"></i></Link>) : (null)}                        
                     </div>
                 </div>
             </Link>

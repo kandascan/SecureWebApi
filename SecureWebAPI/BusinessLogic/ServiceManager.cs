@@ -357,13 +357,14 @@ namespace SecureWebAPI.BusinessLogic
             {
                 var editedTask = _mapper.Map<TaskEntity>(request.Task);
                 var task = _uow.Repository<TaskEntity>().Update(editedTask);
-                _uow.Save();
                 if (task != null)
                 {
                     if (task.Sprint != -1)
                     {
                         var xRefSprintTask = new XRefSprintTaskEntity { SprintId = (int)task.Sprint, TaskId = task.Id };
-                        _uow.Repository<XRefSprintTaskEntity>().Add(xRefSprintTask);//albo update
+                        var xst = _uow.Repository<XRefSprintTaskEntity>().GetOverview(t => t.TaskId == task.Id).FirstOrDefault();
+                        if(xst == null)
+                            _uow.Repository<XRefSprintTaskEntity>().Add(xRefSprintTask);
                         var backlogTaskDb = _uow.Repository<XRefBacklogTaskEntity>().GetOverview(t => t.TaskId == editedTask.Id).FirstOrDefault();
                         if(backlogTaskDb != null)
                         {
@@ -374,7 +375,9 @@ namespace SecureWebAPI.BusinessLogic
                     {
                         var backlog = _uow.Repository<BacklogEntity>().GetOverview(b => b.TeamId == request.Task.TeamId).FirstOrDefault();
                         var xRefBacklogTask = new XRefBacklogTaskEntity { TaskId = task.Id, BacklogId = backlog.BacklogId };
-                        _uow.Repository<XRefBacklogTaskEntity>().Add(xRefBacklogTask);//albo update
+                        var xbt = _uow.Repository<XRefBacklogTaskEntity>().GetOverview(t => t.TaskId == task.Id).FirstOrDefault();
+                        if (xbt == null)
+                            _uow.Repository<XRefBacklogTaskEntity>().Add(xRefBacklogTask);
                         var sprintTaskDb = _uow.Repository<XRefSprintTaskEntity>().GetOverview(t => t.TaskId == editedTask.Id).FirstOrDefault();
                         if (sprintTaskDb != null)
                         {
@@ -441,6 +444,8 @@ namespace SecureWebAPI.BusinessLogic
                 var teams = _uow.Repository<TeamEntity>().GetOverview();
                 var xrefTeamsUsers = _uow.Repository<XRefTeamUserEntity>().GetOverview();
                 var userRoles = _uow.Repository<RoleEntity>().GetOverview();
+                var backlog = _uow.Repository<BacklogEntity>().GetOverview();
+                var xrefBacklogTask = _uow.Repository<XRefBacklogTaskEntity>().GetOverview();
                 var userTeams = (from ut in xrefTeamsUsers
                                  join t in teams
                                  on ut.TeamId equals t.TeamId
@@ -452,7 +457,13 @@ namespace SecureWebAPI.BusinessLogic
                                      TeamId = t.TeamId,
                                      TeamName = t.TeamName,
                                      UserRole = r.RoleName,
-                                     ScrumMasterUser = r.RoleId == (int)Role.SCRUM_MASTER ? true : false
+                                     ScrumMasterUser = r.RoleId == (int)Role.SCRUM_MASTER ? true : false,
+                                     TeamUserNumber = xrefTeamsUsers.Where(x => x.TeamId == t.TeamId).Count(),
+                                     TaskNumber = (from xbt in xrefBacklogTask
+                                                   join b in backlog
+                                                   on xbt.BacklogId equals b.BacklogId
+                                                   where b.TeamId == t.TeamId
+                                                   select xbt.TaskId).Count()
                                  }).OrderByDescending(t => t.TeamId).ToList();
 
                 if (userTeams != null && userTeams.Count() > 0)
@@ -605,6 +616,6 @@ namespace SecureWebAPI.BusinessLogic
                 response.Errors.Add("System Exception", ex.Message);
             }
             return response;
-        }
+        }        
     }
 }

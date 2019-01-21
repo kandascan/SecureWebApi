@@ -10,5 +10,6 @@ namespace SecureWebAPI.BusinessLogic.Request
     {
         public TeamVM Team { get; set; }
         public string UserId { get; internal set; }
+        public int TeamId { get; internal set; }
     }
 }
