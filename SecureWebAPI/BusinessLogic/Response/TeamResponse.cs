@@ -11,5 +11,6 @@ namespace SecureWebAPI.BusinessLogic.Response
     {
         public TeamVM Team { get; internal set; }
         public List<UserTeams> UserTeams { get; internal set; }
+        public List<User> TeamUsers { get; internal set; }
     }
 }

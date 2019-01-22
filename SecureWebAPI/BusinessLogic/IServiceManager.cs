@@ -39,5 +39,9 @@ namespace SecureWebAPI.BusinessLogic
         SprintResponse CreateSprint(SprintRequest request);
 
         SprintResponse GetSprintsList(SprintRequest request);
+
+        UserResponse GetAllUsersWithoutMe(UserRequest request);
+
+        TeamResponse GetTeamUsers(TeamRequest request);
     }
 }

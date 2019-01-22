@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getTaskById, updateTask } from '../actions/backlogActions';

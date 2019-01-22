@@ -71,7 +71,6 @@ class Team extends Component {
                     </div>
                     <div className="col-md-1"></div>
                     <div style={{ padding: "7px 7px 7px 0" }}>
-                        {/* <button className="btn btn-danger"><i className="fas fa-trash"></i></button> */}
                         {team.scrumMasterUser ? 
                             (<Link to={`manageteam/${team.teamId}`} key={team.teamId} className="btn btn-warning"><i className="fas fa-edit"></i></Link>) : (null)}                        
                     </div>

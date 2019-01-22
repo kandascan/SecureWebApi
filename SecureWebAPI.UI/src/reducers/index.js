@@ -7,6 +7,7 @@ import spinnerReducer from './spinnerReducer';
 import modalReducer from './modalReducer';
 import teamReducer from './teamReducer';
 import sprintReducer from './sprintReducer';
+import userReducer from './userReducer';
 
 export default combineReducers({
     auth: authReducer,
@@ -16,5 +17,6 @@ export default combineReducers({
     spinner: spinnerReducer,
     modal: modalReducer,
     team: teamReducer,
-    sprint: sprintReducer
+    sprint: sprintReducer,
+    user: userReducer
 });

@@ -616,6 +616,65 @@ namespace SecureWebAPI.BusinessLogic
                 response.Errors.Add("System Exception", ex.Message);
             }
             return response;
-        }        
+        }
+
+        public UserResponse GetAllUsersWithoutMe(UserRequest request)
+        {
+            var response = new UserResponse();
+            try
+            {
+                var users = _uow.Repository<UserEntity>().GetOverview(u => u.Id != request.UserId).Select(u => new User
+                {
+                    UserId = u.Id,
+                    UserName = u.UserName
+                }).ToList();
+                if(users != null)
+                {
+                    response.UserList = users;
+                    response.Success = true;
+                }                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public TeamResponse GetTeamUsers(TeamRequest request)
+        {
+            var response = new TeamResponse();
+            try
+            {
+                var xRefTeamUser = _uow.Repository<XRefTeamUserEntity>().GetOverview();
+                var user = _uow.Repository<UserEntity>().GetOverview();
+                var role = _uow.Repository<RoleEntity>().GetOverview();
+
+                var teamUsers = (from x in xRefTeamUser
+                                 join u in user
+                                 on x.UserId equals u.Id
+                                 join r in role
+                                 on x.RoleId equals r.RoleId
+                                 select new User {
+                                     UserId = u.Id,
+                                     UserName = u.UserName,
+                                     UserRole = r.RoleName,
+                                     Me = request.UserId == x.UserId ? true : false
+                                 }).ToList();
+
+                if (teamUsers != null)
+                {
+                    response.TeamUsers = teamUsers;
+                    response.Success = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
     }
 }

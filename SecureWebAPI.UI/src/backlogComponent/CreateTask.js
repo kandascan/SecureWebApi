@@ -8,7 +8,6 @@ import { toggleCreateTaskModal, clearErrorsModal } from '../actions/modalActions
 import ModalComponent from '../CommonComponent/ModaComponent';
 import TextFieldGroup from '../CommonComponent/TextFieldGroup';
 import classnames from 'classnames';
-import isEmpty from '../validation/is-Empty';
 
 import $ from 'jquery';
 window.jQuery = window.$ = $;
