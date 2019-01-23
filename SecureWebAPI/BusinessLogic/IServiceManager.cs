@@ -43,5 +43,9 @@ namespace SecureWebAPI.BusinessLogic
         UserResponse GetAllUsersWithoutMe(UserRequest request);
 
         TeamResponse GetTeamUsers(TeamRequest request);
+
+        RoleResponse GetUserRoles(RoleRequest request);
+
+        UserResponse AddUserToTeam(UserRequest request);
     }
 }

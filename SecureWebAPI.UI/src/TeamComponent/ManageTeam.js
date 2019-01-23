@@ -1,31 +1,55 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getUsersWithoutMe, getTeamUsers } from '../actions/userActions';
+import { getUsersWithoutMe, getTeamUsers, getUserRoles, addUserToTeam } from '../actions/userActions';
 import classnames from 'classnames';
+import isEmpty from '../../src/validation/is-Empty'
 
 class ManageTeam extends Component {
     constructor(props) {
         super(props);
         this.state = { userId: -1, roleId: -1 };
     }
+    componentWillReceiveProps = (nextProps) => {
+        const { errors } = nextProps;
+        if (isEmpty(errors))
+            this.setState({ userId: -1, roleId: -1 });
+    }
     componentDidMount = () => {
-        const { users, teamUsers } = this.props.user;
+        const { users, teamUsers, roles } = this.props.user;
         if (users === null)
             this.props.getUsersWithoutMe();
         if (teamUsers === null)
             this.props.getTeamUsers(this.props.match.params.teamid)
+        if (roles === null)
+            this.props.getUserRoles();
     }
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
 
+    handleClick = () => {
+        const newUser = {
+            Id: this.state.userId,
+            TeamId: parseInt(this.props.match.params.teamid),
+            RoleId: this.state.roleId
+        }
+        this.props.addUserToTeam(newUser);
+    }
+
     render() {
-        const { users, teamUsers } = this.props.user;
+        const { errors } = this.props;
+        const { users, teamUsers, roles } = this.props.user;
         let ddlUsers, ddlRoles, teamUserList = null;
         if (users != null) {
             ddlUsers = users.userList.map((user) =>
                 <option key={user.userId} value={user.userId}>{user.userName}</option>
+            );
+        }
+
+        if (roles != null) {
+            ddlRoles = roles.roles.map((role) =>
+                <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
             );
         }
 
@@ -42,7 +66,7 @@ class ManageTeam extends Component {
                             'badge-info': !teamUser.me,
                             'badge-dark': teamUser.me
                         })}>14</span>
-                    {teamUser.me ? (null) : (<button className="btn btn-danger"><i className="fas fa-trash"></i></button>)}
+                    {teamUser.me ? (<button className="btn btn-danger"><i className="fas fa-trash"></i></button>) : (null)}
                 </li>
             );
         }
@@ -57,20 +81,37 @@ class ManageTeam extends Component {
                                 </div>
                             </div>
                             <br /><br /><br /><br />
-                            <div className="form-group col-md-5">
-                                <label htmlFor="inputUser">Users</label>
-                                <select className="custom-select mr-sm-2" name="userId" onChange={this.handleChange} value={this.state.userId} >
-                                    <option key={-1} value={-1}>Choose user for your team</option>
-                                    {ddlUsers}
-                                </select>
-                                <label htmlFor="inputUser">Role</label>
-                                <select className="custom-select mr-sm-2" name="roleId" onChange={this.handleChange} value={this.state.roleId} >
-                                    <option key={-1} value={-1}>Choose role for user</option>
-                                    {ddlRoles}
-                                </select>
-                                <br /><br />
-                                <button type="button" className="btn btn-warning">Add User</button>
-                            </div>
+                            <form className="col-md-5">
+                                <div className="form-group">
+                                    <label htmlFor="inputUser">Users</label>
+                                    <select
+                                        className={classnames("custom-select mr-sm-2", {
+                                            'is-invalid': errors.userId
+                                        })}
+                                        name="userId"
+                                        onChange={this.handleChange}
+                                        value={this.state.userId} >
+                                        <option key={-1} value={-1}>Choose user for your team</option>
+                                        {ddlUsers}
+                                    </select>
+                                    {errors.userId && (<div className="invalid-feedback">{errors.userId}</div>)}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="inputUser">Role</label>
+                                    <select
+                                        className={classnames("custom-select mr-sm-2", {
+                                            'is-invalid': errors.roleId
+                                        })}
+                                        name="roleId"
+                                        onChange={this.handleChange}
+                                        value={this.state.roleId} >
+                                        <option key={-1} value={-1}>Choose role for user</option>
+                                        {ddlRoles}
+                                    </select>
+                                    {errors.roleId && (<div className="invalid-feedback">{errors.roleId}</div>)}
+                                </div>
+                                <button onClick={this.handleClick} type="button" className="btn btn-warning">Add User</button>
+                            </form>
                             <div className="col-md-2">
                             </div>
                             <div className="col-md-5">
@@ -88,12 +129,16 @@ class ManageTeam extends Component {
 
 ManageTeam.propTypes = {
     user: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired,
     getUsersWithoutMe: PropTypes.func.isRequired,
-    getTeamUsers: PropTypes.func.isRequired
+    getTeamUsers: PropTypes.func.isRequired,
+    getUserRoles: PropTypes.func.isRequired,
+    addUserToTeam: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    user: state.user
+    user: state.user,
+    errors: state.errors
 });
 
-export default connect(mapStateToProps, { getUsersWithoutMe, getTeamUsers })(ManageTeam);
+export default connect(mapStateToProps, { getUsersWithoutMe, getTeamUsers, getUserRoles, addUserToTeam })(ManageTeam);

@@ -54,15 +54,16 @@ class Team extends Component {
             </div>) : (null)
             }</div>
         ) : (userteams.map((team) => (
-            <Link
-                to={`backlog/${team.teamId}`}
-                key={team.teamId}
+            <div key={team.teamId}               
                 // className={classnames("list-group-item list-group-item-action d-flex justify-content-between align-items-center list-group-item-light", {
                 //     'active': !team.scrumMasterUser
                 // })}> tutaj cos podobnego ale tylko dla przycisku do zarzadzania teamem uzyc tej propercji scrumMasterUser
                 className={classnames("list-group-item list-group-item-action d-flex justify-content-between align-items-center list-group-item-light", {
                     'active': localStorage.teamid == team.teamId
                 })}>
+                <Link to={`backlog/${team.teamId}`} className="btn btn-info">
+                    <i className="fas fa-arrow-right"></i>
+                </Link>
                 {team.teamName}
                 <div style={{ float: "right", textAlign: "right" }} className="row">
                     <div>
@@ -75,7 +76,7 @@ class Team extends Component {
                             (<Link to={`manageteam/${team.teamId}`} key={team.teamId} className="btn btn-warning"><i className="fas fa-edit"></i></Link>) : (null)}                        
                     </div>
                 </div>
-            </Link>
+            </div>
         )));
 
         const modalContent = (

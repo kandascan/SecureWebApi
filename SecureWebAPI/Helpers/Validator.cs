@@ -79,5 +79,25 @@ namespace SecureWebAPI.Helpers
 
             return response;
         }
+
+        internal static Dictionary<string, string> AddUserToTeam(UserVM user)
+        {
+            var response = new Dictionary<string, string>();
+
+            if (string.IsNullOrEmpty(user.Id) || user.Id == "-1")
+            {
+                response.Add("userId", "Pleae select user to your team");
+            }
+            if(user.RoleId <= 0)
+            {
+                response.Add("roleId", "Please select role for user");
+            }
+            if (user.TeamId <= 0)
+            {
+                response.Add("teamId", "TeamId is required");
+            }
+
+            return response;
+        }
     }
 }

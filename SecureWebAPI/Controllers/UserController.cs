@@ -45,5 +45,23 @@ namespace SecureWebAPI.Controllers
             var response = _service.GetTeamUsers(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
+
+        [HttpGet]
+        [Route("getuserroles")]
+        public IActionResult GetUserRoles()
+        {
+            var request = new RoleRequest();
+            var response = _service.GetUserRoles(request);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
+        }
+
+        [HttpPost]
+        [Route("addusertoteam")]
+        public IActionResult AddUserToTeam(UserVM teamUser)
+        {
+            var request = new UserRequest { User = teamUser };
+            var response = _service.AddUserToTeam(request);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
+        }
     }
 }

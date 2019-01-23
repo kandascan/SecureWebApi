@@ -417,7 +417,7 @@ namespace SecureWebAPI.BusinessLogic
                 _uow.Repository<TeamEntity>().Add(newTeam);
                 _uow.Save();
 
-                var newXrefTeamUser = new XRefTeamUserEntity { TeamId = newTeam.TeamId, UserId = request.UserId, RoleId = (int)Role.SCRUM_MASTER };
+                var newXrefTeamUser = new XRefTeamUserEntity { TeamId = newTeam.TeamId, UserId = request.UserId, RoleId = (int)Enums.Role.SCRUM_MASTER };
                 _uow.Repository<XRefTeamUserEntity>().Add(newXrefTeamUser);
                 _uow.Save();
 
@@ -457,7 +457,7 @@ namespace SecureWebAPI.BusinessLogic
                                      TeamId = t.TeamId,
                                      TeamName = t.TeamName,
                                      UserRole = r.RoleName,
-                                     ScrumMasterUser = r.RoleId == (int)Role.SCRUM_MASTER ? true : false,
+                                     ScrumMasterUser = r.RoleId == (int)Enums.Role.SCRUM_MASTER ? true : false,
                                      TeamUserNumber = xrefTeamsUsers.Where(x => x.TeamId == t.TeamId).Count(),
                                      TaskNumber = (from xbt in xrefBacklogTask
                                                    join b in backlog
@@ -668,6 +668,51 @@ namespace SecureWebAPI.BusinessLogic
                     response.TeamUsers = teamUsers;
                     response.Success = true;
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public RoleResponse GetUserRoles(RoleRequest request)
+        {
+            var response = new RoleResponse();
+            try
+            {
+                var roles = _uow.Repository<RoleEntity>().GetOverview().ToList();
+                if(roles != null)
+                {
+
+                    response.Roles = _mapper.Map<List<Model.Role>>(roles);
+                    response.Success = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public UserResponse AddUserToTeam(UserRequest request)
+        {
+            var response = new UserResponse();
+            response.Errors = Validator.AddUserToTeam(request.User);
+            if (response.Errors.Count() > 0)
+            {
+                return response;
+            }
+
+            try
+            {
+                _uow.Repository<XRefTeamUserEntity>().Add(new XRefTeamUserEntity { RoleId = request.User.RoleId, UserId = request.User.Id, TeamId = request.User.TeamId });
+                _uow.Save();
+                response.TeamId = request.User.TeamId;
+                response.Success = true;
             }
             catch (Exception ex)
             {

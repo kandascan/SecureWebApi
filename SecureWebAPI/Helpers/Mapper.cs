@@ -1,4 +1,5 @@
 using AutoMapper;
+using SecureWebAPI.BusinessLogic.Model;
 using SecureWebAPI.DataAccess.Entities;
 using SecureWebAPI.Models;
 
@@ -22,6 +23,8 @@ namespace SecureWebAPI.Helpers
             CreateMap<BacklogEntity, BacklogVM>();
             CreateMap<SprintVM, SprintEntity>();
             CreateMap<SprintEntity, SprintVM>();
+            CreateMap<RoleEntity, Role>();
+            CreateMap<Role, RoleEntity>();
         }
     }
 }
