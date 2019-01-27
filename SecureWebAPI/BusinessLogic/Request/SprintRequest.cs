@@ -9,8 +9,9 @@ namespace SecureWebAPI.BusinessLogic.Request
     public class SprintRequest : BaseRequest
     {
         public int Id { get; set; }
-        public SprintVM Sprint { get; internal set; }
-        public string UserId { get; internal set; }
+        public SprintVM Sprint { get; set; }
+        public string UserId { get; set; }
         public int TeamId { get; set; }
+        public SortedSprintTasksVM SortedSprintTasks { get;  set; }
     }
 }

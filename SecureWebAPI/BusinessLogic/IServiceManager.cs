@@ -49,5 +49,7 @@ namespace SecureWebAPI.BusinessLogic
         RoleResponse GetUserRoles(RoleRequest request);
 
         UserResponse AddUserToTeam(UserRequest request);
+
+        SprintResponse SortSprintTasks(SprintRequest request);
     }
 }

@@ -2,7 +2,8 @@ import { GET_CURRENT_SPRINT } from '../actions/types';
 
 const initialState = {
     tasks: null,
-    sprintId: 0
+    sprintId: 0,
+    teamId: 0
 };
 
 export default function (state = initialState, action) {
@@ -11,7 +12,8 @@ export default function (state = initialState, action) {
         return {
             ...state,
             tasks: action.payload.sprintBoardTasks,
-            sprintId: action.payload.sprintId
+            sprintId: action.payload.sprintId,
+            teamId: action.payload.teamId,
         }
         default:
             return state;

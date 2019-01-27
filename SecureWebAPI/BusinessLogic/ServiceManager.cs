@@ -534,6 +534,7 @@ namespace SecureWebAPI.BusinessLogic
                         where xst.SprintId == sprint.SprintId
                         select new SprintTask
                         {
+                            Id = xst.Id,
                             ColumnId = sc.ColumnId,
                             ColumnName = sc.ColumnName,
                             OrderId = xst == null ? 0 : xst.OrderId,
@@ -547,7 +548,7 @@ namespace SecureWebAPI.BusinessLogic
 
                     foreach (var s in sprintColumn)
                     {
-                        var items = tasks.Where(t => t.ColumnId == s.ColumnId).OrderByDescending(i => i.OrderId).ThenByDescending(d => d.CreatedDate).ToList();
+                        var items = tasks.Where(t => t.ColumnId == s.ColumnId).OrderBy(i => i.OrderId).ThenBy(d => d.CreatedDate).ToList();
 
                         var sprintBoardTask = new SprintBoardTask
                         {
@@ -557,11 +558,48 @@ namespace SecureWebAPI.BusinessLogic
                         };
 
                         response.SprintBoardTasks.Add(sprintBoardTask);
-                    }                    
+                    }
 
+                    response.TeamId = request.TeamId;
                     response.SprintId = sprint.SprintId;
                     response.Success = true;
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public SprintResponse SortSprintTasks(SprintRequest request)
+        {
+            var response = new SprintResponse();
+            try
+            {
+                var sprintColumn = _uow.Repository<SprintColumnEntity>().GetOverview();
+                var xRefSprintTask = _uow.Repository<XRefSprintTaskEntity>().GetOverview();
+                int orderId = 0;
+                foreach (var col in request.SortedSprintTasks.SprintBoardTasks)
+                {
+                    foreach(var t in col.Items)
+                    {
+                        var xst = new XRefSprintTaskEntity
+                        {
+                            Id = t.Id,
+                            SprintId = request.SortedSprintTasks.SprintId,
+                            TaskId = (int)t.TaskId,
+                            ColumnId = col.ColumnId,
+                            OrderId = orderId
+                        };
+                        _uow.Repository<XRefSprintTaskEntity>().Update(xst);
+                        orderId++;
+                    }                    
+                }
+                _uow.Save();
+                response.Success = true;
+               
             }
             catch (Exception ex)
             {

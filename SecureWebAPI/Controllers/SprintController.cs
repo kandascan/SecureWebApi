@@ -44,5 +44,14 @@ namespace SecureWebAPI.Controllers
             var response = _service.CreateSprint(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
+
+        [HttpPost]
+        [Route("onsortsprinttasks")]
+        public IActionResult Post([FromBody] SortedSprintTasksVM sortedSprintTasks)
+        {
+            var request = new SprintRequest { SortedSprintTasks = sortedSprintTasks };
+            var response = _service.SortSprintTasks(request);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
+        }
     }
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { sortableContainer, sortableElement, arrayMove, DragLayer } from '../react-sortable-multiple-hoc';
+import { onSortSprintTasks } from "../actions/sprintActions";
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -70,8 +71,10 @@ class SortableComponent extends Component {
 
     componentDidMount() {
         this.setState({
-            parts: this.props.sprint.tasks
-        })
+            parts: this.props.sprint.tasks,
+            sprintId: this.props.sprint.sprintId,
+            teamId: this.props.sprint.teamId
+        });
     }
     
     onSortEnd = ({ oldIndex, newIndex }) => {
@@ -95,7 +98,14 @@ class SortableComponent extends Component {
         this.setState({
             parts: parts,
         });
-        console.log(this.state)
+
+        const sprintTasks = {
+            TeamId: this.state.teamId,
+            SprintId: this.state.sprintId,
+            SprintBoardTasks: this.state.parts,
+        }
+        console.log(sprintTasks)
+        this.props.onSortSprintTasks(sprintTasks);
 
     }
     render() {
@@ -122,11 +132,12 @@ class SortableComponent extends Component {
 }
 
 SortableComponent.propTypes = {
-    sprint: PropTypes.object.isRequired
+    sprint: PropTypes.object.isRequired,
+    onSortSprintTasks: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
     sprint: state.sprint
 });
 
-export default connect(mapStateToProps, {})(SortableComponent);
+export default connect(mapStateToProps, {onSortSprintTasks})(SortableComponent);

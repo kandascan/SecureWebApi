@@ -16,5 +16,6 @@ namespace SecureWebAPI.BusinessLogic.Model
         public string UserName { get; set; }
         public int Effort { get;  set; }
         public DateTime CreatedDate { get;  set; }
+        public int Id { get; set; }
     }
 }
