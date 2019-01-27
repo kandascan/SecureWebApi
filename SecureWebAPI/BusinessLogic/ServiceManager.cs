@@ -618,12 +618,14 @@ namespace SecureWebAPI.BusinessLogic
             return response;
         }
 
-        public UserResponse GetAllUsersWithoutMe(UserRequest request)
+        public UserResponse GetAllUsersWithouUsersInTeam(UserRequest request)
         {
             var response = new UserResponse();
             try
             {
-                var users = _uow.Repository<UserEntity>().GetOverview(u => u.Id != request.UserId).Select(u => new User
+                var xRefTeamUsers = _uow.Repository<XRefTeamUserEntity>().GetOverview(t => t.TeamId == request.UserTeam.TeamId).Select(x => x.UserId).ToList();
+
+                var users = _uow.Repository<UserEntity>().GetOverview().Where(u => !xRefTeamUsers.Contains(u.Id)).Select(u => new User
                 {
                     UserId = u.Id,
                     UserName = u.UserName
@@ -713,6 +715,29 @@ namespace SecureWebAPI.BusinessLogic
                 _uow.Save();
                 response.TeamId = request.User.TeamId;
                 response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public UserResponse DeleteUserFromTeam(UserRequest request)
+        {
+            var response = new UserResponse();           
+            try
+            {
+                var xref = _uow.Repository<XRefTeamUserEntity>().GetOverview(x => x.UserId == request.UserTeam.UserId && x.TeamId == request.UserTeam.TeamId).FirstOrDefault();
+                if(xref != null)
+                {
+                    _uow.Repository<XRefTeamUserEntity>().Delete(xref);
+                    _uow.Save();
+                    response.TeamId = request.UserTeam.TeamId;
+                    response.Success = true;
+                }                
+                
             }
             catch (Exception ex)
             {

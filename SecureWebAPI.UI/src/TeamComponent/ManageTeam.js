@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getUsersWithoutMe, getTeamUsers, getUserRoles, addUserToTeam } from '../actions/userActions';
+import { getUsersWithoutUsersInTeam, getTeamUsers, getUserRoles, addUserToTeam, deleteUserFromTeam } from '../actions/userActions';
 import classnames from 'classnames';
 import isEmpty from '../../src/validation/is-Empty'
 
@@ -18,7 +18,7 @@ class ManageTeam extends Component {
     componentDidMount = () => {
         const { users, teamUsers, roles } = this.props.user;
         if (users === null)
-            this.props.getUsersWithoutMe();
+            this.props.getUsersWithoutUsersInTeam(this.props.match.params.teamid);
         if (teamUsers === null)
             this.props.getTeamUsers(this.props.match.params.teamid)
         if (roles === null)
@@ -35,6 +35,14 @@ class ManageTeam extends Component {
             RoleId: this.state.roleId
         }
         this.props.addUserToTeam(newUser);
+    }
+
+    handleDeleteUserFromTeam = (userId) => {
+        const xrefUserTeam = {
+            UserId: userId,
+            TeamId: parseInt(this.props.match.params.teamid)
+        };
+        this.props.deleteUserFromTeam(xrefUserTeam);
     }
 
     render() {
@@ -66,7 +74,7 @@ class ManageTeam extends Component {
                             'badge-info': !teamUser.me,
                             'badge-dark': teamUser.me
                         })}>14</span>
-                    {teamUser.me ? (<button className="btn btn-danger"><i className="fas fa-trash"></i></button>) : (null)}
+                    {!teamUser.me ? (<i className="fas fa-trash" onClick={() =>this.handleDeleteUserFromTeam(teamUser.userId)}></i>) : (null)}
                 </li>
             );
         }
@@ -130,10 +138,11 @@ class ManageTeam extends Component {
 ManageTeam.propTypes = {
     user: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
-    getUsersWithoutMe: PropTypes.func.isRequired,
+    getUsersWithoutUsersInTeam: PropTypes.func.isRequired,
     getTeamUsers: PropTypes.func.isRequired,
     getUserRoles: PropTypes.func.isRequired,
-    addUserToTeam: PropTypes.func.isRequired
+    addUserToTeam: PropTypes.func.isRequired,
+    deleteUserFromTeam: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -141,4 +150,4 @@ const mapStateToProps = (state) => ({
     errors: state.errors
 });
 
-export default connect(mapStateToProps, { getUsersWithoutMe, getTeamUsers, getUserRoles, addUserToTeam })(ManageTeam);
+export default connect(mapStateToProps, { getUsersWithoutUsersInTeam, getTeamUsers, getUserRoles, addUserToTeam, deleteUserFromTeam })(ManageTeam);

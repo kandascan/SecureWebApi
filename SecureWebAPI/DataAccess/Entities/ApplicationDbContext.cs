@@ -138,7 +138,7 @@ namespace SecureWebAPI.DataAccess.Entities
             entity.Property(e => e.Description);
             entity.Property(e => e.EffortId);
             entity.Property(e => e.PriorityId);
-            entity.Property(e => e.Username);
+            entity.Property(e => e.UserId);
             entity.Property(e => e.OrderId);
             entity.Property(e => e.Sprint);
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");

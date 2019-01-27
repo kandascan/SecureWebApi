@@ -1,4 +1,4 @@
-import { GET_USERS_WITHOUT_ME, GET_TEAM_USERS, GET_USER_ROLES } from '../actions/types';
+import { GET_USERS_WITHOUT_USERS_IN_TEAM, GET_TEAM_USERS, GET_USER_ROLES } from '../actions/types';
 
 const initialState = {
     users: null,
@@ -18,7 +18,7 @@ export default function (state = initialState, action) {
                 ...state,
                 teamUsers: action.payload
             }
-        case  GET_USERS_WITHOUT_ME:
+        case  GET_USERS_WITHOUT_USERS_IN_TEAM:
             return {
                 ...state,
                 users: action.payload

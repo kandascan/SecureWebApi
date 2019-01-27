@@ -13,7 +13,7 @@ namespace SecureWebAPI.DataAccess.Entities
         public string Description { get; set; }
         public int? EffortId { get; set; }
         public int? PriorityId { get; set; }
-        public string Username { get; set; }
+        public string UserId { get; set; }
         public int OrderId { get; set; }
         public int? Sprint { get; set; }
         public DateTime CreatedDate { get; set; }

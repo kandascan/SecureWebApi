@@ -28,12 +28,20 @@ namespace SecureWebAPI.Controllers
             UserId = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         }
 
-        [HttpGet]
-        [Route("getalluserswithoutme")]
-        public IActionResult GetAllUsersWithoutMe()
+        [HttpDelete]
+        [Route("deleteuserfromteam")]
+        public IActionResult DeleteUserFromTeam(XRefUserTeam xrefUserTeam)
         {
-            var request = new UserRequest { UserId = UserId };
-            var response = _service.GetAllUsersWithoutMe(request);
+            var request = new UserRequest { UserTeam = xrefUserTeam };
+            var response = _service.DeleteUserFromTeam(request);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
+        }
+        [HttpGet]
+        [Route("getalluserswitusersinteam/{teamid}")]
+        public IActionResult GetAllUsersWithouUsersInTeam(string teamid)
+        {
+            var request = new UserRequest { UserTeam = new XRefUserTeam { TeamId = Int32.Parse(teamid), UserId = UserId } };
+            var response = _service.GetAllUsersWithouUsersInTeam(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 

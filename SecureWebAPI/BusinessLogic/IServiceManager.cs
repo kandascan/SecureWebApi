@@ -38,9 +38,11 @@ namespace SecureWebAPI.BusinessLogic
 
         SprintResponse CreateSprint(SprintRequest request);
 
+        UserResponse DeleteUserFromTeam(UserRequest request);
+
         SprintResponse GetSprintsList(SprintRequest request);
 
-        UserResponse GetAllUsersWithoutMe(UserRequest request);
+        UserResponse GetAllUsersWithouUsersInTeam(UserRequest request);
 
         TeamResponse GetTeamUsers(TeamRequest request);
 

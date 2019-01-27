@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getTaskById, updateTask } from '../actions/backlogActions';
 import { getEfforts, getPriorities, getSprintsList } from '../actions/dictionaryActions';
+import { getTeamUsers } from '../actions/userActions';
 import { toggleEditTaskModal } from '../actions/modalActions';
 import ModalComponent from '../CommonComponent/ModaComponent';
 import $ from 'jquery';
@@ -11,7 +12,7 @@ window.jQuery = window.$ = $;
 class EditTask extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { taskId: 0, orderId: 0, taskname: '', description: '', effort: -1, priority: -1, username: '', sprint: -1, toggleEdit: true };
+        this.state = { taskId: 0, orderId: 0, taskname: '', description: '', effort: -1, priority: -1, userId: '', sprint: -1, toggleEdit: true };
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -24,11 +25,15 @@ class EditTask extends React.Component {
             priority: nextProps.backlog.task.task.priorityId, 
             orderId: nextProps.backlog.task.task.orderId,
             sprint: nextProps.backlog.task.task.sprint,
-            username: nextProps.backlog.task.task.username
+            userId: nextProps.backlog.task.task.userId
         })
     }
 
     componentDidMount = () =>{      
+        const { teamUsers } = this.props.user;
+        if( teamUsers === null){
+            this.props.getTeamUsers(this.props.teamid)
+        }
         const { priorities, efforts, sprints } = this.props.dics;
         if (priorities === null && efforts === null) {
             this.props.getEfforts();
@@ -62,7 +67,7 @@ class EditTask extends React.Component {
             description: this.state.description,
             effortId: +this.state.effort,
             priorityId: +this.state.priority,
-            username: this.state.username,
+            userId: this.state.userId,
             orderId: this.state.orderId,
             sprint: this.state.sprint
         }
@@ -73,6 +78,7 @@ class EditTask extends React.Component {
     render() {
         const { showEditTaskModal } = this.props.modal;
         const { priorities, efforts, sprints } = this.props.dics;
+        const { teamUsers } = this.props.user;
         let ddlPriorities, ddlEfforts, ddlTeamSprints = null;
         if (priorities != null && efforts != null) {
             ddlPriorities = priorities.priorities.map((priority) =>
@@ -80,6 +86,13 @@ class EditTask extends React.Component {
             );
             ddlEfforts = efforts.efforts.map((effort) =>
                 <option key={effort.effortId} value={effort.effortId}>{effort.effortName}</option>
+            );
+        }
+        let ddlUsers = null;
+        if (teamUsers != null) {
+            debugger
+            ddlUsers = teamUsers.teamUsers.map((user) =>
+                <option key={user.userId} value={user.userId}>{user.userName}</option>
             );
         }
 
@@ -114,7 +127,10 @@ class EditTask extends React.Component {
             <div className="row">
                 <div className="form-group col-md-12">
                     <label>Priority:</label>
-                    <select className="custom-select mr-sm-2" name="priority" onChange={this.handleChange} disabled={priorities === null || this.state.toggleEdit} value={this.state.priority} >
+                    <select className="custom-select mr-sm-2" 
+                    name="priority" onChange={this.handleChange} 
+                    disabled={priorities === null || this.state.toggleEdit} 
+                    value={this.state.priority} >
                         <option key={-1} value={-1}>Choose...</option>
                         {ddlPriorities}
                     </select>
@@ -127,8 +143,8 @@ class EditTask extends React.Component {
                         className={"custom-select mr-sm-2"}
                         name="sprint"
                         onChange={this.handleChange}
-                        disabled={sprints === null && !this.state.toggleEdit ? true : false} 
-                        >
+                        disabled={sprints === null  || this.state.toggleEdit} 
+                        value={this.state.sprint}>
                         <option key={-1} value={-1}>Choose...</option>
                         {ddlTeamSprints}
                     </select>
@@ -137,7 +153,15 @@ class EditTask extends React.Component {
             <div className="row">
                 <div className="form-group col-md-12">
                     <label>Username:</label>
-                    <input name="username" type="text" value={this.state.username} onChange={this.handleChange} disabled={this.state.toggleEdit} className="form-control" />
+                    <select
+                        className={"custom-select mr-sm-2"}
+                        name="userId"
+                        onChange={this.handleChange}
+                        disabled={teamUsers === null || this.state.toggleEdit} 
+                        value={this.state.userId}>
+                        <option key={-1} value={-1}>Choose...</option>
+                        {ddlUsers}
+                    </select>
                 </div>
             </div>
     </form>);
@@ -164,13 +188,16 @@ EditTask.propTypes = {
     updateTask: PropTypes.func.isRequired,
     getEfforts: PropTypes.func.isRequired,
     getPriorities: PropTypes.func.isRequired,
-    getSprintsList: PropTypes.func.isRequired
+    user: PropTypes.object.isRequired,
+    getSprintsList: PropTypes.func.isRequired,
+    getTeamUsers: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
     backlog: state.backlog,
     dics: state.dics,
-    modal: state.modal
+    modal: state.modal,
+    user: state.user
 });
 
-export default connect(mapStateToProps, { getTaskById, toggleEditTaskModal, getEfforts, getPriorities, updateTask, getSprintsList })(EditTask);
+export default connect(mapStateToProps, { getTaskById, toggleEditTaskModal, getEfforts, getPriorities, updateTask, getSprintsList, getTeamUsers })(EditTask);

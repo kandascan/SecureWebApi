@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { createTask } from '../actions/backlogActions';
 import { getEfforts, getPriorities, getSprintsList } from '../actions/dictionaryActions';
 import { toggleCreateTaskModal, clearErrorsModal } from '../actions/modalActions';
+import { getTeamUsers } from '../actions/userActions';
 import ModalComponent from '../CommonComponent/ModaComponent';
 import TextFieldGroup from '../CommonComponent/TextFieldGroup';
 import classnames from 'classnames';
@@ -15,13 +16,17 @@ window.jQuery = window.$ = $;
 class CreateTask extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { teamid: '', taskname: '', description: '', effort: -1, priority: -1, username: '', sprint: -1, errors: {} };
+        this.state = { teamid: '', taskname: '', description: '', effort: -1, priority: -1, userId: '', sprint: -1, errors: {} };
     }
 
     toggle = () => {
-        this.setState({ taskname: '', description: '', effort: -1, priority: -1, username: '', sprint: -1, errors: {} });
+        this.setState({ taskname: '', description: '', effort: -1, priority: -1, userId: '', sprint: -1, errors: {} });
         this.props.toggleCreateTaskModal();
         const { priorities, efforts, sprints } = this.props.dics;
+        const { teamUsers } = this.props.user;
+        if( teamUsers === null){
+            this.props.getTeamUsers(this.props.teamid)
+        }
         if (priorities === null && efforts === null) {
             this.props.getEfforts();
             this.props.getPriorities();
@@ -49,7 +54,7 @@ class CreateTask extends React.Component {
             description: this.state.description,
             effortId: +this.state.effort,
             priorityId: +this.state.priority,
-            username: this.state.username,
+            userId: this.state.userId,
             sprint: this.state.sprint
         }
         this.props.createTask(newTask);
@@ -59,6 +64,7 @@ class CreateTask extends React.Component {
         const { errors } = this.props;
         const { showCreateTaskModal } = this.props.modal;
         const { priorities, efforts, sprints } = this.props.dics;
+        const { teamUsers } = this.props.user;
         let ddlPriorities, ddlEfforts, ddlTeamSprints = null;
         if (priorities != null && efforts != null) {
             ddlPriorities = priorities.priorities.map((priority) =>
@@ -72,6 +78,13 @@ class CreateTask extends React.Component {
         if(sprints != null){
             ddlTeamSprints = sprints.sprintsList.map((sprint) =>
                 <option key={sprint.sprintId} value={sprint.sprintId}>{sprint.sprintName}</option>
+            );
+        }
+        let ddlUsers = null;
+        if (teamUsers != null) {
+            debugger
+            ddlUsers = teamUsers.teamUsers.map((user) =>
+                <option key={user.userId} value={user.userId}>{user.userName}</option>
             );
         }
 
@@ -153,7 +166,15 @@ class CreateTask extends React.Component {
             <div className="row">
                 <div className="form-group col-md-12">
                     <label>Username:</label>
-                    <input name="username" type="text" value={this.state.username} onChange={this.handleChange} className="form-control" />
+                    <select
+                        className={"custom-select mr-sm-2"}
+                        name="userId"
+                        onChange={this.handleChange}
+                        disabled={teamUsers === null} >
+                        >
+                        <option key={-1} value={-1}>Choose...</option>
+                        {ddlUsers}
+                    </select>
                 </div>
             </div>
         </form>);
@@ -179,14 +200,17 @@ CreateTask.propTypes = {
     getPriorities: PropTypes.func.isRequired,
     clearErrorsModal: PropTypes.func.isRequired,
     errors: PropTypes.object.isRequired,
-    getSprintsList: PropTypes.func.isRequired
+    user: PropTypes.object.isRequired,
+    getSprintsList: PropTypes.func.isRequired,
+    getTeamUsers: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
     backlog: state.backlog,
     dics: state.dics,
     modal: state.modal,
-    errors: state.errors
+    errors: state.errors,
+    user: state.user
 });
 
-export default connect(mapStateToProps, { createTask, toggleCreateTaskModal, getEfforts, getPriorities, clearErrorsModal, getSprintsList })(CreateTask);
+export default connect(mapStateToProps, { createTask, toggleCreateTaskModal, getEfforts, getPriorities, clearErrorsModal, getSprintsList, getTeamUsers })(CreateTask);
