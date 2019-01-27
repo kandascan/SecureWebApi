@@ -24,6 +24,7 @@ namespace SecureWebAPI.DataAccess.Entities
         public DbSet<RoleEntity> Roles { get; set; }
         public DbSet<XRefBacklogTaskEntity> xRefBacklogTask { get; set; }
         public DbSet<XRefSprintTaskEntity> xRefSprintTask { get; set; }
+        public DbSet<SprintColumnEntity> SprintColumn { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
@@ -43,8 +44,18 @@ namespace SecureWebAPI.DataAccess.Entities
             modelBuilder.Entity<XRefSprintTaskEntity>(ConfigureXrefSprintTaskEntity);
             modelBuilder.Entity<RoleEntity>(ConfigureRolekEntity);
             modelBuilder.Entity<XRefBacklogTaskEntity>(ConfigureXrefBacklogTaskEntity);
+            modelBuilder.Entity<SprintColumnEntity>(ConfigureSprintColumnEntity);
 
             base.OnModelCreating(modelBuilder);
+        }
+
+        private void ConfigureSprintColumnEntity(EntityTypeBuilder<SprintColumnEntity> entity)
+        {
+            entity.ToTable("SprintColumn");
+            entity.HasKey(e => e.ColumnId);
+            entity.Property(e => e.ColumnId).ValueGeneratedNever();
+            entity.HasIndex(e => e.ColumnName).IsUnique();
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
         }
 
         private void ConfigureXrefBacklogTaskEntity(EntityTypeBuilder<XRefBacklogTaskEntity> entity)
@@ -73,6 +84,8 @@ namespace SecureWebAPI.DataAccess.Entities
             entity.HasIndex(e => e.TaskId).IsUnique();
             entity.Property(e => e.SprintId);
             entity.Property(e => e.TaskId);
+            entity.Property(e => e.ColumnId).HasDefaultValue(1);
+            entity.Property(e => e.OrderId).HasDefaultValue(0);
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("GETDATE()");
         }
 

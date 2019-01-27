@@ -25,6 +25,8 @@ namespace SecureWebAPI.Helpers
             CreateMap<SprintEntity, SprintVM>();
             CreateMap<RoleEntity, Role>();
             CreateMap<Role, RoleEntity>();
+            CreateMap<SprintTask, SprintTaskVM>();
+            CreateMap<SprintTaskVM, SprintTask>();
         }
     }
 }

@@ -9,12 +9,17 @@ namespace SecureWebAPI.BusinessLogic.Response
 {
     public class SprintResponse : BaseResponse
     {
+        public SprintResponse()
+        {
+            SprintBoardTasks = new List<SprintBoardTask>();
+        }
         public List<TaskVM> Tasks { get; set; }
         public DateTime StartDate { get;  set; }
         public DateTime? EndDate { get;  set; }
         public int SprintId { get;  set; }
         public int TeamId { get;  set; }
-        public List<ShortSprint> SprintsList { get; internal set; }
-        public string SprintName { get; internal set; }
+        public List<ShortSprint> SprintsList { get;  set; }
+        public string SprintName { get;  set; }
+        public List<SprintBoardTask> SprintBoardTasks { get; set; }
     }
 }

@@ -82,7 +82,6 @@ class CreateTask extends React.Component {
         }
         let ddlUsers = null;
         if (teamUsers != null) {
-            debugger
             ddlUsers = teamUsers.teamUsers.map((user) =>
                 <option key={user.userId} value={user.userId}>{user.userName}</option>
             );

@@ -10,7 +10,7 @@ export default function (state = initialState, action) {
         case GET_CURRENT_SPRINT:
         return {
             ...state,
-            tasks: action.payload.tasks,
+            tasks: action.payload.sprintBoardTasks,
             sprintId: action.payload.sprintId
         }
         default:

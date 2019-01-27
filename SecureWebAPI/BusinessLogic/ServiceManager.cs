@@ -148,7 +148,7 @@ namespace SecureWebAPI.BusinessLogic
             }
             try
             {
-                var newTask = _mapper.Map<TaskEntity>(request.Task);               
+                var newTask = _mapper.Map<TaskEntity>(request.Task);
                 var task = _uow.Repository<TaskEntity>().Add(newTask);
                 _uow.Save();
                 if (task != null)
@@ -363,10 +363,10 @@ namespace SecureWebAPI.BusinessLogic
                     {
                         var xRefSprintTask = new XRefSprintTaskEntity { SprintId = (int)task.Sprint, TaskId = task.Id };
                         var xst = _uow.Repository<XRefSprintTaskEntity>().GetOverview(t => t.TaskId == task.Id).FirstOrDefault();
-                        if(xst == null)
+                        if (xst == null)
                             _uow.Repository<XRefSprintTaskEntity>().Add(xRefSprintTask);
                         var backlogTaskDb = _uow.Repository<XRefBacklogTaskEntity>().GetOverview(t => t.TaskId == editedTask.Id).FirstOrDefault();
-                        if(backlogTaskDb != null)
+                        if (backlogTaskDb != null)
                         {
                             _uow.Repository<XRefBacklogTaskEntity>().Delete(backlogTaskDb);
                         }
@@ -486,7 +486,7 @@ namespace SecureWebAPI.BusinessLogic
             try
             {
                 var teamBacklog = _uow.Repository<BacklogEntity>().GetOverview().Where(b => b.TeamId == request.TeamId).FirstOrDefault();
-                if(teamBacklog != null)
+                if (teamBacklog != null)
                 {
                     var xRefBacklogTask = _uow.Repository<XRefBacklogTaskEntity>().GetOverview().Where(x => x.BacklogId == teamBacklog.BacklogId).Select(i => i.TaskId);
                     var tasks = _uow.Repository<TaskEntity>().GetOverview().Where(t => xRefBacklogTask.Contains(t.Id)).OrderBy(t => t.OrderId).ThenByDescending(t => t.Id);
@@ -496,7 +496,7 @@ namespace SecureWebAPI.BusinessLogic
                         response.Success = true;
                     }
                 }
-                
+
                 else
                 {
                     response.Errors.Add("Get Tasks", "Cannot featch Tasks");
@@ -516,25 +516,52 @@ namespace SecureWebAPI.BusinessLogic
             try
             {
                 var sprint = _uow.Repository<SprintEntity>().GetOverview().Where(b => b.TeamId == request.TeamId).FirstOrDefault();
+                var sprintColumn = _uow.Repository<SprintColumnEntity>().GetOverview();
+                var xRefSprintTask = _uow.Repository<XRefSprintTaskEntity>().GetOverview();
+                var task = _uow.Repository<TaskEntity>().GetOverview();
+                var user = _uow.Repository<UserEntity>().GetOverview();
+                var effort = _uow.Repository<EffortEntity>().GetOverview();
+
                 if (sprint != null)
                 {
+                    var tasks =
+                       (from xst in xRefSprintTask
+                        join sc in sprintColumn on xst.ColumnId equals sc.ColumnId 
+                        join t in task on xst.TaskId equals t.Id
+                        join u in user on t.UserId equals u.Id into uX
+                        from u in uX.DefaultIfEmpty()
+                        join e in effort on t.EffortId equals e.EffortId
+                        where xst.SprintId == sprint.SprintId
+                        select new SprintTask
+                        {
+                            ColumnId = sc.ColumnId,
+                            ColumnName = sc.ColumnName,
+                            OrderId = xst == null ? 0 : xst.OrderId,
+                            SprintId = xst == null ? 0 : xst.SprintId,
+                            TaskId = t == null ? 0 : t.Id,
+                            TaskName = t?.TaskName,
+                            UserName = u?.UserName,
+                            Effort = e.EffortName,
+                            CreatedDate = xst.CreatedDate
+                        }).ToList();
+
+                    foreach (var s in sprintColumn)
+                    {
+                        var items = tasks.Where(t => t.ColumnId == s.ColumnId).OrderByDescending(i => i.OrderId).ThenByDescending(d => d.CreatedDate).ToList();
+
+                        var sprintBoardTask = new SprintBoardTask
+                        {
+                            ColumnName = s.ColumnName,
+                            ColumnId = s.ColumnId,
+                            Items = _mapper.Map<List<SprintTaskVM>>(items)
+                        };
+
+                        response.SprintBoardTasks.Add(sprintBoardTask);
+                    }                    
+
                     response.SprintId = sprint.SprintId;
-                    var tasks = _uow.Repository<TaskEntity>().GetOverview().Where(t => t.Sprint == sprint.SprintId).ToList();
-                    if (tasks != null)
-                    {
-                        response.Tasks = _mapper.Map<List<TaskVM>>(tasks);
-                        response.Success = true;
-                    }
-                    else
-                    {
-                        response.Errors.Add("Get Tasks", "There is no task in current sprint, back to backlog.");
-                    }
+                    response.Success = true;
                 }
-                else
-                {
-                    response.Errors.Add("Get Sprint", "There is no active sprint, create sprint first.");
-                }
-                response.Success = true;
             }
             catch (Exception ex)
             {
@@ -557,13 +584,13 @@ namespace SecureWebAPI.BusinessLogic
                        .Select(n => n.TeamName).FirstOrDefault();
                 if (!string.IsNullOrEmpty(teamName))
                 {
-                    sprintName = $"{teamName} - Sprint: {sprintNumber}";  
+                    sprintName = $"{teamName} - Sprint: {sprintNumber}";
                 }
 
                 var teamSprints = _uow.Repository<SprintEntity>().GetOverview()
                     .Where(b => b.TeamId == request.Sprint.TeamId)
                     .Select(s => s.SprintId).ToList();
-                if(teamSprints != null && teamSprints.Count > 0)
+                if (teamSprints != null && teamSprints.Count > 0)
                 {
                     sprintNumber = teamSprints.Count;
                     sprintName = $"{teamName} - Sprint: {sprintNumber++}";
@@ -601,7 +628,7 @@ namespace SecureWebAPI.BusinessLogic
                 if (sprints != null && sprints.Count > 0)
                 {
                     response.SprintsList = sprints;
-                    response.Success = true;                   
+                    response.Success = true;
                 }
                 else
                 {
@@ -630,11 +657,11 @@ namespace SecureWebAPI.BusinessLogic
                     UserId = u.Id,
                     UserName = u.UserName
                 }).ToList();
-                if(users != null)
+                if (users != null)
                 {
                     response.UserList = users;
                     response.Success = true;
-                }                
+                }
             }
             catch (Exception ex)
             {
@@ -658,7 +685,8 @@ namespace SecureWebAPI.BusinessLogic
                                  on x.UserId equals u.Id
                                  join r in role
                                  on x.RoleId equals r.RoleId
-                                 select new User {
+                                 select new User
+                                 {
                                      UserId = u.Id,
                                      UserName = u.UserName,
                                      UserRole = r.RoleName,
@@ -685,7 +713,7 @@ namespace SecureWebAPI.BusinessLogic
             try
             {
                 var roles = _uow.Repository<RoleEntity>().GetOverview().ToList();
-                if(roles != null)
+                if (roles != null)
                 {
 
                     response.Roles = _mapper.Map<List<Model.Role>>(roles);
@@ -726,18 +754,18 @@ namespace SecureWebAPI.BusinessLogic
 
         public UserResponse DeleteUserFromTeam(UserRequest request)
         {
-            var response = new UserResponse();           
+            var response = new UserResponse();
             try
             {
                 var xref = _uow.Repository<XRefTeamUserEntity>().GetOverview(x => x.UserId == request.UserTeam.UserId && x.TeamId == request.UserTeam.TeamId).FirstOrDefault();
-                if(xref != null)
+                if (xref != null)
                 {
                     _uow.Repository<XRefTeamUserEntity>().Delete(xref);
                     _uow.Save();
                     response.TeamId = request.UserTeam.TeamId;
                     response.Success = true;
-                }                
-                
+                }
+
             }
             catch (Exception ex)
             {

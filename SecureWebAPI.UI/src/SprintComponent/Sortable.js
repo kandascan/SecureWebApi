@@ -1,36 +1,22 @@
 import React, { Component } from 'react';
 import { sortableContainer, sortableElement, arrayMove, DragLayer } from '../react-sortable-multiple-hoc';
-//import '../react-sortable-multiple-hoc/SortableComponent.css';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 const dragLayer = new DragLayer();
 
 const SortableItem = sortableElement((props) => {
     return (<li style={{textAlign: "left"}} className="list-group-item list-group-item-light" onClick={props.onSelect}>
             {/* {props.item.ind}  */}
-            {/* {props.item.val} */}
-            <h6>{props.item.val} </h6>
+            <h6>{props.item.val.taskName} </h6>
             <div style={{textAlign: "right"}}>
-            <span  className="badge badge-light">Username</span></div>
+            <span  className="badge badge-light">{props.item.val.userName === null ? "Not assigned" : props.item.val.userName}</span></div>
             <div style={{textAlign: "left"}}>
-            <div><span style={{float: "right"}} className="badge badge-light">Effort: 3</span></div>
+            <div><span style={{float: "right"}} className="badge badge-light">Effort: {props.item.val.effort}</span></div>
             <a href="#" className="badge badge-danger">DEL</a>
             <a href="#" className="badge badge-light">More</a>
             </div>
         </li>);
-//     return (<div className="card" style={{width: "18rem", background: "light-blue"}}>
-//     <div className="card-body">
-//       <h6 className="card-title">{props.item.val}</h6>
-//       <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-//       <div className="btn-group btn-group-toggle" data-toggle="buttons">
-//   <label className="btn btn-primary btn-sm">
-//      De
-//   </label>
-//   <label className="btn btn-danger btn-sm">
-//      Rm
-//   </label>
-// </div>
-//     </div>
-//   </div>)
 });
 
 const SortableListItems = sortableContainer(({ items }) =>
@@ -74,31 +60,20 @@ const SortableListParts = sortableContainer(({ items, onSortItemsEnd }) =>
     </div>
 );
 
-const getParts = (countParts, countLessons) => {
-    const parts = [];
-
-    for (let i = 0; i < countParts; i++) {
-        const lessons = [];
-
-        for (let j = 0; j < countLessons; j++) {
-            lessons.push('Task-' + (i + 1) + '-' + (j + 1));
-        }
-        parts.push({
-            name: 'Part',
-            items: lessons,
-        });
-    }
-
-    return parts;
-};
-
-export default class SortableComponent extends Component {
+class SortableComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            parts: getParts(4, 2),
+            parts: []
         };
     }
+
+    componentDidMount() {
+        this.setState({
+            parts: this.props.sprint.tasks
+        })
+    }
+    
     onSortEnd = ({ oldIndex, newIndex }) => {
         this.setState({
             parts: arrayMove(this.state.parts, oldIndex, newIndex),
@@ -120,6 +95,8 @@ export default class SortableComponent extends Component {
         this.setState({
             parts: parts,
         });
+        console.log(this.state)
+
     }
     render() {
         const parts = this.state.parts.map((value, index) => {
@@ -127,7 +104,7 @@ export default class SortableComponent extends Component {
                 name: value.name,
                 items: value.items.map((val, ind) => {
                     return {
-                        val,
+                        val: val,
                         ind: (index + 1) + '.' + (ind + 1),
                     };
                 }),
@@ -143,3 +120,13 @@ export default class SortableComponent extends Component {
     </div>);
     }
 }
+
+SortableComponent.propTypes = {
+    sprint: PropTypes.object.isRequired
+}
+
+const mapStateToProps = (state) => ({
+    sprint: state.sprint
+});
+
+export default connect(mapStateToProps, {})(SortableComponent);
