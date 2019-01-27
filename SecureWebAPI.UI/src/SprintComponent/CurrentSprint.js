@@ -2,8 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getCurrentSprint, createSprint } from '../actions/sprintActions';
+import { getTaskById } from '../actions/backlogActions';
 import { currentTeam } from '../actions/teamActions';
 import Spinner from '../CommonComponent/Spinner';
+import EditTask from '../BacklogComponent/EditTask';
+
 import SortableComponent from './Sortable';
 import $ from 'jquery';
 window.jQuery = window.$ = $;
@@ -54,6 +57,7 @@ class CurrentSprint extends Component {
                     </div>
                 </div>
                 <SortableComponent />
+                <EditTask teamid={sprint.teamId}  />
             </div>)
         }
         return (
@@ -77,6 +81,7 @@ CurrentSprint.propTypes = {
     currentTeam: PropTypes.func.isRequired,
     getCurrentSprint: PropTypes.func.isRequired,
     createSprint: PropTypes.func.isRequired,
+    getTaskById: PropTypes.func.isRequired,
     spinner: PropTypes.object.isRequired
 }
 const mapStateToProps = (state) => ({
@@ -84,4 +89,4 @@ const mapStateToProps = (state) => ({
     sprint: state.sprint,
     spinner: state.spinner
 });
-export default connect(mapStateToProps, { getCurrentSprint, currentTeam, createSprint })(CurrentSprint);
+export default connect(mapStateToProps, { getCurrentSprint, currentTeam, createSprint, getTaskById })(CurrentSprint);

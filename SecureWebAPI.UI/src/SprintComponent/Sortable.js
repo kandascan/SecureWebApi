@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { sortableContainer, sortableElement, arrayMove, DragLayer } from '../react-sortable-multiple-hoc';
 import { onSortSprintTasks } from "../actions/sprintActions";
+import { getTaskById } from '../actions/backlogActions';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -15,18 +16,19 @@ const SortableItem = sortableElement((props) => {
             <div style={{textAlign: "left"}}>
             <div><span style={{float: "right"}} className="badge badge-light">Effort: {props.item.val.effort}</span></div>
             <a href="#" className="badge badge-danger">DEL</a>
-            <a href="#" className="badge badge-light">More</a>
+            <a onClick={() => props.getTask(props.item.val.taskId)} className="badge badge-light">More</a>
             </div>
         </li>);
 });
 
-const SortableListItems = sortableContainer(({ items }) =>
+const SortableListItems = sortableContainer(({ items, getTask }) =>
     <ul className="list-group">
         {items.map((value, index) => (
           <SortableItem
               key={index}
               index={index}
               item={value}
+              getTask={getTask}
           />
         ))}
     </ul>
@@ -43,11 +45,12 @@ const SortablePart = sortableElement(props =>
             helperClass={'selected'}
             isMultiple={true}
             helperCollision={{ top: 1, bottom: 1 }}
+            getTask={props.getTask}
         />
     </div>
 );
 
-const SortableListParts = sortableContainer(({ items, onSortItemsEnd }) =>
+const SortableListParts = sortableContainer(({ items, onSortItemsEnd, getTask }) =>
     <div className="row">
         {items.map((value, index) => (
             <SortablePart
@@ -56,6 +59,7 @@ const SortableListParts = sortableContainer(({ items, onSortItemsEnd }) =>
                 item={value}
                 id={index}
                 onMultipleSortEnd={onSortItemsEnd}
+                getTask={getTask}
             />
         ))}
     </div>
@@ -67,6 +71,18 @@ class SortableComponent extends Component {
         this.state = {
             parts: []
         };
+    }
+
+    componentWillReceiveProps = (nextProps) => {
+        this.setState({
+            parts: nextProps.sprint.tasks,
+            sprintId: nextProps.sprint.sprintId,
+            teamId: nextProps.sprint.teamId
+        });
+    }
+
+    onClickGetTaskById = (id) => {
+        this.props.getTaskById(id, this.state.teamId);
     }
 
     componentDidMount() {
@@ -104,7 +120,6 @@ class SortableComponent extends Component {
             SprintId: this.state.sprintId,
             SprintBoardTasks: this.state.parts,
         }
-        console.log(sprintTasks)
         this.props.onSortSprintTasks(sprintTasks);
 
     }
@@ -126,18 +141,21 @@ class SortableComponent extends Component {
             items={parts}
             onSortEnd={this.onSortEnd}
             onSortItemsEnd={this.onSortItemsEnd}
-            helperClass={'selected'}/>
+            helperClass={'selected'}
+            getTask={this.onClickGetTaskById}
+            />
     </div>);
     }
 }
 
 SortableComponent.propTypes = {
     sprint: PropTypes.object.isRequired,
-    onSortSprintTasks: PropTypes.func.isRequired
+    onSortSprintTasks: PropTypes.func.isRequired,
+    getTaskById: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
     sprint: state.sprint
 });
 
-export default connect(mapStateToProps, {onSortSprintTasks})(SortableComponent);
+export default connect(mapStateToProps, {onSortSprintTasks, getTaskById})(SortableComponent);

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { GET_BACKLOG_ITEMS, CLEAR_BACKLOG, GET_ERRORS, SORTED_BACKLOG_ITEMS, TOGGLE_SPINNER, SHOW_CREATE_TASK_MODAL, SHOW_EDIT_TASK_MODAL, GET_TASK_BY_ID } from './types';
+import { getCurrentSprint } from '../actions/sprintActions';
 
 export const getTaskById = (id) => dispatch => {
     dispatch({
@@ -69,6 +70,7 @@ export const updateTask = (task) => dispatch => {
                 type: TOGGLE_SPINNER
             });
             dispatch(getBacklogItems(task.teamid));
+            dispatch(getCurrentSprint(task.teamid));            
         })
         .catch(err => {
             dispatch({
