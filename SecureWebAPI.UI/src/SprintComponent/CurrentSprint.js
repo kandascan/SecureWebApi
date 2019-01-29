@@ -6,7 +6,6 @@ import { getTaskById } from '../actions/backlogActions';
 import { currentTeam } from '../actions/teamActions';
 import Spinner from '../CommonComponent/Spinner';
 import EditTask from '../BacklogComponent/EditTask';
-
 import SortableComponent from './Sortable';
 import $ from 'jquery';
 window.jQuery = window.$ = $;
@@ -32,6 +31,18 @@ class CurrentSprint extends Component {
     render() {
         const { sprint } = this.props;
         const { showSpinner } = this.props.spinner;
+        let view = null;
+        if(sprint != null && sprint.tasks != null){  
+            if(sprint.tasks.length > 0){
+                view = sprint.tasks.map(t =>(
+                    <div className="col-sm ">
+                            <h6>{t.columnName}:</h6>
+                        </div>
+                )
+                );
+            }   
+        }
+       
         let sprintView;
         if (sprint.sprintId === 0) {
             sprintView = (<div>
@@ -42,7 +53,8 @@ class CurrentSprint extends Component {
             sprintView = (<div className="col-md-12 text-center">
                 <div className="container">
                     <div className="row">
-                        <div className="col-sm ">
+                    {view   }
+                        {/* <div className="col-sm ">
                             <h6>ToDO:</h6>
                         </div>
                         <div className="col-sm">
@@ -53,7 +65,7 @@ class CurrentSprint extends Component {
                         </div>
                         <div className="col-sm">
                             <h6>Done:</h6>
-                        </div>
+                        </div>                         */}
                     </div>
                 </div>
                 <SortableComponent />

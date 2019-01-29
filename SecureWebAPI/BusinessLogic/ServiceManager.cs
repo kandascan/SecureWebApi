@@ -562,8 +562,12 @@ namespace SecureWebAPI.BusinessLogic
 
                     response.TeamId = request.TeamId;
                     response.SprintId = sprint.SprintId;
-                    response.Success = true;
                 }
+                else
+                {
+                    response.Message = $"There is no active sprint yet for team: {request.TeamId}";
+                }
+                response.Success = true;
             }
             catch (Exception ex)
             {
@@ -723,6 +727,7 @@ namespace SecureWebAPI.BusinessLogic
                                  on x.UserId equals u.Id
                                  join r in role
                                  on x.RoleId equals r.RoleId
+                                 where x.TeamId == request.TeamId
                                  select new User
                                  {
                                      UserId = u.Id,
@@ -804,6 +809,27 @@ namespace SecureWebAPI.BusinessLogic
                     response.Success = true;
                 }
 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.StackTrace);
+                response.Errors.Add("System Exception", ex.Message);
+            }
+            return response;
+        }
+
+        public TeamResponse GetTeamById(TeamRequest request)
+        {
+            var response = new TeamResponse();
+            try
+            {
+                var team = _uow.Repository<TeamEntity>().GetOverview(x => x.TeamId == request.TeamId).FirstOrDefault();
+                if (team != null)
+                {
+
+                    response.Team = _mapper.Map<TeamVM>(team);
+                    response.Success = true;
+                }
             }
             catch (Exception ex)
             {

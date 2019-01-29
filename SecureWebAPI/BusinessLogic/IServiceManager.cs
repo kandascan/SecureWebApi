@@ -51,5 +51,7 @@ namespace SecureWebAPI.BusinessLogic
         UserResponse AddUserToTeam(UserRequest request);
 
         SprintResponse SortSprintTasks(SprintRequest request);
+
+        TeamResponse GetTeamById(TeamRequest request);
     }
 }

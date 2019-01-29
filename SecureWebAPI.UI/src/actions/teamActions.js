@@ -1,5 +1,22 @@
 import axios from 'axios';
-import { TOGGLE_SPINNER, SHOW_CREATE_TEAM_MODAL, GET_ERRORS, GET_USER_TEAMS, SET_CURRENT_TEAM } from './types';
+import { TOGGLE_SPINNER, SHOW_CREATE_TEAM_MODAL, GET_ERRORS, GET_USER_TEAMS, SET_CURRENT_TEAM, GET_TEAM_BY_ID } from './types';
+
+export const getTeamById = (teamid) => dispacht => {
+    axios.get(`/api/team/getteambyid/${teamid}`)
+        .then(res => {
+            dispacht({
+                type: GET_TEAM_BY_ID,
+                payload: res.data.team
+            })
+        })
+        .catch(err => {
+            dispacht({
+                type: GET_TEAM_BY_ID,
+                payload: {}
+            })
+        }
+        );
+}
 
 export const currentTeam = (teamid) => dispatch => {
     localStorage.setItem('teamid', `${teamid}`);

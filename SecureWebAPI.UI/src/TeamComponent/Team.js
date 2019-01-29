@@ -61,7 +61,7 @@ class Team extends Component {
                 className={classnames("list-group-item list-group-item-action d-flex justify-content-between align-items-center list-group-item-light", {
                     'active': localStorage.teamid == team.teamId
                 })}>
-                <Link to={`backlog/${team.teamId}`} className="btn btn-info">
+                <Link to={`backlog/${team.teamId}`} className="btn btn-info">Go to backlog {' '}
                     <i className="fas fa-arrow-right"></i>
                 </Link>
                 {team.teamName}
@@ -73,7 +73,7 @@ class Team extends Component {
                     <div className="col-md-1"></div>
                     <div style={{ padding: "7px 7px 7px 0" }}>
                         {team.scrumMasterUser ? 
-                            (<Link to={`manageteam/${team.teamId}`} key={team.teamId} className="btn btn-warning"><i className="fas fa-edit"></i></Link>) : (null)}                        
+                            (<Link to={`manageteam/${team.teamId}`} key={team.teamId} className="btn btn-warning">Manage team {' '}<i className="fas fa-edit"></i></Link>) : (null)}                        
                     </div>
                 </div>
             </div>
@@ -99,12 +99,13 @@ class Team extends Component {
 
         return (
             <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-4">
                     <br />
-                    <button type="button" className="btn btn-primary btn-lg" onClick={this.toggle}>Creat team</button>
+                    <button type="button" className="btn btn-primary btn-lg" onClick={this.toggle}>Create team</button>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-8">
                     <ul className="list-group">
+                    <br/>
                         {userTeams}
                     </ul>
                 </div>

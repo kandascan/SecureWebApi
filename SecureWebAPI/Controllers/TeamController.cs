@@ -44,5 +44,14 @@ namespace SecureWebAPI.Controllers
             var response = _service.GetUserTeams(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
+
+        [HttpGet]
+        [Route("getteambyid/{teamid}")]
+        public IActionResult GetTeamById(string teamid)
+        {
+            var request = new TeamRequest { TeamId = Int32.Parse(teamid) };
+            var response = _service.GetTeamById(request);
+            return response.Success ? Ok(response) : StatusCode(404, response.Errors);
+        }
     }
 }

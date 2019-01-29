@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUsersWithoutUsersInTeam, getTeamUsers, getUserRoles, addUserToTeam, deleteUserFromTeam } from '../actions/userActions';
+import { getTeamById } from '../actions/teamActions';
 import classnames from 'classnames';
 import isEmpty from '../../src/validation/is-Empty'
 
@@ -10,20 +11,25 @@ class ManageTeam extends Component {
         super(props);
         this.state = { userId: -1, roleId: -1 };
     }
+    
     componentWillReceiveProps = (nextProps) => {
         const { errors } = nextProps;
         if (isEmpty(errors))
             this.setState({ userId: -1, roleId: -1 });
     }
+
     componentDidMount = () => {
-        const { users, teamUsers, roles } = this.props.user;
-        if (users === null)
+        if (!this.props.auth.isAuthenticated) {
+            this.props.history.push('/');
+        }
+        if (this.props.match.params.teamid){
             this.props.getUsersWithoutUsersInTeam(this.props.match.params.teamid);
-        if (teamUsers === null)
             this.props.getTeamUsers(this.props.match.params.teamid)
-        if (roles === null)
             this.props.getUserRoles();
+            this.props.getTeamById(this.props.match.params.teamid);
+        }
     }
+
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
@@ -46,7 +52,7 @@ class ManageTeam extends Component {
     }
 
     render() {
-        const { errors } = this.props;
+        const { errors, team } = this.props;
         const { users, teamUsers, roles } = this.props.user;
         let ddlUsers, ddlRoles, teamUserList = null;
         if (users != null) {
@@ -85,7 +91,7 @@ class ManageTeam extends Component {
                         <div className="row">
                             <div className="col-md-12 text-center">
                                 <div>
-                                    <h1 className="display-4">Team manager </h1>
+                                    <h1 className="display-4">Manage team: <small>{team.team.teamName}</small></h1>
                                 </div>
                             </div>
                             <br /><br /><br /><br />
@@ -136,18 +142,22 @@ class ManageTeam extends Component {
 }
 
 ManageTeam.propTypes = {
+    auth: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
     getUsersWithoutUsersInTeam: PropTypes.func.isRequired,
     getTeamUsers: PropTypes.func.isRequired,
     getUserRoles: PropTypes.func.isRequired,
     addUserToTeam: PropTypes.func.isRequired,
-    deleteUserFromTeam: PropTypes.func.isRequired
+    deleteUserFromTeam: PropTypes.func.isRequired,
+    getTeamById: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
+    auth: state.auth,
     user: state.user,
-    errors: state.errors
+    errors: state.errors,
+    team: state.team
 });
 
-export default connect(mapStateToProps, { getUsersWithoutUsersInTeam, getTeamUsers, getUserRoles, addUserToTeam, deleteUserFromTeam })(ManageTeam);
+export default connect(mapStateToProps, { getUsersWithoutUsersInTeam, getTeamUsers, getUserRoles, addUserToTeam, deleteUserFromTeam, getTeamById })(ManageTeam);
