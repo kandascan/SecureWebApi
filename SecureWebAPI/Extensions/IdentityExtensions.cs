@@ -8,20 +8,39 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using SecureWebAPI.DataAccess.Entities;
+using System.Runtime.Serialization;
 
 namespace SecureWebAPI.Extensions
 {
+    [DataContract(Name = "MyResource", Namespace = "http://example.org/resources")]
+    public sealed class MyResourceType
+    {
+        private string text;
+        private int number;
+
+        public MyResourceType(string text, int number)
+        {
+            this.text = text;
+            this.number = number;
+        }
+
+        [DataMember]
+        public string Text { get { return this.text; } set { this.text = value; } }
+        [DataMember]
+        public int Number { get { return this.number; } set { this.number = value; } }
+    }
     public static class IdentityExtensions
     {
-        public static async Task<string> GenerateJwtToken(this UserEntity user, IConfiguration configuration)
+        public static async Task<string> GenerateJwtToken(this UserEntity user, IConfiguration configuration, int[] userTeams)
         {
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Role, "Admin")
-            };
+                new Claim(ClaimTypes.Role, "Admin"),
+                new Claim("UserTeams", string.Join(",",userTeams))
+        };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

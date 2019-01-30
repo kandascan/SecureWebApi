@@ -1,7 +1,23 @@
 import axios from 'axios';
 import setAuthToken from '../utils/setAuthToken';
 import jwt_decode from 'jwt-decode';
-import { GET_ERRORS, SET_CURRENT_USER, SET_CURRENT_TEAM } from './types';
+import { GET_ERRORS, SET_CURRENT_USER, SET_CURRENT_TEAM, SET_TEAM_MEMBER } from './types';
+import store from '../store';
+
+export const isTeamMember = (teamId, history) => dispatch => {
+    const teamIds = store.getState().auth.user.UserTeams.split(',')
+    const isTeamMember = teamIds.includes(teamId);
+    if(!isTeamMember){
+        history.push('/');
+        localStorage.removeItem('teamid');
+    }else{
+        localStorage.setItem('teamid', `${teamId}`);        
+    }
+    dispatch({
+        type: SET_TEAM_MEMBER,
+        payload: isTeamMember
+    })
+}
 
 export const registerUser = (userData, history) => dispatch => {
     axios.post("api/auth/register", userData)

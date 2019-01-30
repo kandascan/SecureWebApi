@@ -10,5 +10,8 @@ namespace SecureWebAPI.BusinessLogic.Request
         {
             RequestId = new Guid();
         }
+
+        public string UserId { get; set; }
+        public int TeamId { get; set; }
     }
 }

@@ -6,6 +6,8 @@ namespace SecureWebAPI.BusinessLogic
 {
     public interface IServiceManager
     {
+        BaseResponse IsUserTeamMember(BaseRequest request);
+
         Task<UserResponse> RegisterUser(UserRequest request);
 
         Task<UserResponse> LoginUser(UserRequest request);

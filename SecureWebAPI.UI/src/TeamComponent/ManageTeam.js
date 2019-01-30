@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getUsersWithoutUsersInTeam, getTeamUsers, getUserRoles, addUserToTeam, deleteUserFromTeam } from '../actions/userActions';
-import { getTeamById } from '../actions/teamActions';
+import { getTeamById, currentTeam } from '../actions/teamActions';
+import { isTeamMember } from '../actions/authActions';
+import { withRouter } from 'react-router-dom';
 import classnames from 'classnames';
 import isEmpty from '../../src/validation/is-Empty'
 
@@ -23,10 +25,12 @@ class ManageTeam extends Component {
             this.props.history.push('/');
         }
         if (this.props.match.params.teamid){
+            this.props.isTeamMember(this.props.match.params.teamid, this.props.history);
             this.props.getUsersWithoutUsersInTeam(this.props.match.params.teamid);
             this.props.getTeamUsers(this.props.match.params.teamid)
             this.props.getUserRoles();
             this.props.getTeamById(this.props.match.params.teamid);
+           // this.props.currentTeam(this.props.match.params.teamid);
         }
     }
 
@@ -150,7 +154,9 @@ ManageTeam.propTypes = {
     getUserRoles: PropTypes.func.isRequired,
     addUserToTeam: PropTypes.func.isRequired,
     deleteUserFromTeam: PropTypes.func.isRequired,
-    getTeamById: PropTypes.func.isRequired
+    getTeamById: PropTypes.func.isRequired,
+    currentTeam: PropTypes.func.isRequired,
+    isTeamMember: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -160,4 +166,4 @@ const mapStateToProps = (state) => ({
     team: state.team
 });
 
-export default connect(mapStateToProps, { getUsersWithoutUsersInTeam, getTeamUsers, getUserRoles, addUserToTeam, deleteUserFromTeam, getTeamById })(ManageTeam);
+export default connect(mapStateToProps, { getUsersWithoutUsersInTeam, getTeamUsers, getUserRoles, addUserToTeam, deleteUserFromTeam, getTeamById, currentTeam, isTeamMember })(withRouter(ManageTeam));

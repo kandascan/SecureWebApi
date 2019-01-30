@@ -19,6 +19,7 @@ export const getTeamById = (teamid) => dispacht => {
 }
 
 export const currentTeam = (teamid) => dispatch => {
+    console.log('cal action')
     localStorage.setItem('teamid', `${teamid}`);
     dispatch({
         type: SET_CURRENT_TEAM,

@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { getCurrentSprint, createSprint } from '../actions/sprintActions';
 import { getTaskById } from '../actions/backlogActions';
 import { currentTeam } from '../actions/teamActions';
+import { isTeamMember } from '../actions/authActions';
 import Spinner from '../CommonComponent/Spinner';
 import EditTask from '../BacklogComponent/EditTask';
 import SortableComponent from './Sortable';
@@ -16,12 +18,13 @@ class CurrentSprint extends Component {
             this.props.history.push('/');
         }
         if (this.props.match.params.teamid) {
-            this.props.currentTeam(this.props.match.params.teamid);
+            this.props.isTeamMember(this.props.match.params.teamid, this.props.history);
+            //this.props.currentTeam(this.props.match.params.teamid);
             this.props.getCurrentSprint(this.props.match.params.teamid);
         }
     }
 
-    onCreateSprint = () =>{
+    onCreateSprint = () => {
         const newSprint = {
             TeamId: this.props.match.params.teamid
         }
@@ -32,17 +35,17 @@ class CurrentSprint extends Component {
         const { sprint } = this.props;
         const { showSpinner } = this.props.spinner;
         let view = null;
-        if(sprint != null && sprint.tasks != null){  
-            if(sprint.tasks.length > 0){
-                view = sprint.tasks.map(t =>(
+        if (sprint != null && sprint.tasks != null) {
+            if (sprint.tasks.length > 0) {
+                view = sprint.tasks.map(t => (
                     <div className="col-sm ">
-                            <h6>{t.columnName}:</h6>
-                        </div>
+                        <h6>{t.columnName}:</h6>
+                    </div>
                 )
                 );
-            }   
+            }
         }
-       
+
         let sprintView;
         if (sprint.sprintId === 0) {
             sprintView = (<div>
@@ -52,24 +55,14 @@ class CurrentSprint extends Component {
         } else {
             sprintView = (<div className="col-md-12 text-center">
                 <div className="container">
+                    <h2 style={{ marginTop: "-50px" }}>{sprint.sprint.sprintName}</h2>
+                    <br />
                     <div className="row">
-                    {view   }
-                        {/* <div className="col-sm ">
-                            <h6>ToDO:</h6>
-                        </div>
-                        <div className="col-sm">
-                            <h6>In Progress:</h6>
-                        </div>
-                        <div className="col-sm">
-                            <h6>QA</h6>
-                        </div>
-                        <div className="col-sm">
-                            <h6>Done:</h6>
-                        </div>                         */}
+                        {view}
                     </div>
                 </div>
                 <SortableComponent />
-                <EditTask teamid={sprint.teamId}  />
+                <EditTask teamid={sprint.teamId} />
             </div>)
         }
         return (
@@ -94,6 +87,7 @@ CurrentSprint.propTypes = {
     getCurrentSprint: PropTypes.func.isRequired,
     createSprint: PropTypes.func.isRequired,
     getTaskById: PropTypes.func.isRequired,
+    isTeamMember: PropTypes.func.isRequired,
     spinner: PropTypes.object.isRequired
 }
 const mapStateToProps = (state) => ({
@@ -101,4 +95,4 @@ const mapStateToProps = (state) => ({
     sprint: state.sprint,
     spinner: state.spinner
 });
-export default connect(mapStateToProps, { getCurrentSprint, currentTeam, createSprint, getTaskById })(CurrentSprint);
+export default connect(mapStateToProps, { getCurrentSprint, currentTeam, createSprint, getTaskById, isTeamMember })(withRouter(CurrentSprint));

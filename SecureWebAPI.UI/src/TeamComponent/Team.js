@@ -61,7 +61,7 @@ class Team extends Component {
                 className={classnames("list-group-item list-group-item-action d-flex justify-content-between align-items-center list-group-item-light", {
                     'active': localStorage.teamid == team.teamId
                 })}>
-                <Link to={`backlog/${team.teamId}`} className="btn btn-info">Go to backlog {' '}
+                <Link to={`backlog/${team.teamId}`} className="btn btn-info">Backlog {' '}
                     <i className="fas fa-arrow-right"></i>
                 </Link>
                 {team.teamName}

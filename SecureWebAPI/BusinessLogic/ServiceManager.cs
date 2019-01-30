@@ -53,7 +53,7 @@ namespace SecureWebAPI.BusinessLogic
                 var result = await _userManager.CreateAsync(user, request.User.Password);
                 response.Success = result.Succeeded;
                 if (result.Succeeded)
-                    response.Token = await user.GenerateJwtToken(_configuration);
+                    response.Token = await user.GenerateJwtToken(_configuration, new int [0]);
                 else
                 {
                     if (response.Errors.Count() == 0)
@@ -106,7 +106,8 @@ namespace SecureWebAPI.BusinessLogic
                     var signIn = await _signInManager.PasswordSignInAsync(user, request.User.Password, true, false);
                     if (signIn.Succeeded)
                     {
-                        response.Token = await user.GenerateJwtToken(_configuration);
+                        var userTeams = _uow.Repository<XRefTeamUserEntity>().GetOverview(u => u.UserId == user.Id).Select(t => t.TeamId).ToArray();
+                        response.Token = await user.GenerateJwtToken(_configuration, userTeams);
                         response.Success = signIn.Succeeded;
                     }
                 }
@@ -214,6 +215,15 @@ namespace SecureWebAPI.BusinessLogic
                 _logger.LogError(ex.Message + ex.StackTrace);
                 response.Errors.Add("System Exception", ex.Message);
             }
+            return response;
+        }
+
+        public BaseResponse IsUserTeamMember(BaseRequest request)
+        {
+            var response = new BaseResponse();
+            var teamMember = _uow.Repository<XRefTeamUserEntity>().GetOverview(u => u.UserId == request.UserId && u.TeamId == request.TeamId).FirstOrDefault();
+            if (teamMember != null)
+                response.IsTeamMember = true;
             return response;
         }
 
@@ -524,6 +534,10 @@ namespace SecureWebAPI.BusinessLogic
 
                 if (sprint != null)
                 {
+                    response.SprintName = sprint.SprintName;
+                    response.EndDate = sprint.EndDate;
+                    response.StartDate = sprint.StartDate;
+
                     var tasks =
                        (from xst in xRefSprintTask
                         join sc in sprintColumn on xst.ColumnId equals sc.ColumnId 

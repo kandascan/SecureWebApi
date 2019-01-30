@@ -30,19 +30,19 @@ class EditTask extends React.Component {
     }
 
     componentDidMount = () =>{      
-        const { teamUsers } = this.props.user;
-        if( teamUsers === null){
+        //const { teamUsers } = this.props.user;
+        //if( teamUsers === null){
             this.props.getTeamUsers(this.props.teamid)
-        }
-        const { priorities, efforts, sprints } = this.props.dics;
-        if (priorities === null && efforts === null) {
+        //}
+       // const { priorities, efforts, sprints } = this.props.dics;
+        //if (priorities === null && efforts === null) {
             this.props.getEfforts();
             this.props.getPriorities();
-        }
+       // }
 
-        if(sprints === null){
+       // if(sprints === null){
             this.props.getSprintsList(this.props.teamid);
-        }
+       // }
     }
 
     onToggleCancel = () => {

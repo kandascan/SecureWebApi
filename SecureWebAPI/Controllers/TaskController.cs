@@ -26,6 +26,8 @@ namespace SecureWebAPI.Controllers
             _service = service;
             claimsPrincipal = httpContextAccessor.HttpContext.User;
             UserId = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            // = claimsPrincipal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            //_service.IsUserTeamMember(new BaseRequest {  UserId = UserId})
         }
 
         [HttpPost]
@@ -41,7 +43,8 @@ namespace SecureWebAPI.Controllers
         [Route("getbacklogtasks/{teamid}")]
         public IActionResult GetBacklog(string teamid)
         {
-            var request = new GetBacklogTasksRequest { TeamId = Int32.Parse(teamid) };
+
+            var request = new GetBacklogTasksRequest { TeamId = Int32.Parse(teamid), UserId = UserId };
             var response = _service.GetBacklogTasks(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }

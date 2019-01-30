@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getBacklogItems, orderBacklogItems, removeTask, getTaskById } from '../actions/backlogActions';
-import { currentTeam } from '../actions/teamActions';
+import { currentTeam, getTeamById } from '../actions/teamActions';
+import { isTeamMember } from '../actions/authActions';
 import BacklogSortable from './BacklogSortable';
 import CreateTask from './CreateTask';
 import EditTask from './EditTask';
@@ -14,8 +16,10 @@ class BacklogComponent extends Component {
             this.props.history.push('/');
         }
         if (this.props.match.params.teamid) {
+            this.props.isTeamMember(this.props.match.params.teamid, this.props.history);
             this.props.getBacklogItems(this.props.match.params.teamid);
-            this.props.currentTeam(this.props.match.params.teamid);
+            this.props.getTeamById(this.props.match.params.teamid);
+            //this.props.currentTeam(this.props.match.params.teamid);// to chyba jesli user jest w teamie
         }
     }
 
@@ -35,6 +39,7 @@ class BacklogComponent extends Component {
         const { items } = this.props.backlog;
         const { showSpinner } = this.props.spinner;
         const { teamid } = this.props.match.params;
+        const { team } = this .props.team;
         return (
             <div className="landing landing-background-backlog">
                 <div className="dark-overlay text-light">
@@ -44,7 +49,7 @@ class BacklogComponent extends Component {
                                 <EditTask teamid={teamid} onEditTask={this.getTaskById} />
                             </div>
                             <div className="col-md-8 text-center">
-                                <h1 className="display-4 mb-4">Main Backlog</h1>
+                                <h1 className="display-4 mb-4">Backlog: <small>{team.teamName}</small></h1>
                             </div>
                             <div className="col-md-2" style={{padding: "20px"}}>
                                 <CreateTask teamid={teamid} />
@@ -75,13 +80,17 @@ BacklogComponent.propTypes = {
     getBacklogItems: PropTypes.func.isRequired,
     orderBacklogItems: PropTypes.func.isRequired,
     getTaskById: PropTypes.func.isRequired,
-    currentTeam: PropTypes.func.isRequired
+    currentTeam: PropTypes.func.isRequired,
+    getTeamById: PropTypes.func.isRequired,
+    isTeamMember: PropTypes.func.isRequired,
+    team: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
     auth: state.auth,
     backlog: state.backlog,
-    spinner: state.spinner
+    spinner: state.spinner,
+    team: state.team
 });
 
-export default connect(mapStateToProps, { getBacklogItems, orderBacklogItems, removeTask, getTaskById, currentTeam })(BacklogComponent);
+export default connect(mapStateToProps, { getBacklogItems, orderBacklogItems, removeTask, getTaskById, currentTeam, getTeamById, isTeamMember })(withRouter(BacklogComponent));

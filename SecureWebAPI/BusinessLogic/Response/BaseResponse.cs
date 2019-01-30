@@ -14,5 +14,6 @@ namespace SecureWebAPI.BusinessLogic.Response
         public Dictionary<string, string> Errors { get; set; }
         public string ResponseTime { get; set; } = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}";
         public string Message { get; set; }
+        public bool IsTeamMember { get; set; }
     }
 }
