@@ -51,11 +51,11 @@ class LoginForm extends Component {
 
     return (
       <div className="landing landing-background-login">
-        <div className="dark-overlay landing-inner text-light">
+        <div className="dark-overlay landing-inner">
           <div className="container">
             <div className="form-main text-center">
               <form noValidate className="form-signin" onSubmit={this.handleSubmit.bind(this)}>
-                <img className="mb-4" src="logosm.svg" alt="" width="72" height="72" style={{width: "auto"}} />
+                <img className="mb-4" src="logosm.svg" alt="" width="72" height="72" style={{ width: "auto" }} />
                 <h1 className="h3 mb-3 font-weight-normal">Please sign in</h1>
                 <TextFieldGroup
                   type="text"
