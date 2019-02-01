@@ -81,7 +81,7 @@ namespace SecureWebAPI.DataAccess.Entities
         {
             entity.ToTable("XRefSprintTask");
             entity.HasKey(e => e.Id);
-            entity.HasIndex(e => e.TaskId).IsUnique();
+            entity.HasIndex(e => e.TaskId);
             entity.Property(e => e.SprintId);
             entity.Property(e => e.TaskId);
             entity.Property(e => e.ColumnId).HasDefaultValue(1);

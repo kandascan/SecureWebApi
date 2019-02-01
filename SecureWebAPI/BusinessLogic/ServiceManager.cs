@@ -371,7 +371,7 @@ namespace SecureWebAPI.BusinessLogic
                 {
                     if (task.Sprint != -1)
                     {
-                        var xRefSprintTask = new XRefSprintTaskEntity { SprintId = (int)task.Sprint, TaskId = task.Id };
+                        var xRefSprintTask = new XRefSprintTaskEntity { SprintId = (int)task.Sprint, TaskId = task.Id, OrderId = -1 };
                         var xst = _uow.Repository<XRefSprintTaskEntity>().GetOverview(t => t.TaskId == task.Id).FirstOrDefault();
                         if (xst == null)
                             _uow.Repository<XRefSprintTaskEntity>().Add(xRefSprintTask);
@@ -525,7 +525,7 @@ namespace SecureWebAPI.BusinessLogic
             var response = new SprintResponse();
             try
             {
-                var sprint = _uow.Repository<SprintEntity>().GetOverview().Where(b => b.TeamId == request.TeamId).FirstOrDefault();
+                var sprint = _uow.Repository<SprintEntity>().GetOverview().Where(b => b.TeamId == request.TeamId).OrderByDescending(s => s.SprintId).FirstOrDefault();
                 var sprintColumn = _uow.Repository<SprintColumnEntity>().GetOverview();
                 var xRefSprintTask = _uow.Repository<XRefSprintTaskEntity>().GetOverview();
                 var task = _uow.Repository<TaskEntity>().GetOverview();
@@ -630,7 +630,7 @@ namespace SecureWebAPI.BusinessLogic
         public SprintResponse CreateSprint(SprintRequest request)
         {
             var response = new SprintResponse();
-
+            var oldSprint = request.Sprint.SprintId;
             try
             {
                 int sprintNumber = 1;
@@ -649,15 +649,36 @@ namespace SecureWebAPI.BusinessLogic
                 if (teamSprints != null && teamSprints.Count > 0)
                 {
                     sprintNumber = teamSprints.Count;
-                    sprintName = $"{teamName} - Sprint: {sprintNumber++}";
+                    sprintName = $"{teamName} - Sprint: {++sprintNumber}";
                 }
 
-                var newSprint = _mapper.Map<SprintEntity>(request.Sprint);
-                newSprint.StartDate = DateTime.Now;
-                newSprint.EndDate = DateTime.Now.AddDays(14);
-                newSprint.SprintName = sprintName;
+                var newSprint = new SprintEntity
+                {
+                    StartDate = DateTime.Now,
+                    EndDate = DateTime.Now.AddDays(14),
+                    SprintName = sprintName,
+                    TeamId = request.Sprint.TeamId
+
+                };
                 _uow.Repository<SprintEntity>().Add(newSprint);
                 _uow.Save();
+
+                if (oldSprint != 0)
+                {
+                    var notCompletedTasks = _uow.Repository<XRefSprintTaskEntity>().GetOverview(s => s.SprintId == oldSprint && s.ColumnId != (int)Column.DONE).ToList();
+                    notCompletedTasks.ForEach(t => 
+                    {
+                        _uow.Repository<XRefSprintTaskEntity>().Add(new XRefSprintTaskEntity {
+                            ColumnId = t.ColumnId,
+                            OrderId = t.OrderId,
+                            SprintId = newSprint.SprintId,  
+                            TaskId = t.TaskId                            
+                        });
+
+                    });
+                    _uow.Save();
+
+                }
                 response.SprintId = newSprint.SprintId;
                 response.StartDate = newSprint.StartDate;
                 response.EndDate = newSprint.EndDate;
@@ -671,6 +692,11 @@ namespace SecureWebAPI.BusinessLogic
                 response.Errors.Add("System Exception", ex.Message);
             }
             return response;
+        }
+
+        private static void MoveTasksToNewSprint(XRefSprintTaskEntity entity, int sprintId)
+        {
+            entity.SprintId = sprintId;
         }
 
         public SprintResponse GetSprintsList(SprintRequest request)
