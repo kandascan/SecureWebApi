@@ -32,14 +32,19 @@ export const registerUser = (userData, history) => dispatch => {
         );
 };
 
+export const updateToken = (data) => dispatch => {
+    localStorage.removeItem('smToken');
+    const { token } = data;
+    localStorage.setItem('smToken', `Bearer ${token}`);
+    setAuthToken(`Bearer ${token}`);
+    const decoded = jwt_decode(token);
+    dispatch(setCurrentUser(decoded));
+}
+
 export const loginUser = (userData) => dispatch => {
     axios.post("api/auth/login", userData)
         .then(res => {
-            const { token } = res.data;
-            localStorage.setItem('smToken', `Bearer ${token}`);
-            setAuthToken(`Bearer ${token}`);
-            const decoded = jwt_decode(token);
-            dispatch(setCurrentUser(decoded));
+            dispatch(updateToken(res.data));
         })
         .catch(err =>
             dispatch({

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { TOGGLE_SPINNER, SHOW_CREATE_TEAM_MODAL, GET_ERRORS, GET_USER_TEAMS, SET_CURRENT_TEAM, GET_TEAM_BY_ID } from './types';
+import { updateToken } from './authActions';
 
 export const getTeamById = (teamid) => dispacht => {
     axios.get(`/api/team/getteambyid/${teamid}`)
@@ -19,7 +20,6 @@ export const getTeamById = (teamid) => dispacht => {
 }
 
 export const currentTeam = (teamid) => dispatch => {
-    console.log('cal action')
     localStorage.setItem('teamid', `${teamid}`);
     dispatch({
         type: SET_CURRENT_TEAM,
@@ -80,6 +80,7 @@ export const createTeam = (newTeam) => dispatch => {
                 type: GET_ERRORS,
                 payload: {}
             })
+            dispatch(updateToken(res.data));
         })
         .catch(err => {
             dispatch({

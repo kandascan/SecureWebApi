@@ -29,10 +29,10 @@ namespace SecureWebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] TeamVM team)
+        public async Task<IActionResult> Post([FromBody] TeamVM team)
         {
             var request = new TeamRequest { Team = team, UserId = UserId };
-            var response = _service.CreateTeam(request);
+            var response = await _service.CreateTeam(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 

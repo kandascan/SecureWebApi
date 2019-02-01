@@ -8,6 +8,5 @@ namespace SecureWebAPI.BusinessLogic.Request
     public class BacklogRequest : BaseRequest
     {
         public int BacklogId { get; set; }
-        public int TeamId { get; set; }
     }
 }

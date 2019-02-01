@@ -413,7 +413,7 @@ namespace SecureWebAPI.BusinessLogic
             return response;
         }
 
-        public TeamResponse CreateTeam(TeamRequest request)
+        public async Task<TeamResponse> CreateTeam(TeamRequest request)
         {
             var response = new TeamResponse();
             response.Errors = Validator.CreateTeam(request.Team);
@@ -434,6 +434,9 @@ namespace SecureWebAPI.BusinessLogic
                 var backlog = new BacklogEntity { TeamId = newTeam.TeamId };
                 _uow.Repository<BacklogEntity>().Add(backlog);
                 _uow.Save();
+                var user = _uow.Repository<UserEntity>().GetOverview(u => u.Id == request.UserId).FirstOrDefault();
+                var userTeams = _uow.Repository<XRefTeamUserEntity>().GetOverview(u => u.UserId == user.Id).Select(t => t.TeamId).ToArray();
+                response.Token = await user.GenerateJwtToken(_configuration, userTeams);
 
                 response.Team = _mapper.Map<TeamVM>(newTeam);
                 response.Success = true;
