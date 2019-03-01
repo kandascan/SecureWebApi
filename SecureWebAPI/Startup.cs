@@ -91,6 +91,7 @@ namespace SecureWebAPI
                 });
             services.AddSingleton<ILoggerManager, LoggerManager>();
             services.AddTransient<IServiceManager, ServiceManager>();
+            services.AddTransient<IManager, Manager>();
 
             services.AddTransient<IRepository<UserEntity>, Repository<UserEntity>>();
             services.AddTransient<IRepository<TaskEntity>, Repository<TaskEntity>>();
