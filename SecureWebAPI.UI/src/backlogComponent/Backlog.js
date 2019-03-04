@@ -54,7 +54,7 @@ class BacklogComponent extends Component {
                             <div className="col-md-2" style={{padding: "20px"}}>
                                 <CreateTask teamid={teamid} />
                             </div>
-                            <div className="container">{items.tasks.length > 0 ?
+                            <div className="container">{items.tasks != null && items.tasks.length > 0 ?
                                 (<BacklogSortable
                                     items={items}
                                     sortBacklogItems={this.sortBacklogItems}

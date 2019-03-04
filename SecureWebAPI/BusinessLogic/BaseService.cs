@@ -10,28 +10,35 @@ namespace SecureWebAPI.BusinessLogic
     public abstract class BaseService
     {
         protected readonly ILoggerManager _logger;
+        protected readonly IUnitOfWork _uow;
 
-        public BaseService(ILoggerManager logger)
+        public BaseService(ILoggerManager logger, IUnitOfWork unitOfWork)
         {
-            this._logger = logger;
+            _logger = logger;
+            _uow = unitOfWork;
         }
 
-        protected void RunCode(string methodName, BaseRequest request, BaseResponse response, Action<UnitOfWork> action)
+        protected void RunCode(string methodName, BaseRequest request, BaseResponse response, Action<IUnitOfWork> action)
         {
-            using (var uow = new UnitOfWork())
+            try
             {
-                try
+                _logger.LogInfo($"Call method: {methodName}");
+                action(_uow);
+                _logger.LogInfo($"Finished method: {methodName}");
+                if (response.Errors.Count != 0)
                 {
-                    _logger.LogInfo($"Call method: {methodName} at {DateTime.Now}");
-                    action(uow);
-                    _logger.LogInfo($"Finished method: {methodName} at {DateTime.Now}");
+                    foreach (var err in response.Errors)
+                    {
+                        _logger.LogError($"Response Errors in method: {methodName}, \nError message: Key: {err.Key} \t Value: {err.Value}");
+                    }
+                }
+                else
                     response.Success = true;
-                }
-                catch (Exception ex)
-                {
-                    response.Errors.Add("System Exception", ex.Message);
-                    _logger.LogError($"Exception method: {methodName} at {DateTime.Now}, \nException message: {ex.Message + ex.StackTrace}");
-                }
+            }
+            catch (Exception ex)
+            {
+                response.Errors.Add("System Exception", ex.Message);
+                _logger.LogError($"Exception method: {methodName}, \nException message: {ex.Message + ex.StackTrace}");
             }
         }
 

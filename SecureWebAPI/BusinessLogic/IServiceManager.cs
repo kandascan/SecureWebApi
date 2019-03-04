@@ -44,7 +44,7 @@ namespace SecureWebAPI.BusinessLogic
 
         SprintResponse GetSprintsList(SprintRequest request);
 
-        UserResponse GetAllUsersWithouUsersInTeam(UserRequest request);
+        UserResponse GetAllUsersWithoutUsersInTeam(UserRequest request);
 
         TeamResponse GetTeamUsers(TeamRequest request);
 

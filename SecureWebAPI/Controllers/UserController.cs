@@ -41,7 +41,7 @@ namespace SecureWebAPI.Controllers
         public IActionResult GetAllUsersWithouUsersInTeam(string teamid)
         {
             var request = new UserRequest { UserTeam = new XRefUserTeam { TeamId = Int32.Parse(teamid), UserId = UserId } };
-            var response = _service.GetAllUsersWithouUsersInTeam(request);
+            var response = _service.GetAllUsersWithoutUsersInTeam(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 
