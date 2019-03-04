@@ -7,6 +7,7 @@ import { getTeamUsers } from '../actions/userActions';
 import { toggleEditTaskModal } from '../actions/modalActions';
 import ModalComponent from '../CommonComponent/ModaComponent';
 import $ from 'jquery';
+import isEmpty from '../validation/is-Empty';
 window.jQuery = window.$ = $;
 
 class EditTask extends React.Component {
@@ -94,8 +95,8 @@ class EditTask extends React.Component {
                 <option key={user.userId} value={user.userId}>{user.userName}</option>
             );
         }
-debugger
-        if(sprints != null){
+
+        if(sprints != null && !isEmpty(sprints)){
             ddlTeamSprints = sprints.sprintsList.map((sprint) =>
                 <option key={sprint.sprintId} value={sprint.sprintId}>{sprint.sprintName}</option>
             );

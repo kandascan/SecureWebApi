@@ -9,7 +9,7 @@ import { getTeamUsers } from '../actions/userActions';
 import ModalComponent from '../CommonComponent/ModaComponent';
 import TextFieldGroup from '../CommonComponent/TextFieldGroup';
 import classnames from 'classnames';
-
+import isEmpty from '../validation/is-Empty';
 import $ from 'jquery';
 window.jQuery = window.$ = $;
 
@@ -75,7 +75,7 @@ class CreateTask extends React.Component {
             );
         }
 
-        if(sprints != null){
+        if(sprints != null && !isEmpty(sprints)){
             ddlTeamSprints = sprints.sprintsList.map((sprint) =>
                 <option key={sprint.sprintId} value={sprint.sprintId}>{sprint.sprintName}</option>
             );
