@@ -68,10 +68,10 @@ namespace SecureWebAPI.Controllers
         }
 
         [HttpDelete]
-        public IActionResult RemoveTask(int id)
+        public async Task<IActionResult> RemoveTask(int id)
         {
             var request = new RemoveTaskRequest { Id = id };
-            var response = _service.RemoveTask(request);
+            var response = await _service.RemoveTask(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 

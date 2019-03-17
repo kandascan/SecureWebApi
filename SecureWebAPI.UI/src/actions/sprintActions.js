@@ -23,7 +23,7 @@ export const onSortSprintTasks = (sprintTasks) => dispatch => {
         });
 }
 
-export const getCurrentSprint = (teamId) => (dispatch) => {
+export const getCurrentSprint = (teamId) => async dispatch => {
     dispatch({
         type: TOGGLE_SPINNER
     });

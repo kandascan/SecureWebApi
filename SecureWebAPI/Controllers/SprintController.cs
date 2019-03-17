@@ -30,10 +30,10 @@ namespace SecureWebAPI.Controllers
 
         [HttpGet]
         [Route("getcurrentsprint/{teamid}")]
-        public IActionResult GetCurrentSprint(string teamid)
+        public async Task<IActionResult> GetCurrentSprint(string teamid)
         {
             var request = new SprintRequest { TeamId = Int32.Parse(teamid) };
-            var response = _service.GetCurrentSprint(request);
+            var response = await _service.GetCurrentSprint(request);
             return response.Success ? Ok(response) : StatusCode(404, response.Errors);
         }
 

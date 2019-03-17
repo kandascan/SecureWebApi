@@ -40,6 +40,8 @@ namespace SecureWebAPI.DataAccess.Repository
             _objectSet.Remove(entity);
         }
 
+
+
         public void AddMany(IEnumerable<T> entities)
         {
             _objectSet.AddRange(entities);
@@ -54,6 +56,11 @@ namespace SecureWebAPI.DataAccess.Repository
         public IEnumerable<T> GetAll()
         {
             return _objectSet;
+        }
+
+        public void DeleteMany(IEnumerable<T> entities)
+        {
+            _objectSet.RemoveRange(entities);
         }
     }
 }
