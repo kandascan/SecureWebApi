@@ -79,12 +79,16 @@ class ManageTeam extends Component {
                     })}
                 >
                     {teamUser.userName} - {teamUser.userRole}
-                    <span
+                    
+                    <div>
+
+                        {!teamUser.me ? (<i style={{paddingRight: '12px'}} className="fas fa-trash" onClick={() =>this.handleDeleteUserFromTeam(teamUser.userId)}></i>) : (null)}
+                        <span
                         className={classnames("badge  badge-pill", {
                             'badge-info': !teamUser.me,
                             'badge-dark': teamUser.me
-                        })}>14</span>
-                    {!teamUser.me ? (<i className="fas fa-trash" onClick={() =>this.handleDeleteUserFromTeam(teamUser.userId)}></i>) : (null)}
+                        })}>{teamUser.countTasks}</span>
+                        </div>
                 </li>
             );
         }

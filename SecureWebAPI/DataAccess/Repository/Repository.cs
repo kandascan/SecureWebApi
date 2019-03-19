@@ -52,6 +52,10 @@ namespace SecureWebAPI.DataAccess.Repository
             _objectSet.Update(entity);
             return entity;
         }
+        public void UpdateMany(IEnumerable<T> entities)
+        {
+            _objectSet.UpdateRange(entities);
+        }
 
         public IEnumerable<T> GetAll()
         {

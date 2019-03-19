@@ -783,19 +783,21 @@ namespace SecureWebAPI.BusinessLogic
                 var xRefTeamUser = _uow.Repository<XRefTeamUserEntity>().GetOverview();
                 var user = _uow.Repository<UserEntity>().GetOverview();
                 var role = _uow.Repository<RoleEntity>().GetOverview();
+                var tasks = _uow.Repository<TaskEntity>().GetOverview();
 
                 var teamUsers = (from x in xRefTeamUser
                                  join u in user
                                  on x.UserId equals u.Id
                                  join r in role
-                                 on x.RoleId equals r.RoleId
+                                 on x.RoleId equals r.RoleId                                 
                                  where x.TeamId == request.TeamId
                                  select new User
                                  {
                                      UserId = u.Id,
                                      UserName = u.UserName,
                                      UserRole = r.RoleName,
-                                     Me = request.UserId == x.UserId ? true : false
+                                     Me = request.UserId == x.UserId ? true : false,
+                                     CountTasks = tasks.Where(t => t.UserId == u.Id).Count()
                                  }).ToList();
 
                 if (teamUsers != null)
@@ -866,6 +868,12 @@ namespace SecureWebAPI.BusinessLogic
                 if (xref != null)
                 {
                     _uow.Repository<XRefTeamUserEntity>().Delete(xref);
+                    var tasks = _uow.Repository<TaskEntity>().GetOverview(u => u.UserId == request.UserTeam.UserId).ToList();
+                    if(tasks.Count > 0)
+                    {
+                        tasks.ForEach(t => t.UserId = null);
+                        _uow.Repository<TaskEntity>().UpdateMany(tasks);
+                    }
                     _uow.Save();
                     response.TeamId = request.UserTeam.TeamId;
                     response.Success = true;
