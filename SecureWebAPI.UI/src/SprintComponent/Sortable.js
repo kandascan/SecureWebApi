@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { sortableContainer, sortableElement, arrayMove, DragLayer } from '../react-sortable-multiple-hoc';
 import { onSortSprintTasks } from "../actions/sprintActions";
-import { getTaskById } from '../actions/backlogActions';
+import { getTaskById, removeTask } from '../actions/backlogActions';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SprintItem from './SprintItem';
+import classnames from 'classnames';
+
 
 const dragLayer = new DragLayer();
 
@@ -13,16 +15,22 @@ const SortableItem = sortableElement((props) => {
         {/* {props.item.ind}  */}
         <h6>{props.item.val.taskName} </h6>
         <div style={{ textAlign: "right" }}>
-            <span className="badge badge-light">{props.item.val.userName === null ? "Not assigned" : props.item.val.userName}</span></div>
+            <span className={classnames("badge", {
+                        'badge-light': props.item.val.userName !== null && props.item.val.userName !== props.userName,
+                        'badge-warning': props.item.val.userName === null,
+                        'badge-info': props.item.val.userName === props.userName,                        
+                    })}>           
+            
+            {props.item.val.userName === null ? "Not assigned" : props.item.val.userName}</span></div>
         <div style={{ textAlign: "left" }}>
             <div><span style={{ float: "right" }} className="badge badge-light">Effort: {props.item.val.effort}</span></div>
-            <a href="#" className="badge badge-danger">DEL</a>
-            <a onClick={() => props.getTask(props.item.val.taskId)} className="badge badge-light">More</a>
+            <a onClick={() => props.removeTask(props.item.val.taskId, props.teamId)} style={{color: "white"}} className="badge badge-danger">DEL</a>
+            <a onClick={() => props.getTask(props.item.val.taskId, props.teamId)} style={{color: "black"}} className="badge badge-light">More</a>
         </div>
     </li>);
 });
 
-const SortableListItems = sortableContainer(({ items, getTask }) =>
+const SortableListItems = sortableContainer(({ items, getTask, removeTask, teamId, userName }) =>
     <ul className="list-group">
         {items.map((value, index) => (
             <SortableItem
@@ -30,6 +38,9 @@ const SortableListItems = sortableContainer(({ items, getTask }) =>
                 index={index}
                 item={value}
                 getTask={getTask}
+                removeTask={removeTask}
+                teamId={teamId}
+                userName={userName}
             />
         ))}
     </ul>
@@ -47,11 +58,14 @@ const SortablePart = sortableElement(props =>
             isMultiple={true}
             helperCollision={{ top: 1, bottom: 1 }}
             getTask={props.getTask}
+            removeTask={props.removeTask}
+            teamId={props.teamId}
+            userName={props.userName}
         />
     </div>
 );
 
-const SortableListParts = sortableContainer(({ items, onSortItemsEnd, getTask, tasks }) =>
+const SortableListParts = sortableContainer(({ items, onSortItemsEnd, getTask, tasks, removeTask,teamId, userName }) =>
     <div>
         <div className="row">
             {tasks}
@@ -65,6 +79,9 @@ const SortableListParts = sortableContainer(({ items, onSortItemsEnd, getTask, t
                     id={index}
                     onMultipleSortEnd={onSortItemsEnd}
                     getTask={getTask}
+                    removeTask={removeTask}
+                    teamId={teamId}
+                    userName={userName}
                 />
             ))}
         </div>
@@ -87,8 +104,12 @@ class SortableComponent extends Component {
         });
     }
 
-    onClickGetTaskById = (id) => {
-        this.props.getTaskById(id, this.state.teamId);
+    onClickGetTaskById = (id, teamId) => {
+        this.props.getTaskById(id, teamId);
+    }
+
+    onClickRemoveTask = (id, teamId) => {
+        this.props.removeTask(id, teamId);
     }
 
     componentDidMount() {
@@ -131,6 +152,8 @@ class SortableComponent extends Component {
     }
     render() {
         const { sprint } = this.props;
+        const { auth } = this.props;
+
         let tasks = null;
         if (sprint != null && sprint.tasks != null) {
             if (sprint.tasks.length > 0) {
@@ -158,7 +181,10 @@ class SortableComponent extends Component {
                 onSortItemsEnd={this.onSortItemsEnd}
                 helperClass={'selected'}
                 getTask={this.onClickGetTaskById}
+                removeTask={this.onClickRemoveTask}
                 tasks={tasks}
+                teamId={this.props.sprint.teamId}
+                userName={auth.user.nameid}
             />
         </div>);
     }
@@ -167,11 +193,14 @@ class SortableComponent extends Component {
 SortableComponent.propTypes = {
     sprint: PropTypes.object.isRequired,
     onSortSprintTasks: PropTypes.func.isRequired,
-    getTaskById: PropTypes.func.isRequired
+    getTaskById: PropTypes.func.isRequired,
+    removeTask: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired,
 }
 
 const mapStateToProps = (state) => ({
-    sprint: state.sprint
+    sprint: state.sprint,
+    auth: state.auth
 });
 
-export default connect(mapStateToProps, { onSortSprintTasks, getTaskById })(SortableComponent);
+export default connect(mapStateToProps, { onSortSprintTasks, getTaskById, removeTask })(SortableComponent);

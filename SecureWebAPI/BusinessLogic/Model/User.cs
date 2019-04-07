@@ -11,5 +11,6 @@ namespace SecureWebAPI.BusinessLogic.Model
         public string UserName { get; set; }
         public string UserRole { get; internal set; }
         public bool Me { get; internal set; }
+        public  int CountTasks { get; set; }
     }
 }

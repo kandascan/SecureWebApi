@@ -13,5 +13,7 @@ namespace SecureWebAPI.DataAccess.Repository
         T Update(T entity);
         void AddMany(IEnumerable<T> entities);
         void Delete(T entity);
+        void DeleteMany(IEnumerable<T> entities);
+        void UpdateMany(IEnumerable<T> entities);
     }
 }

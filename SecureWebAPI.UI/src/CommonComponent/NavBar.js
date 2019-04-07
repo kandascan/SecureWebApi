@@ -32,7 +32,9 @@ class NavBar extends Component {
         </ul>)}
         <ul className="navbar-nav ml-auto">
           <li className="nav-item">
-            <NavLink className="nav-link" to="/profile">{user.sub}</NavLink>
+            <NavLink className="nav-link" to="#">
+              {user.sub}
+            </NavLink>
           </li>
           <li className="nav-item">
             <a href="" onClick={this.onLogoutClick} className="nav-link" to="/login">

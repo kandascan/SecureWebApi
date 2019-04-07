@@ -197,29 +197,29 @@ namespace SecureWebAPI.BusinessLogic
             }
         }
 
-        public void RemoveTask(RemoveTaskRequest request, RemoveTaskResponse response)
-        {
-            var dbTask = _uow.Repository<TaskEntity>().GetDetails(t => t.Id == request.Id);
-            if (dbTask != null)
-            {
-                _uow.Repository<TaskEntity>().Delete(dbTask);
+        //public void RemoveTask(RemoveTaskRequest request, RemoveTaskResponse response)
+        //{
+        //    var dbTask = _uow.Repository<TaskEntity>().GetDetails(t => t.Id == request.Id);
+        //    if (dbTask != null)
+        //    {
+        //        _uow.Repository<TaskEntity>().Delete(dbTask);
 
-                _uow.Save();
-                var backlogItems = GetBacklogTasks(new GetBacklogTasksRequest { TeamId = dbTask.TeamId });
-                if (backlogItems != null && backlogItems.Tasks.Count > 0)
-                {
-                    response.Tasks = backlogItems.Tasks;
-                }
-                else
-                {
-                    response.Tasks = new List<TaskVM>();
-                }
-            }
-            else
-            {
-                response.Errors.Add("Sort Backlog items", "Cannot featch Backlog items");
-            }
-        }
+        //        _uow.Save();
+        //        var backlogItems = GetBacklogTasks(new GetBacklogTasksRequest { TeamId = dbTask.TeamId });
+        //        if (backlogItems != null && backlogItems.Tasks.Count > 0)
+        //        {
+        //            response.Tasks = backlogItems.Tasks;
+        //        }
+        //        else
+        //        {
+        //            response.Tasks = new List<TaskVM>();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        response.Errors.Add("Sort Backlog items", "Cannot featch Backlog items");
+        //    }
+        //}
 
         public void SortBacklogItems(SortBacklogItemsRequest request, SortBacklogItemsResponse response)
         {
@@ -383,64 +383,64 @@ namespace SecureWebAPI.BusinessLogic
             }
         }
 
-        public void GetCurrentSprint(SprintRequest request, SprintResponse response)
-        {
-            var sprint = _uow.Repository<SprintEntity>().GetOverview().Where(b => b.TeamId == request.TeamId).OrderByDescending(s => s.SprintId).FirstOrDefault();
-            var sprintColumn = _uow.Repository<SprintColumnEntity>().GetOverview();
-            var xRefSprintTask = _uow.Repository<XRefSprintTaskEntity>().GetOverview();
-            var task = _uow.Repository<TaskEntity>().GetOverview();
-            var user = _uow.Repository<UserEntity>().GetOverview();
-            var effort = _uow.Repository<EffortEntity>().GetOverview();
-            if (sprint != null)
-            {
-                response.SprintName = sprint.SprintName;
-                response.EndDate = sprint.EndDate;
-                response.StartDate = sprint.StartDate;
+        //public void GetCurrentSprint(SprintRequest request, SprintResponse response)
+        //{
+        //    var sprint = _uow.Repository<SprintEntity>().GetOverview().Where(b => b.TeamId == request.TeamId).OrderByDescending(s => s.SprintId).FirstOrDefault();
+        //    var sprintColumn = _uow.Repository<SprintColumnEntity>().GetOverview();
+        //    var xRefSprintTask = _uow.Repository<XRefSprintTaskEntity>().GetOverview();
+        //    var task = _uow.Repository<TaskEntity>().GetOverview();
+        //    var user = _uow.Repository<UserEntity>().GetOverview();
+        //    var effort = _uow.Repository<EffortEntity>().GetOverview();
+        //    if (sprint != null)
+        //    {
+        //        response.SprintName = sprint.SprintName;
+        //        response.EndDate = sprint.EndDate;
+        //        response.StartDate = sprint.StartDate;
 
-                var tasks =
-                   (from xst in xRefSprintTask
-                    join sc in sprintColumn on xst.ColumnId equals sc.ColumnId
-                    join t in task on xst.TaskId equals t.Id
-                    join u in user on t.UserId equals u.Id into uX
-                    from u in uX.DefaultIfEmpty()
-                    join e in effort on t.EffortId equals e.EffortId
-                    where xst.SprintId == sprint.SprintId
-                    select new SprintTask
-                    {
-                        Id = xst.Id,
-                        ColumnId = sc.ColumnId,
-                        ColumnName = sc.ColumnName,
-                        OrderId = xst == null ? 0 : xst.OrderId,
-                        SprintId = xst == null ? 0 : xst.SprintId,
-                        TaskId = t == null ? 0 : t.Id,
-                        TaskName = t?.TaskName,
-                        UserName = u?.UserName,
-                        Effort = e.EffortName,
-                        CreatedDate = xst.CreatedDate
-                    }).ToList();
+        //        var tasks =
+        //           (from xst in xRefSprintTask
+        //            join sc in sprintColumn on xst.ColumnId equals sc.ColumnId
+        //            join t in task on xst.TaskId equals t.Id
+        //            join u in user on t.UserId equals u.Id into uX
+        //            from u in uX.DefaultIfEmpty()
+        //            join e in effort on t.EffortId equals e.EffortId
+        //            where xst.SprintId == sprint.SprintId
+        //            select new SprintTask
+        //            {
+        //                Id = xst.Id,
+        //                ColumnId = sc.ColumnId,
+        //                ColumnName = sc.ColumnName,
+        //                OrderId = xst == null ? 0 : xst.OrderId,
+        //                SprintId = xst == null ? 0 : xst.SprintId,
+        //                TaskId = t == null ? 0 : t.Id,
+        //                TaskName = t?.TaskName,
+        //                UserName = u?.UserName,
+        //                Effort = e.EffortName,
+        //                CreatedDate = xst.CreatedDate
+        //            }).ToList();
 
-                foreach (var s in sprintColumn)
-                {
-                    var items = tasks.Where(t => t.ColumnId == s.ColumnId).OrderBy(i => i.OrderId).ThenBy(d => d.CreatedDate).ToList();
+        //        foreach (var s in sprintColumn)
+        //        {
+        //            var items = tasks.Where(t => t.ColumnId == s.ColumnId).OrderBy(i => i.OrderId).ThenBy(d => d.CreatedDate).ToList();
 
-                    var sprintBoardTask = new SprintBoardTask
-                    {
-                        ColumnName = s.ColumnName,
-                        ColumnId = s.ColumnId,
-                        Items = _mapper.Map<List<SprintTaskVM>>(items)
-                    };
+        //            var sprintBoardTask = new SprintBoardTask
+        //            {
+        //                ColumnName = s.ColumnName,
+        //                ColumnId = s.ColumnId,
+        //                Items = _mapper.Map<List<SprintTaskVM>>(items)
+        //            };
 
-                    response.SprintBoardTasks.Add(sprintBoardTask);
-                }
+        //            response.SprintBoardTasks.Add(sprintBoardTask);
+        //        }
 
-                response.TeamId = request.TeamId;
-                response.SprintId = sprint.SprintId;
-            }
-            else
-            {
-                response.Message = $"There is no active sprint yet for team: {request.TeamId}";
-            }
-        }
+        //        response.TeamId = request.TeamId;
+        //        response.SprintId = sprint.SprintId;
+        //    }
+        //    else
+        //    {
+        //        response.Message = $"There is no active sprint yet for team: {request.TeamId}";
+        //    }
+        //}
 
         public void SortSprintTasks(SprintRequest request, SprintResponse response)
         {
@@ -616,6 +616,104 @@ namespace SecureWebAPI.BusinessLogic
             {
                 response.Team = _mapper.Map<TeamVM>(team);
             }
+        }
+
+        public async Task RemoveTask(RemoveTaskRequest request, RemoveTaskResponse response)
+        {
+            await Task.Run(() =>
+            {
+                var dbTask = _uow.Repository<TaskEntity>().GetDetails(t => t.Id == request.Id);
+                if (dbTask != null)
+                {
+                    var dbXrefBacklogTask = _uow.Repository<XRefBacklogTaskEntity>().GetDetails(x => x.TaskId == request.Id);
+                    if (dbXrefBacklogTask != null)
+                    {
+                        _uow.Repository<XRefBacklogTaskEntity>().Delete(dbXrefBacklogTask);
+                    }
+
+                    var dbXRefSprintTasks = _uow.Repository<XRefSprintTaskEntity>().GetOverview(x => x.TaskId == request.Id);
+                    if (dbXRefSprintTasks != null && dbXRefSprintTasks.Count() > 0)
+                    {
+                        _uow.Repository<XRefSprintTaskEntity>().DeleteMany(dbXRefSprintTasks);
+                    }
+
+                    _uow.Repository<TaskEntity>().Delete(dbTask);
+
+                    _uow.Save();
+                    var backlogItems = GetBacklogTasks(new GetBacklogTasksRequest { TeamId = dbTask.TeamId });
+                    if (backlogItems != null && backlogItems.Tasks.Count > 0)
+                    {
+                        response.Tasks = backlogItems.Tasks;
+                    }
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Errors.Add("Sort Backlog items", "Cannot featch Backlog items");
+                }
+            });
+        }
+
+        public async Task GetCurrentSprint(SprintRequest request, SprintResponse response)
+        {
+            await Task.Run(() =>
+            {
+                var sprint = _uow.Repository<SprintEntity>().GetOverview().Where(b => b.TeamId == request.TeamId).OrderByDescending(s => s.SprintId).FirstOrDefault();
+                var sprintColumn = _uow.Repository<SprintColumnEntity>().GetOverview();
+                var xRefSprintTask = _uow.Repository<XRefSprintTaskEntity>().GetOverview();
+                var task = _uow.Repository<TaskEntity>().GetOverview();
+                var user = _uow.Repository<UserEntity>().GetOverview();
+                var effort = _uow.Repository<EffortEntity>().GetOverview();
+                if (sprint != null)
+                {
+                    response.SprintName = sprint.SprintName;
+                    response.EndDate = sprint.EndDate;
+                    response.StartDate = sprint.StartDate;
+
+                    var tasks =
+                       (from xst in xRefSprintTask
+                        join sc in sprintColumn on xst.ColumnId equals sc.ColumnId
+                        join t in task on xst.TaskId equals t.Id
+                        join u in user on t.UserId equals u.Id into uX
+                        from u in uX.DefaultIfEmpty()
+                        join e in effort on t.EffortId equals e.EffortId
+                        where xst.SprintId == sprint.SprintId
+                        select new SprintTask
+                        {
+                            Id = xst.Id,
+                            ColumnId = sc.ColumnId,
+                            ColumnName = sc.ColumnName,
+                            OrderId = xst == null ? 0 : xst.OrderId,
+                            SprintId = xst == null ? 0 : xst.SprintId,
+                            TaskId = t == null ? 0 : t.Id,
+                            TaskName = t?.TaskName,
+                            UserName = u?.UserName,
+                            Effort = e.EffortName,
+                            CreatedDate = xst.CreatedDate
+                        }).ToList();
+
+                    foreach (var s in sprintColumn)
+                    {
+                        var items = tasks.Where(t => t.ColumnId == s.ColumnId).OrderBy(i => i.OrderId).ThenBy(d => d.CreatedDate).ToList();
+
+                        var sprintBoardTask = new SprintBoardTask
+                        {
+                            ColumnName = s.ColumnName,
+                            ColumnId = s.ColumnId,
+                            Items = _mapper.Map<List<SprintTaskVM>>(items)
+                        };
+
+                        response.SprintBoardTasks.Add(sprintBoardTask);
+                    }
+
+                    response.TeamId = request.TeamId;
+                    response.SprintId = sprint.SprintId;
+                }
+                else
+                {
+                    response.Message = $"There is no active sprint yet for team: {request.TeamId}";
+                }
+            });
         }
     }
 }

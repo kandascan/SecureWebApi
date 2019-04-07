@@ -25,7 +25,7 @@ namespace SecureWebAPI.BusinessLogic
 
         void SortBacklogItems(SortBacklogItemsRequest request, SortBacklogItemsResponse response);
 
-        void RemoveTask(RemoveTaskRequest request, RemoveTaskResponse response);
+        //void RemoveTask(RemoveTaskRequest request, RemoveTaskResponse response);
 
         void GetPriorities(GetPrioritiesRequest request, GetPrioritiesResponse response);
 
@@ -39,7 +39,7 @@ namespace SecureWebAPI.BusinessLogic
 
         void GetTeamBacklog(BacklogRequest request, BacklogResponse response);
 
-        void GetCurrentSprint(SprintRequest request, SprintResponse response);
+        //void GetCurrentSprint(SprintRequest request, SprintResponse response);
 
         void SortSprintTasks(SprintRequest request, SprintResponse response);
 
@@ -58,5 +58,7 @@ namespace SecureWebAPI.BusinessLogic
         void DeleteUserFromTeam(UserRequest request, UserResponse response);
 
         void GetTeamById(TeamRequest request, TeamResponse response);
+        Task RemoveTask(RemoveTaskRequest request, RemoveTaskResponse response);
+        Task GetCurrentSprint(SprintRequest request, SprintResponse response);
     }
 }

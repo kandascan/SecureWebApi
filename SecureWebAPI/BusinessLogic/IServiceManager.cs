@@ -24,7 +24,7 @@ namespace SecureWebAPI.BusinessLogic
 
         SortBacklogItemsResponse SortBacklogItems(SortBacklogItemsRequest request);
 
-        RemoveTaskResponse RemoveTask(RemoveTaskRequest request);
+        Task<RemoveTaskResponse> RemoveTask(RemoveTaskRequest request);
 
         GetPrioritiesResponse GetPriorities(GetPrioritiesRequest request);
 
@@ -36,7 +36,7 @@ namespace SecureWebAPI.BusinessLogic
 
         TeamResponse GetUserTeams(TeamRequest request);
 
-        SprintResponse GetCurrentSprint(SprintRequest request);
+        Task<SprintResponse> GetCurrentSprint(SprintRequest request);
 
         SprintResponse CreateSprint(SprintRequest request);
 

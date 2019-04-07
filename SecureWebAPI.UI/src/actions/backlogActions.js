@@ -114,7 +114,7 @@ export const createTask = (newTask) => dispatch => {
         );
 }
 
-export const removeTask = (id) => dispatch => {
+export const removeTask = (id, taskId) => async dispatch => {
     dispatch({
         type: TOGGLE_SPINNER
     });
@@ -129,6 +129,9 @@ export const removeTask = (id) => dispatch => {
                 type: GET_BACKLOG_ITEMS,
                 payload: res.data
             });
+            if(taskId !== undefined){
+                dispatch(getCurrentSprint(taskId));
+            }
         })
         .catch(err => {
             dispatch({
