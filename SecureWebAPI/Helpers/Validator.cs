@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SecureWebAPI.Helpers
@@ -47,6 +48,14 @@ namespace SecureWebAPI.Helpers
             if (string.IsNullOrEmpty(user.Email))
             {
                 response.Add("email", "Email cannot be null");
+                return response;
+            }
+            Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+            Match match = regex.Match(user.Email);
+            if (!match.Success)
+            {
+                response.Add("email", "Email adress is not valid");
+
             }
 
             return response;

@@ -3,6 +3,7 @@ import setAuthToken from '../utils/setAuthToken';
 import jwt_decode from 'jwt-decode';
 import { GET_ERRORS, SET_CURRENT_USER, SET_CURRENT_TEAM, SET_TEAM_MEMBER } from './types';
 import store from '../store';
+import isEmpty from '../validation/is-Empty';
 
 export const isTeamMember = (teamId, history) => dispatch => {
     const teamIds = store.getState().auth.user.UserTeams.split(',')
@@ -22,7 +23,14 @@ export const isTeamMember = (teamId, history) => dispatch => {
 export const registerUser = (userData, history) => dispatch => {
     axios.post("api/auth/register", userData)
         .then(res => {
-            history.push('/login');
+            if(!isEmpty(res.data.errors)){
+                dispatch({
+                    type: GET_ERRORS,
+                    payload: res.data.errors
+                })
+            }else{
+                history.push('/login');
+            }
         })
         .catch(err =>
             dispatch({
@@ -44,7 +52,15 @@ export const updateToken = (data) => dispatch => {
 export const loginUser = (userData) => dispatch => {
     axios.post("api/auth/login", userData)
         .then(res => {
-            dispatch(updateToken(res.data));
+            if(!isEmpty(res.data.errors)){
+                dispatch({
+                    type: GET_ERRORS,
+                    payload: res.data.errors
+                })
+            }
+            else{
+                dispatch(updateToken(res.data));
+            }
         })
         .catch(err =>
             dispatch({

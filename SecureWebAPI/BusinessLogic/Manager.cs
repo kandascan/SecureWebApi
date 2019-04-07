@@ -223,7 +223,6 @@ namespace SecureWebAPI.BusinessLogic
             if (dbPriorites != null && dbPriorites.Count() > 0)
             {
                 response.Priorities = _mapper.Map<List<PriorityVM>>(dbPriorites);
-                response.Success = true;
             }
         }
 
@@ -233,7 +232,6 @@ namespace SecureWebAPI.BusinessLogic
             if (dbEfforts != null && dbEfforts.Count() > 0)
             {
                 response.Efforts = _mapper.Map<List<EffortVM>>(dbEfforts);
-                response.Success = true;
             }
         }
 
@@ -270,7 +268,6 @@ namespace SecureWebAPI.BusinessLogic
                 }
                 _uow.Save();
                 response.Task = _mapper.Map<TaskVM>(task);
-                response.Success = true;
             }
             else
             {
@@ -301,7 +298,6 @@ namespace SecureWebAPI.BusinessLogic
             response.Token = await user.GenerateJwtToken(_configuration, userTeams);
 
             response.Team = _mapper.Map<TeamVM>(newTeam);
-            response.Success = true;
         }
 
         public void GetUserTeams(TeamRequest request, TeamResponse response)
@@ -445,7 +441,6 @@ namespace SecureWebAPI.BusinessLogic
             if (sprints != null && sprints.Count > 0)
             {
                 response.SprintsList = sprints;
-                response.Success = true;
             }
             else
             {
@@ -473,6 +468,7 @@ namespace SecureWebAPI.BusinessLogic
             var xRefTeamUser = _uow.Repository<XRefTeamUserEntity>().GetOverview();
             var user = _uow.Repository<UserEntity>().GetOverview();
             var role = _uow.Repository<RoleEntity>().GetOverview();
+            var tasks = _uow.Repository<TaskEntity>().GetOverview();
 
             var teamUsers = (from x in xRefTeamUser
                              join u in user
@@ -485,7 +481,8 @@ namespace SecureWebAPI.BusinessLogic
                                  UserId = u.Id,
                                  UserName = u.UserName,
                                  UserRole = r.RoleName,
-                                 Me = request.UserId == x.UserId ? true : false
+                                 Me = request.UserId == x.UserId ? true : false,
+                                 CountTasks = tasks.Where(t => t.UserId == u.Id && t.TeamId == request.TeamId).Count()
                              }).ToList();
 
             if (teamUsers != null)
@@ -521,6 +518,12 @@ namespace SecureWebAPI.BusinessLogic
             if (xref != null)
             {
                 _uow.Repository<XRefTeamUserEntity>().Delete(xref);
+                var tasks = _uow.Repository<TaskEntity>().GetOverview(u => u.UserId == request.UserTeam.UserId).ToList();
+                if (tasks.Count > 0)
+                {
+                    tasks.ForEach(t => t.UserId = null);
+                    _uow.Repository<TaskEntity>().UpdateMany(tasks);
+                }
                 _uow.Save();
                 response.TeamId = request.UserTeam.TeamId;
             }
@@ -562,7 +565,6 @@ namespace SecureWebAPI.BusinessLogic
                     {
                         response.Tasks = backlogItems.Tasks;
                     }
-                    response.Success = true;
                 }
                 else
                 {
