@@ -100,17 +100,6 @@ namespace SecureWebAPI.BusinessLogic
             return response;
         }
 
-        //public RemoveTaskResponse RemoveTask(RemoveTaskRequest request)
-        //{
-        //    var response = new RemoveTaskResponse();
-        //    RunCode(MethodBase.GetCurrentMethod().Name, request, response, (uow) =>
-        //    {
-        //        _manager.RemoveTask(request, response);
-        //    });
-
-        //    return response;
-        //}
-
         public GetPrioritiesResponse GetPriorities(GetPrioritiesRequest request)
         {
             var response = new GetPrioritiesResponse();
@@ -174,16 +163,6 @@ namespace SecureWebAPI.BusinessLogic
             });
             return response;
         }
-
-        //public SprintResponse GetCurrentSprint(SprintRequest request)
-        //{
-        //    var response = new SprintResponse();
-        //    RunCode(MethodBase.GetCurrentMethod().Name, request, response, (uow) =>
-        //    {
-        //        _manager.GetCurrentSprint(request, response);
-        //    });
-        //    return response;
-        //}
 
         public SprintResponse SortSprintTasks(SprintRequest request)
         {
