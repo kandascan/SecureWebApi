@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using SecureWebAPI.Enums;
 
 namespace SecureWebAPI.BusinessLogic.Response
 {
@@ -12,7 +11,8 @@ namespace SecureWebAPI.BusinessLogic.Response
         }
         public bool Success { get; set; }
         public Dictionary<string, string> Errors { get; set; }
-        public string ResponseTime { get; set; } = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}";
+        public string ResponseTime { get; set; } = 
+            $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}";
         public string Message { get; set; }
         public bool IsTeamMember { get; set; }
     }
