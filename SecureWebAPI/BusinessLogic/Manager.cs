@@ -282,6 +282,12 @@ namespace SecureWebAPI.BusinessLogic
             {
                 return;
             }
+            var teamDb = _uow.Repository<TeamEntity>().GetOverview(t => t.TeamName == request.Team.TeamName).FirstOrDefault();
+            if(teamDb != null)
+            {
+                response.Errors.Add("teamname", $"Team with name {request.Team.TeamName} already exist.");
+                return;
+            }
             var newTeam = _mapper.Map<TeamEntity>(request.Team);
             _uow.Repository<TeamEntity>().Add(newTeam);
             _uow.Save();

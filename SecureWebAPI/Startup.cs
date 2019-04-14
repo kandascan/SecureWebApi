@@ -89,6 +89,10 @@ namespace SecureWebAPI
             services.AddTransient<IRepository<TaskEntity>, Repository<TaskEntity>>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "wwwroot";
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext dbContext)
@@ -99,9 +103,10 @@ namespace SecureWebAPI
             }
             else
             {
+                app.UseExceptionHandler("/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             dbContext.Database.EnsureCreated();
             app.UseAuthentication();
             app.UseHttpsRedirection();
@@ -110,35 +115,27 @@ namespace SecureWebAPI
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
-            //DefaultFilesOptions options = new DefaultFilesOptions();
-            //options.DefaultFileNames.Clear();
-            //options.DefaultFileNames.Add("/build/index.html");
+
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles();
             app.UseFileServer();
-            //app.UseStaticFiles(new StaticFileOptions()
-            //{
-            //    FileProvider = new PhysicalFileProvider(
-            //    Path.Combine(Directory.GetCurrentDirectory(), @"angular")),
-            //    RequestPath = ""
-            //});
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
+                    template: "{controller}/{action=Index}/{id?}");
             });
-            //app.UseSpa(spa =>
-            //{
-            //    spa.Options.SourcePath = "wwwroot/build";
-            //    spa.UseProxyToSpaDevelopmentServer("http://localhost:50754");
-            //    if (env.IsDevelopment())
-            //    {
-            //        spa.UseReactDevelopmentServer(npmScript: "start");
-            //    }
-            //});
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "wwwroot";
+
+                if (env.IsDevelopment())
+                {
+                    //spa.UseReactDevelopmentServer(npmScript: "..\\SecureWebAPI.UI\\start");
+                }
+            });
         }
     }
 }

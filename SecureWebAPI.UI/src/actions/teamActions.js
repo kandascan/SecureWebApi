@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { TOGGLE_SPINNER, SHOW_CREATE_TEAM_MODAL, GET_ERRORS, GET_USER_TEAMS, SET_CURRENT_TEAM, GET_TEAM_BY_ID } from './types';
 import { updateToken } from './authActions';
+import isEmpty from '../validation/is-Empty';
 
 export const getTeamById = (teamid) => dispacht => {
     axios.get(`/api/team/getteambyid/${teamid}`)
@@ -69,6 +70,16 @@ export const createTeam = (newTeam) => dispatch => {
     });
     axios.post("api/team", newTeam)
         .then(res => {
+            if(!isEmpty(res.data.errors)){
+                dispatch({
+                    type: GET_ERRORS,
+                    payload: res.data.errors
+                })
+                dispatch({
+                    type: TOGGLE_SPINNER
+                });
+                return;
+            }
             dispatch({
                 type: SHOW_CREATE_TEAM_MODAL
             });
